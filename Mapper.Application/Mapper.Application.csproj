@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="CommandAndQueries\GeoMap\Commands\CreateGeoMapCommand\" />
+    <Folder Include="CommandAndQueries\GeoMap\Commands\DeleteGeoMapCommand\" />
+    <Folder Include="CommandAndQueries\GeoMap\Commands\UpdateGeoMapCommand\" />
+    <Folder Include="CommandAndQueries\GeoMap\Queries\GetGeoMapDetails\" />
+    <Folder Include="CommandAndQueries\GeoMap\Queries\GetGeoMapList\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageReference Include="Serilog" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Mapper.Domain\Mapper.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
