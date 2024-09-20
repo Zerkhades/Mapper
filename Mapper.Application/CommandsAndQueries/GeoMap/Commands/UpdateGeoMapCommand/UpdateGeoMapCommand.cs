@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Mapper.Domain;
 using MediatR;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.UpdateGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand
 {
     public class UpdateGeoMapCommand : IRequest
     {

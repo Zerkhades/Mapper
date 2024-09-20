@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.CreateGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand
 {
     internal class CreateGeoMapValidator : AbstractValidator<CreateGeoMapCommand>
     {

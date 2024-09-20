@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.DeleteGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand
 {
     internal class DeleteGeoMapValidator : AbstractValidator<DeleteGeoMapCommand>
     {

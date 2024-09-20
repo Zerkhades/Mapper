@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Mapper.Domain;
 using MediatR;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.CreateGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand
 {
     public class CreateGeoMapCommand : IRequest<Guid>
     {

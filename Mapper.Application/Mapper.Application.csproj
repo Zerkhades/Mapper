@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="CommandAndQueries\GeoMap\Queries\GetGeoMapDetails\" />
-    <Folder Include="CommandAndQueries\GeoMap\Queries\GetGeoMapList\" />
+    <Folder Include="CommandsAndQueries\GeoMap\Queries\GetGeoMapDetails\" />
+    <Folder Include="CommandsAndQueries\GeoMap\Queries\GetGeoMapList\" />
   </ItemGroup>
 
   <ItemGroup>

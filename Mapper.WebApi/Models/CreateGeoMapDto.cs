@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using AutoMapper;
 using System.ComponentModel.DataAnnotations;
-using Mapper.Application.CommandAndQueries.GeoMap.Commands.CreateGeoMapCommand;
+using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
 using Mapper.Application.Common.Mappings;
 using Mapper.Domain;
 

@@ -2,7 +2,7 @@
 using Mapper.Application.Interfaces;
 using MediatR;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.DeleteGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand
 {
     public class DeleteGeoMapHandler
         : IRequestHandler<DeleteGeoMapCommand>

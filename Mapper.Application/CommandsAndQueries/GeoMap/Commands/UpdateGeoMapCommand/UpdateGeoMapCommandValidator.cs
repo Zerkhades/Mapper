@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.UpdateGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand
 {
     internal class UpdateGeoMapCommandValidator : AbstractValidator<UpdateGeoMapCommand>
     {

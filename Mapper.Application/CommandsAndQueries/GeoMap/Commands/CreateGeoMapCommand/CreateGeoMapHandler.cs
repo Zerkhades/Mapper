@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.CreateGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand
 {
     public class CreateNoteCommandHandler
         : IRequestHandler<CreateGeoMapCommand, Guid>

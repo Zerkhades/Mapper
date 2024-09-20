@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.DeleteGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand
 {
     public class DeleteGeoMapCommand : IRequest
     {

@@ -9,7 +9,7 @@ using Mapper.Application.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Mapper.Domain;
 
-namespace Mapper.Application.CommandAndQueries.GeoMap.Commands.UpdateGeoMapCommand
+namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand
 {
     internal class UpdateGeoMapCommandHandler
         : IRequestHandler<UpdateGeoMapCommand>
