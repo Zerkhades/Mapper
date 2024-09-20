@@ -11,14 +11,14 @@ namespace Mapper.Persistence
             services, IConfiguration configuration)
         {
             var connectionString = configuration["DbConnection"];
-            services.AddDbContext<GeoMapDbContext>(options =>
+            services.AddDbContext<MapperDbContext>(options =>
             {
                 // Add mssql or/and postgres
                 // options.UseSqlite(connectionString);
                 // options.UseSql(connectionString);
             });
             services.AddScoped<IMapperDbContext>(provider =>
-                provider.GetService<GeoMapDbContext>());
+                provider.GetService<MapperDbContext>());
             return services;
         }
     }

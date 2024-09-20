@@ -20,7 +20,7 @@ namespace Mapper.Application.Common.Behaviours
             var requestName = typeof(TRequest).Name;
             var userId = _currentUserService.UserId;
 
-            Log.Information("Notes Request: {Name} {@UserId} {@Request}",
+            Log.Information("Mapper Request: {Name} {@UserId} {@Request}",
                 requestName, userId, request);
 
             var response = await next();

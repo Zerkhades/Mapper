@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="CommandAndQueries\GeoMap\Commands\CreateGeoMapCommand\" />
-    <Folder Include="CommandAndQueries\GeoMap\Commands\DeleteGeoMapCommand\" />
-    <Folder Include="CommandAndQueries\GeoMap\Commands\UpdateGeoMapCommand\" />
     <Folder Include="CommandAndQueries\GeoMap\Queries\GetGeoMapDetails\" />
     <Folder Include="CommandAndQueries\GeoMap\Queries\GetGeoMapList\" />
   </ItemGroup>

@@ -4,7 +4,7 @@ using Mapper.Domain;
 
 namespace Mapper.Persistence.EntityTypeConfigurations
 {
-    public class GeoMapConfiguration : IEntityTypeConfiguration<GeoMap>
+    public class MapperConfiguration : IEntityTypeConfiguration<GeoMap>
     {
         public void Configure(EntityTypeBuilder<GeoMap> builder)
         {
