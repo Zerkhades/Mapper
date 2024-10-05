@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.iOS", "Mapper.iOS\Ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.Models", "Mapper.Models\Mapper.Models.csproj", "{8B0D92FF-4486-4236-83BA-6444D12711E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.DBService", "Mapper.DBService\Mapper.DBService.csproj", "{1AFAA379-CF8A-42F0-817B-2EF42E889CFF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.Messages", "Mapper.Messages\Mapper.Messages.csproj", "{B49F4F3D-6E00-4C8B-A49F-820613A92F39}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.ViewModels", "Mapper.ViewModels\Mapper.ViewModels.csproj", "{1DB3BC26-06A3-4250-A582-2378D77A6658}"
@@ -35,13 +33,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EF2C8705-8C0D-4A3C-B212-9F6BA6535E27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper.Application", "Mapper.Application\Mapper.Application.csproj", "{728050AA-E934-46D5-B20F-38A239E26C90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.Application", "Mapper.Application\Mapper.Application.csproj", "{728050AA-E934-46D5-B20F-38A239E26C90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper.Domain", "Mapper.Domain\Mapper.Domain.csproj", "{43BFCDD5-21F8-4EDA-8A25-F0DAC9332C54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.Domain", "Mapper.Domain\Mapper.Domain.csproj", "{43BFCDD5-21F8-4EDA-8A25-F0DAC9332C54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper.Persistence", "Mapper.Persistence\Mapper.Persistence.csproj", "{B5F3D3F1-51E1-4F80-A073-ACFB89467940}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.Persistence", "Mapper.Persistence\Mapper.Persistence.csproj", "{B5F3D3F1-51E1-4F80-A073-ACFB89467940}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper.WebApi", "Mapper.WebApi\Mapper.WebApi.csproj", "{BE2FA231-AF4B-4904-82FB-67CF9E14767F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper.WebApi", "Mapper.WebApi\Mapper.WebApi.csproj", "{BE2FA231-AF4B-4904-82FB-67CF9E14767F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,10 +75,6 @@ Global
 		{8B0D92FF-4486-4236-83BA-6444D12711E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B0D92FF-4486-4236-83BA-6444D12711E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B0D92FF-4486-4236-83BA-6444D12711E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1AFAA379-CF8A-42F0-817B-2EF42E889CFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AFAA379-CF8A-42F0-817B-2EF42E889CFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AFAA379-CF8A-42F0-817B-2EF42E889CFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AFAA379-CF8A-42F0-817B-2EF42E889CFF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B49F4F3D-6E00-4C8B-A49F-820613A92F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B49F4F3D-6E00-4C8B-A49F-820613A92F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B49F4F3D-6E00-4C8B-A49F-820613A92F39}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -8,8 +8,8 @@ namespace Mapper.Persistence.EntityTypeConfigurations
     {
         public void Configure(EntityTypeBuilder<GeoMap> builder)
         {
-            builder.HasKey(note => note.Id);
-            builder.HasIndex(note => note.Id).IsUnique();
+            builder.HasKey(geomap => geomap.Id);
+            builder.HasIndex(geomap => geomap.Id).IsUnique();
         }
     }
 }

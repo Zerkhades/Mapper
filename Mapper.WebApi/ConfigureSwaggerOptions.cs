@@ -22,36 +22,36 @@ namespace Mapper.WebApi
                     new OpenApiInfo
                     {
                         Version = apiVersion,
-                        Title = $"Notes API {apiVersion}",
+                        Title = $"Mapper API {apiVersion}",
                         Description =
                             "A simple example ASP NET Core Web API. Professional way",
                         TermsOfService =
-                            new Uri("https://www.youtube.com/c/PlatinumTechTalks"),
+                            new Uri("https://google.com"),
                         Contact = new OpenApiContact
                         {
-                            Name = " Platinum Chat",
+                            Name = "Mapper",
                             Email = string.Empty,
                             Url =
-                                new Uri("https://t.me/platinum_chat")
+                                new Uri("https://google.com")
                         },
                         License = new OpenApiLicense
                         {
-                            Name = "Platinum Telegram Channel",
+                            Name = "Mapper",
                             Url =
-                                new Uri("https://t.me/platinum_tech_talks")
+                                new Uri("https://google.com")
                         }
                     });
 
-                options.AddSecurityDefinition($"AuthToken {apiVersion}",
-                    new OpenApiSecurityScheme
-                    {
-                        In = ParameterLocation.Header,
-                        Type = SecuritySchemeType.Http,
-                        BearerFormat = "JWT",
-                        Scheme = "bearer",
-                        Name = "Authorization",
-                        Description = "Authorization token"
-                    });
+                //options.AddSecurityDefinition($"AuthToken {apiVersion}",
+                //    new OpenApiSecurityScheme
+                //    {
+                //        In = ParameterLocation.Header,
+                //        Type = SecuritySchemeType.Http,
+                //        BearerFormat = "JWT",
+                //        Scheme = "bearer",
+                //        Name = "Authorization",
+                //        Description = "Authorization token"
+                //    });
 
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {

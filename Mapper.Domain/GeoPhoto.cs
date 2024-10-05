@@ -10,7 +10,7 @@ namespace Mapper.Domain
     {
         public int Id { get; set; }
         public string PhotoName { get; set; }
-        public byte[] File { get; set; }
+        //public byte[] File { get; set; }
         public bool IsArchived { get; set; }
 
         public GeoPhoto()

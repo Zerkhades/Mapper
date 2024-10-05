@@ -23,8 +23,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
             CancellationToken cancellationToken)
         {
             var entity = await _dbContext.GeoMaps
-                .FirstOrDefaultAsync(note =>
-                    note.Id == request.Id, cancellationToken);
+                .FirstOrDefaultAsync(geoMap =>
+                    geoMap.Id == request.Id, cancellationToken);
 
             if (entity == null || entity.Id != request.Id)
             {

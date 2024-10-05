@@ -11,7 +11,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
     {
         public GetGeoMapDetailsQueryValidator() 
         {
-            RuleFor(note => note.Id).NotEqual(Guid.Empty);
+            RuleFor(geoMap => geoMap.Id).NotEqual(Guid.Empty);
         }
     }
 }

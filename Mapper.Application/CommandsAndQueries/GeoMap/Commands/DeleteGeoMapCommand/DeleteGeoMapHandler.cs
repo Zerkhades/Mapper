@@ -15,7 +15,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapComm
 
         public async Task Handle(DeleteGeoMapCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _dbContext.GeoMarks
+            var entity = await _dbContext.GeoMaps
                 .FindAsync(new object[] { request.Id }, cancellationToken);
             entity.IsArchived = true;
             await _dbContext.SaveChangesAsync(cancellationToken);

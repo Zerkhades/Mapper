@@ -48,17 +48,17 @@ namespace Mapper.WebApi
                 });
             });
 
-            services.AddAuthentication(config =>
-            {
-                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer("Bearer", options =>
-                {
-                    options.Authority = "https://localhost:44386/";
-                    options.Audience = "MapperWebAPI";
-                    options.RequireHttpsMetadata = false;
-                });
+            //services.AddAuthentication(config =>
+            //{
+            //    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //    .AddJwtBearer("Bearer", options =>
+            //    {
+            //        options.Authority = "https://localhost:44386/";
+            //        options.Audience = "MapperWebAPI";
+            //        options.RequireHttpsMetadata = false;
+            //    });
 
             services.AddApiVersioning()
                 .AddMvc()
@@ -94,8 +94,8 @@ namespace Mapper.WebApi
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseCors("AllowAll");
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

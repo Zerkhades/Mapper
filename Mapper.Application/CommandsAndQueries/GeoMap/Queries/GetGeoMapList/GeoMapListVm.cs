@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList
 {
-    internal class GeoMapListVm
+    public class GeoMapListVm
     {
+        public IList<GeoMapLookupDto> GeoMaps { get; set; }
     }
 }

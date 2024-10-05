@@ -11,8 +11,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapComm
     {
         public UpdateGeoMapCommandValidator()
         {
-            RuleFor(updateNoteCommand => updateNoteCommand.Id).NotEqual(Guid.Empty);
-            RuleFor(updateNoteCommand => updateNoteCommand.MapName)
+            RuleFor(updateGeoMapCommand => updateGeoMapCommand.Id).NotEqual(Guid.Empty);
+            RuleFor(updateGeoMapCommand => updateGeoMapCommand.MapName)
                 .NotEmpty().MaximumLength(250);
         }
     }

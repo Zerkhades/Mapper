@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand
 {
-    public class CreateNoteCommandHandler
+    public class CreateGeoMapCommandHandler
         : IRequestHandler<CreateGeoMapCommand, Guid>
     {
         private readonly IMapperDbContext _dbContext;
 
-        public CreateNoteCommandHandler(IMapperDbContext dbContext) =>
+        public CreateGeoMapCommandHandler(IMapperDbContext dbContext) =>
             _dbContext = dbContext;
 
         public async Task<Guid> Handle(CreateGeoMapCommand request,
@@ -24,10 +24,10 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapComm
             {
                 Id = Guid.NewGuid(),
                 MapName = request.MapName,
-                MapDescription = null,
-                Map = new byte[]
-                {
-                },
+                MapDescription = request.MapDescription,
+                //Map = new byte[]
+                //{
+                //},
                 IsArchived = false,
                 //GeoMarks = null
             };

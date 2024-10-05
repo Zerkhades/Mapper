@@ -15,10 +15,10 @@ namespace Mapper.Persistence
 
 
         // Might be useless
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-        //    builder.ApplyConfiguration(new MapperConfiguration());
-        //    base.OnModelCreating(builder);
-        //}
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfiguration(new MapperConfiguration());
+            base.OnModelCreating(builder);
+        }
     }
 }

@@ -7,10 +7,10 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapComm
     {
         public CreateGeoMapValidator()
         {
-            RuleFor(createNoteCommand =>
-                createNoteCommand.MapName).NotEmpty().MaximumLength(250);
-            RuleFor(createNoteCommand =>
-                createNoteCommand.Id).NotEqual(Guid.Empty);
+            RuleFor(createGeoMapCommand =>
+                createGeoMapCommand.MapName).NotEmpty().MaximumLength(250);
+            RuleFor(createGeoMapCommand =>
+                createGeoMapCommand.Id).NotEqual(Guid.Empty);
         }
     }
 }

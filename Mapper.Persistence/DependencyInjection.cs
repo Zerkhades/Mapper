@@ -15,7 +15,7 @@ namespace Mapper.Persistence
             {
                 // Add mssql or/and postgres
                 // options.UseSqlite(connectionString);
-                // options.UseSql(connectionString);
+                options.UseSqlServer(connectionString);
             });
             services.AddScoped<IMapperDbContext>(provider =>
                 provider.GetService<MapperDbContext>());
