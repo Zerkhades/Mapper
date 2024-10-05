@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand
 {
-    internal class CreateGeoMapValidator : AbstractValidator<CreateGeoMapCommand>
+    public class CreateGeoMapCommandValidator : AbstractValidator<CreateGeoMapCommand>
     {
-        public CreateGeoMapValidator()
+        public CreateGeoMapCommandValidator()
         {
             RuleFor(createGeoMapCommand =>
                 createGeoMapCommand.MapName).NotEmpty().MaximumLength(250);

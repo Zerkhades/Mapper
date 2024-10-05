@@ -8,7 +8,7 @@ namespace Mapper.Domain
 {
     public class EmployeePhoto
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         //public byte[] Photo { get; set; }
         public bool IsArchived { get; set; }
 

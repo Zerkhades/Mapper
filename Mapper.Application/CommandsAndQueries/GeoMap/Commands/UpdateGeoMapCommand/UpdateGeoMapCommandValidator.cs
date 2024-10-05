@@ -7,7 +7,7 @@ using FluentValidation;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand
 {
-    internal class UpdateGeoMapCommandValidator : AbstractValidator<UpdateGeoMapCommand>
+    public class UpdateGeoMapCommandValidator : AbstractValidator<UpdateGeoMapCommand>
     {
         public UpdateGeoMapCommandValidator()
         {

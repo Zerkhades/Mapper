@@ -5,7 +5,7 @@ namespace Mapper.Domain
 {
     public class GeoMark : Mark
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string MarkName { get; set; }
         public string? MarkDescription { get; set; }
         public string Color { get; set; }

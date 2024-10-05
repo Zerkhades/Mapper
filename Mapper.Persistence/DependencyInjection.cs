@@ -13,9 +13,14 @@ namespace Mapper.Persistence
             var connectionString = configuration["DbConnection"];
             services.AddDbContext<MapperDbContext>(options =>
             {
-                // Add mssql or/and postgres
+                // Sqlite server
                 // options.UseSqlite(connectionString);
+
+                // MsSql server
                 options.UseSqlServer(connectionString);
+
+                // Inmemory database purposes is only for testing
+                //options.UseInMemoryDatabase(connectionString);
             });
             services.AddScoped<IMapperDbContext>(provider =>
                 provider.GetService<MapperDbContext>());

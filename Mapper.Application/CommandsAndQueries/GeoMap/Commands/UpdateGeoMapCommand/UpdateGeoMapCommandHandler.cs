@@ -11,7 +11,7 @@ using Mapper.Domain;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand
 {
-    internal class UpdateGeoMapCommandHandler
+    public class UpdateGeoMapCommandHandler
         : IRequestHandler<UpdateGeoMapCommand>
     {
         private readonly IMapperDbContext _dbContext;

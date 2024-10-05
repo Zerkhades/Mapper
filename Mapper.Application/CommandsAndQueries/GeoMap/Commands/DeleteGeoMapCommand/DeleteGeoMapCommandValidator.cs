@@ -7,9 +7,9 @@ using FluentValidation;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand
 {
-    internal class DeleteGeoMapValidator : AbstractValidator<DeleteGeoMapCommand>
+    public class DeleteGeoMapCommandValidator : AbstractValidator<DeleteGeoMapCommand>
     {
-        public DeleteGeoMapValidator()
+        public DeleteGeoMapCommandValidator()
         {
             RuleFor(deleteMapCommand => deleteMapCommand.Id).NotEqual(Guid.Empty);
         }

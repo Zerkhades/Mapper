@@ -4,7 +4,7 @@ namespace Mapper.Domain
 {
     public  class Employee
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string? Patronymic { get; set; }
         public string FullName => $"{FirstName} {Surname} {Patronymic}";
