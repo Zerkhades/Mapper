@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Collections.ObjectModel;
+using AutoMapper;
 using Mapper.Application.Common.Mappings;
 using Mapper.Domain;
 
@@ -11,9 +12,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
         public string MapDescription { get; set; }
         //public byte[] Map { get; set; }
         public bool IsArchived { get; set; }
-        //public virtual ObservableCollection<GeoMark>? GeoMarks { get; set; }
+        public virtual IList<Domain.GeoMark>? GeoMarks { get; set; }
 
-        // Не ебу почему не маппится. Некст тайм - узнаю
         public void Mapping(Profile profile)
         {
             profile.CreateMap<Domain.GeoMap, GeoMapDetailsVm>()
@@ -26,9 +26,9 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
                 //.ForMember(mapCommand => mapCommand.Map,
                 //    opt => opt.MapFrom(mapDto => mapDto.Map))
                 .ForMember(mapCommand => mapCommand.IsArchived,
-                    opt => opt.MapFrom(mapDto => mapDto.IsArchived));
-            //.ForMember(mapCommand => mapCommand.GeoMarks,
-            //    opt => opt.MapFrom(mapDto => mapDto.GeoMarks));
+                    opt => opt.MapFrom(mapDto => mapDto.IsArchived))
+            .ForMember(mapCommand => mapCommand.GeoMarks,
+                opt => opt.MapFrom(mapDto => mapDto.GeoMarks));
         }
     }
 }

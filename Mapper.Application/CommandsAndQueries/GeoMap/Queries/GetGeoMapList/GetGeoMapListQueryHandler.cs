@@ -29,7 +29,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList
             //    .ToListAsync(cancellationToken);
 
             var geoMapsQuery = await _dbContext.GeoMaps
-                .Where(geomap => geomap.IsArchived != false)
+                //.Where(geomap => geomap.IsArchived != false)
                 .ProjectTo<GeoMapLookupDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 

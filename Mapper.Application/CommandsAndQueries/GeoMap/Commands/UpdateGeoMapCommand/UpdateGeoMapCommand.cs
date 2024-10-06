@@ -14,7 +14,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapComm
         public Guid Id { get; set; }
         public string MapName { get; set; }
         public string MapDescription { get; set; }
+        public string IsArchived { get; set; }
         //public byte[] Map { get; set; }
-        //public ObservableCollection<GeoMark> GeoMarks { get; set; }
+        public ObservableCollection<Domain.GeoMark> GeoMarks { get; set; }
     }
 }

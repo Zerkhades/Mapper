@@ -12,11 +12,7 @@ namespace Mapper.Domain
         public string MapDescription { get; set; }
         //public byte[] Map { get; set; }
         public bool IsArchived { get; set; }
-        //public virtual ObservableCollection<GeoMark>? GeoMarks { get; set; }
-
-        //public GeoMap()
-        //{
-        //    IsArchived = false;
-        //}
+        //public DateTime CreationDate { get; set; }
+        public virtual IList<GeoMark>? GeoMarks { get; set; }
     }
 }

@@ -32,11 +32,9 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapComm
                 Id = Guid.NewGuid(),
                 MapName = request.MapName,
                 MapDescription = request.MapDescription,
-                //Map = new byte[]
-                //{
-                //},
+                //Add new class with photo Map parameter
                 IsArchived = false,
-                //GeoMarks = null
+                GeoMarks = request.GeoMarks,
             };
 
             await _dbContext.GeoMaps.AddAsync(map, cancellationToken);

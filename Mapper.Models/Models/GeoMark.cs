@@ -7,7 +7,7 @@ namespace Mapper.Models.Models
 {
     public class GeoMark : Mark, IGeoMark
     {
-
+        public Guid Id { get; set; }
         public string MarkName { get; set; }
         public string? MarkDescription { get; set; }
         public string Color { get; set; }
@@ -16,8 +16,8 @@ namespace Mapper.Models.Models
         public bool IsEmoji { get; set; }
         public bool IsArchived { get; set; }
         public int GeoMapId { get; set; }
-        public ObservableCollection<Employee>? Employees { get; set; }
-        public ObservableCollection<GeoPhoto>? GeoPhotos { get; set; }
+        public virtual ObservableCollection<Employee>? Employees { get; set; }
+        public virtual ObservableCollection<GeoPhoto>? GeoPhotos { get; set; }
 
 
         public GeoMark()

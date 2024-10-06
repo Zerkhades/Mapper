@@ -29,11 +29,12 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapComm
             {
                 throw new NotFoundException(nameof(GeoMap), request.Id);
             }
-
+            entity.Id = request.Id;
             entity.MapName = request.MapName;
             entity.MapDescription = request.MapDescription;
+            entity.GeoMarks = request.GeoMarks;
             //entity.Map = request.Map;
-            entity.Id = request.Id;
+
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

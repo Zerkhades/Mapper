@@ -11,7 +11,6 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList
     public class GeoMapLookupDto : IMapWith<Domain.GeoMap>
     {
         public Guid Id { get; set; }
-        public string Title { get; set; }
 
         public void Mapping(Profile profile)
         {
