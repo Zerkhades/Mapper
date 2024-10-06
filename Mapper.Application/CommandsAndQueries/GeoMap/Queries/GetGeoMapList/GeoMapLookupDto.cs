@@ -17,7 +17,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList
         {
             profile.CreateMap<Domain.GeoMap, GeoMapLookupDto>()
                 .ForMember(geoMapDto => geoMapDto.Id,
-                    opt => opt.MapFrom(note => note.Id));
+                    opt => opt.MapFrom(geoMap => geoMap.Id));
             //.ForMember(geoMapDto => geoMapDto.Title,
             //    opt => opt.MapFrom(geoMapDto => geoMapDto.Title));
         }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
 {
-    internal class GetGeoMapDetailsQueryHandler : IRequestHandler<GetGeoMapDetailsQuery, GeoMapDetailsVm>
+    public class GetGeoMapDetailsQueryHandler : IRequestHandler<GetGeoMapDetailsQuery, GeoMapDetailsVm>
     {
         private readonly IMapperDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -28,7 +28,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
 
             if (entity == null || entity.Id != request.Id)
             {
-                throw new NotFoundException(nameof(GeoMap), request.Id);
+                throw new NotFoundException(nameof(Domain.GeoMap), request.Id);
             }
 
             return _mapper.Map<GeoMapDetailsVm>(entity);

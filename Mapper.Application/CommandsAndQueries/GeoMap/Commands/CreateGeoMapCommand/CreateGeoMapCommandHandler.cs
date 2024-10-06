@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mapper.Application.Common.Exceptions;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand
 {
@@ -20,6 +21,12 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapComm
         public async Task<Guid> Handle(CreateGeoMapCommand request,
             CancellationToken cancellationToken)
         {
+            var entity = await _dbContext.GeoMaps
+                .FindAsync(new object[] { request.Id }, cancellationToken);
+            if (entity != null)
+            {
+                throw new AlreadyExistsException(nameof(Domain.GeoMap), request.Id);
+            }
             var map = new Domain.GeoMap
             {
                 Id = Guid.NewGuid(),

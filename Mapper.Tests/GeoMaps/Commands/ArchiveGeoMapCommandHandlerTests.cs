@@ -9,37 +9,38 @@ using Mapper.Tests.Common;
 
 namespace Mapper.Tests.GeoMaps.Commands
 {
-    public class DeleteGeoMapCommandHandlerTests : TestCommandBase
+    public class ArchiveGeoMapCommandHandlerTests : TestCommandBase
     {
         [Fact]
-        public async Task DeleteNoteCommandHandler_Success()
+        public async Task ArchiveGeomapCommandHandler_Success()
         {
             // Arrange
-            var handler = new DeleteGeoMapCommandHandler(Context);
+            var handler = new ArchiveGeoMapCommandHandler(Context);
 
             // Act
-            await handler.Handle(new DeleteGeoMapCommand()
+            await handler.Handle(new ArchiveGeoMapCommand()
             {
                 Id = GeoMapsContextFactory.GeoMapIdForDelete,
                 // UserId = GeoMapsContextFactory.UserAId
             }, CancellationToken.None);
 
             // Assert
-            Assert.NotNull(Context.GeoMaps.SingleOrDefault(note =>
-                note.Id == GeoMapsContextFactory.GeoMapIdForDelete));
+            Assert.NotNull(Context.GeoMaps.SingleOrDefault(geoMap =>
+                geoMap.Id == GeoMapsContextFactory.GeoMapIdForDelete 
+                && geoMap.IsArchived == true));
         }
 
         [Fact]
-        public async Task DeleteNoteCommandHandler_FailOnWrongId()
+        public async Task ArchiveGeomapCommandHandler_FailOnWrongId()
         {
             // Arrange
-            var handler = new DeleteGeoMapCommandHandler(Context);
+            var handler = new ArchiveGeoMapCommandHandler(Context);
 
             // Act
             // Assert
             await Assert.ThrowsAsync<NotFoundException>(async () =>
                 await handler.Handle(
-                    new DeleteGeoMapCommand()
+                    new ArchiveGeoMapCommand()
                     {
                         Id = Guid.NewGuid(),
                     },
@@ -47,7 +48,7 @@ namespace Mapper.Tests.GeoMaps.Commands
         }
 
         //[Fact]
-        //public async Task DeleteNoteCommandHandler_FailOnWrongUserId()
+        //public async Task ArchiveGeomapCommandHandler_FailOnWrongUserId()
         //{
         //    // Arrange
         //    var deleteHandler = new DeleteGeoMapCommandHandler(Context);

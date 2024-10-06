@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
 {
-    internal class GetGeoMapDetailsQueryValidator : AbstractValidator<GetGeoMapDetailsQuery>
+    public class GetGeoMapDetailsQueryValidator : AbstractValidator<GetGeoMapDetailsQuery>
     {
         public GetGeoMapDetailsQueryValidator() 
         {

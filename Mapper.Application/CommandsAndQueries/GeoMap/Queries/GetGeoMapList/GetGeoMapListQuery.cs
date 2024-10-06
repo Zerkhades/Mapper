@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList
 {
-    internal class GetGeoMapListQuery
+    public class GetGeoMapListQuery : IRequest<GeoMapListVm>
     {
+        public Guid UserId { get; set; }
     }
 }

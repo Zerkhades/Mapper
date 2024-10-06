@@ -44,7 +44,7 @@ namespace Mapper.WebApi.Controllers
         {
             var query = new GetGeoMapDetailsQuery()
             {
-                
+                //Id = 
             };
             var vm = await Mediator.Send(query);
             return Ok(vm);
@@ -120,14 +120,14 @@ namespace Mapper.WebApi.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Update([FromBody] UpdateGeoMapCommand updategeomapDto)
+        public async Task<IActionResult> Update([FromBody] UpdateGeoMapCommand updateGeoMapDto)
         {
-            var command = _mapper.Map<UpdateGeoMapCommand>(updategeomapDto);
+            var command = _mapper.Map<UpdateGeoMapCommand>(updateGeoMapDto);
             command.Id = UserId;
             await Mediator.Send(command);
             return NoContent();
         }
-
+        
         /// <summary>
         /// Deletes the geomap by id
         /// </summary>
@@ -143,9 +143,9 @@ namespace Mapper.WebApi.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Archive(Guid id)
         {
-            var command = new DeleteGeoMapCommand
+            var command = new ArchiveGeoMapCommand
             {
                 Id = id
             };

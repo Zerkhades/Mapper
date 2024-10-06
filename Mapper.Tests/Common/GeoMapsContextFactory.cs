@@ -46,7 +46,7 @@ namespace Mapper.Tests.Common
                     Id = GeoMapIdForDelete,
                     MapName = "string",
                     MapDescription = "string",
-                    IsArchived = true
+                    IsArchived = false
                 }
             );
             context.SaveChanges();

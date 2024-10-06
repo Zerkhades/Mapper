@@ -13,7 +13,7 @@ namespace Mapper.Tests.GeoMaps.Commands
     public class UpdateGeoMapCommandHandlerTests : TestCommandBase
     {
         [Fact]
-        public async Task UpdateNoteCommandHandler_Success()
+        public async Task UpdateGeomapCommandHandler_Success()
         {
             // Arrange
             var handler = new UpdateGeoMapCommandHandler(Context);
@@ -36,7 +36,7 @@ namespace Mapper.Tests.GeoMaps.Commands
         }
 
         [Fact]
-        public async Task UpdateNoteCommandHandler_FailOnWrongId()
+        public async Task UpdateGeomapCommandHandler_FailOnWrongId()
         {
             // Arrange
             var handler = new UpdateGeoMapCommandHandler(Context);

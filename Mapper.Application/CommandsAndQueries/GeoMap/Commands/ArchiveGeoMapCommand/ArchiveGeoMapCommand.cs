@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand
 {
-    public class DeleteGeoMapCommand : IRequest
+    public class ArchiveGeoMapCommand : IRequest
     {
         public Guid Id { get; set; }
     }

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
+﻿using AutoMapper;
+using Mapper.Application.Common.Mappings;
 using Mapper.Domain;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
 {
-    internal class GeoMapDetailsVm
+    public class GeoMapDetailsVm : IMapWith<Domain.GeoMap>
     {
         public Guid Id { get; set; }
         public string MapName { get; set; }
@@ -19,9 +13,12 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
         public bool IsArchived { get; set; }
         //public virtual ObservableCollection<GeoMark>? GeoMarks { get; set; }
 
+        // Не ебу почему не маппится. Некст тайм - узнаю
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<Domain.GeoMap, CreateGeoMapCommand>()
+            profile.CreateMap<Domain.GeoMap, GeoMapDetailsVm>()
+                .ForMember(mapCommand => mapCommand.Id,
+                    opt => opt.MapFrom(mapDto => mapDto.Id))
                 .ForMember(mapCommand => mapCommand.MapName,
                     opt => opt.MapFrom(mapDto => mapDto.MapName))
                 .ForMember(mapCommand => mapCommand.MapDescription,
@@ -30,6 +27,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
                 //    opt => opt.MapFrom(mapDto => mapDto.Map))
                 .ForMember(mapCommand => mapCommand.IsArchived,
                     opt => opt.MapFrom(mapDto => mapDto.IsArchived));
+            //.ForMember(mapCommand => mapCommand.GeoMarks,
+            //    opt => opt.MapFrom(mapDto => mapDto.GeoMarks));
         }
     }
 }

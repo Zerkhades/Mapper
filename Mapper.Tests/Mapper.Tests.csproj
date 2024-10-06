@@ -24,4 +24,9 @@
     <ProjectReference Include="..\Mapper.Persistence\Mapper.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="GeoMarks\" />
+    <Folder Include="Employees\" />
+  </ItemGroup>
+
 </Project>

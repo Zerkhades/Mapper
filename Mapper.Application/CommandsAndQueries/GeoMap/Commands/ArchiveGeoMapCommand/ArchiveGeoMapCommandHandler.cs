@@ -4,16 +4,16 @@ using MediatR;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand
 {
-    public class DeleteGeoMapCommandHandler
-        : IRequestHandler<DeleteGeoMapCommand>
+    public class ArchiveGeoMapCommandHandler
+        : IRequestHandler<ArchiveGeoMapCommand>
     {
         private readonly IMapperDbContext _dbContext;
 
-        public DeleteGeoMapCommandHandler(IMapperDbContext dbContext) =>
+        public ArchiveGeoMapCommandHandler(IMapperDbContext dbContext) =>
             _dbContext = dbContext;
 
 
-        public async Task Handle(DeleteGeoMapCommand request, CancellationToken cancellationToken)
+        public async Task Handle(ArchiveGeoMapCommand request, CancellationToken cancellationToken)
         {
             var entity = await _dbContext.GeoMaps
                 .FindAsync(new object[] { request.Id }, cancellationToken);
