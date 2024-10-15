@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
+﻿using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
 using Mapper.Application.Common.Exceptions;
 using Mapper.Tests.Common;
 using Microsoft.EntityFrameworkCore;

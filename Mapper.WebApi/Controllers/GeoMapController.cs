@@ -127,7 +127,32 @@ namespace Mapper.WebApi.Controllers
             await Mediator.Send(command);
             return NoContent();
         }
-        
+
+        /// <summary>
+        /// Archives the geomap by id
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// DELETE /geomap/88DEB432-062F-43DE-8DCD-8B6EF79073D3
+        /// </remarks>
+        /// <param name="id">Id of the geomap (guid)</param>
+        /// <returns>Returns NoContent</returns>
+        /// <response code="204">Success</response>
+        /// <response code="401">If the user is unauthorized</response>
+        [HttpPut("{id}")]
+        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Archive(Guid id)
+        {
+            var command = new ArchiveGeoMapCommand
+            {
+                Id = id
+            };
+            await Mediator.Send(command);
+            return NoContent();
+        }
+
         /// <summary>
         /// Deletes the geomap by id
         /// </summary>
@@ -143,9 +168,9 @@ namespace Mapper.WebApi.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Archive(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var command = new ArchiveGeoMapCommand
+            var command = new DeleteGeoMapCommand
             {
                 Id = id
             };

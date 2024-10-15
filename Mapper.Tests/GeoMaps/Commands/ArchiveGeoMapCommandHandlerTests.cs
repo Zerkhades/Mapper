@@ -1,9 +1,4 @@
 ﻿using Mapper.Application.Common.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand;
 using Mapper.Tests.Common;
 

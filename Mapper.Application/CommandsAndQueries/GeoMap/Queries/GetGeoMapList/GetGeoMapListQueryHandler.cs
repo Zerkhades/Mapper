@@ -11,13 +11,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList
 {
-    public class GetNoteListQueryHandler
+    public class GetGeoMapListQueryHandler
         : IRequestHandler<GetGeoMapListQuery, GeoMapListVm>
     {
         private readonly IMapperDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public GetNoteListQueryHandler(IMapperDbContext dbContext,
+        public GetGeoMapListQueryHandler(IMapperDbContext dbContext,
             IMapper mapper) =>
             (_dbContext, _mapper) = (dbContext, mapper);
 
