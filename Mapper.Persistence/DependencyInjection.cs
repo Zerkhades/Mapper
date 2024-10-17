@@ -10,7 +10,9 @@ namespace Mapper.Persistence
         public static IServiceCollection AddPersistence(this IServiceCollection
             services, IConfiguration configuration)
         {
-            var connectionString = configuration["DbConnection"];
+            //var connectionString = configuration["DbConnection"];
+            var connectionString =
+                "Server=db;Database=MapperDB;User Id=sa;Password=YourPassword123;TrustServerCertificate=True;";
             services.AddDbContext<MapperDbContext>(options =>
             {
                 // Sqlite server

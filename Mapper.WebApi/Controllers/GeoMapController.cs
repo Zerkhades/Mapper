@@ -97,7 +97,7 @@ namespace Mapper.WebApi.Controllers
         public async Task<ActionResult<Guid>> Create([FromBody] CreateGeoMapDto createGeoMapDto)
         {
             var command = _mapper.Map<CreateGeoMapCommand>(createGeoMapDto);
-            command.Id = UserId;
+            //command.Id = UserId;
             var geomapId = await Mediator.Send(command);
             return Ok(geomapId);
         }
