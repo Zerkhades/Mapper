@@ -34,5 +34,5 @@ jobs:
 
       # Run tests
       - name: Run tests
-        run: dotnet test Mapper.Tests/Mapper.Tests.csproj --no-build --verbosity normal
+        run: dotnet test Mapper.Tests/Mapper.Tests.csproj --verbosity normal
 
