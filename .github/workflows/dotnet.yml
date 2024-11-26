@@ -24,17 +24,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-
-      # Install required workloads [iOS] on macOS
-      - name: Install required workloads [iOS]
-        if: runner.os == 'macOS'  # This step will only run on macOS
-        run: dotnet workload restore Mapper.iOS/Mapper.iOS.csproj
-
-      # Install required workloads [Android] on Ubuntu
-      - name: Install required workloads [Android]
-        if: runner.os == 'Linux'  # This step will only run on Linux (Ubuntu)
-        run: dotnet workload restore Mapper.Android/Mapper.Android.csproj
-
       # Restore project dependencies
       - name: Restore dependencies
         run: dotnet restore Mapper.sln
