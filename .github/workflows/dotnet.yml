@@ -22,7 +22,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Install required workloads
-      run: dotnet workload restore Mapper.sln
+      run: dotnet workload restore
     - name: Restore dependencies
       run: dotnet restore Mapper.sln
     - name: Build
