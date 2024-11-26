@@ -27,10 +27,10 @@ jobs:
 
       # Install required workloads
       - name: Install required workloads [iOS]
-        run: dotnet workload restore [/home/runner/work/Mapper/Mapper/Mapper.iOS/Mapper.iOS.csproj]
+        run: dotnet workload restore Mapper.iOS/Mapper.iOS.csproj
         
       - name: Install required workloads [Android]
-        run: dotnet workload restore [/home/runner/work/Mapper/Mapper/Mapper.Android/Mapper.Android.csproj]
+        run: dotnet workload restore Mapper.Android/Mapper.Android.csproj
 
       # Restore project dependencies
       - name: Restore dependencies
