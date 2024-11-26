@@ -6,26 +6,37 @@ name: .NET
 on:
   push:
     branches:
-      - '*'
+      - '*'  # Run on all branches
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - 'master'  # Run on pull requests targeting 'master' branch
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Install required workloads
-      run: dotnet workload restore
-    - name: Restore dependencies
-      run: dotnet restore Mapper.sln
-    - name: Build
-      run: dotnet build Mapper.sln --no-restore
-    - name: Test
-      run: dotnet test Mapper.Tests --no-build --verbosity normal
+      # Checkout the repository
+      - uses: actions/checkout@v4
+
+      # Set up .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # Install required workloads if any (like Android or iOS)
+      - name: Install required workloads
+        run: dotnet workload restore
+
+      # Restore project dependencies
+      - name: Restore dependencies
+        run: dotnet restore Mapper.sln
+
+      # Build the solution
+      - name: Build the solution
+        run: dotnet build Mapper.sln --configuration Release --no-restore
+
+      # Run tests
+      - name: Run tests
+        run: dotnet test Mapper.Tests/Mapper.Tests.csproj --no-build --verbosity normal
