@@ -2,15 +2,12 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Mapper.DBService.DbContexts;
 using Mapper.Services.LoggerService;
 using Mapper.ViewModels;
 using Mapper.Views;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Identity.Client;
 using System;
 using System.IO;
 using System.Reflection;
@@ -39,8 +36,7 @@ namespace Mapper
 
                 // Register DB context
                 string? conString = context.Configuration.GetConnectionString("Default");
-                services.AddDbContextFactory<InteractiveMapDbContext>(options =>
-                    options.UseSqlServer(conString));
+
             });
 
         public override void Initialize()
