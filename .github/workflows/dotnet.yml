@@ -1,0 +1,38 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches:
+      - '*'  # Run on all branches
+  pull_request:
+    branches:
+      - 'master'  # Run on pull requests targeting 'master' branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Main job runs on Ubuntu
+
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v4
+
+      # Set up .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      # Restore project dependencies
+      - name: Restore dependencies
+        run: dotnet restore Mapper.sln
+
+      # Build the solution
+      - name: Build the solution
+        run: dotnet build Mapper.sln --configuration Release --no-restore
+
+      # Run tests
+      - name: Run tests
+        run: dotnet test Mapper.Tests/Mapper.Tests.csproj --verbosity normal
+
