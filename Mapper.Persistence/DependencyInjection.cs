@@ -25,7 +25,7 @@ namespace Mapper.Persistence
                 //options.UseInMemoryDatabase(connectionString);
             });
             services.AddScoped<IMapperDbContext>(provider =>
-                provider.GetService<MapperDbContext>());
+                provider.GetRequiredService<MapperDbContext>());
             return services;
         }
     }

@@ -8,8 +8,8 @@ namespace Mapper.Domain
     {
         [Key]
         public Guid Id { get; set; }
-        public string MapName { get; set; }
-        public string MapDescription { get; set; }
+        public required string MapName { get; set; }
+        public required string MapDescription { get; set; }
         //public byte[] Map { get; set; }
         public bool IsArchived { get; set; }
         //public DateTime CreationDate { get; set; }

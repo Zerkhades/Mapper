@@ -14,9 +14,9 @@ namespace Mapper.Domain
         public string? Comment { get; set; }
         public string? Email { get; set; }
         public GeoMark GeoMark { get; set; }
-        public int GeoMarkId { get; set; }
+        public Guid GeoMarkId { get; set; }
         public EmployeePhoto? Photo { get; set; }
-        public int? PhotoId { get; set; }
+        public Guid PhotoId { get; set; }
         public bool IsArchived { get; set; }
 
         public Employee()
