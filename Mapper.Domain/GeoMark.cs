@@ -6,6 +6,7 @@ namespace Mapper.Domain
     public class GeoMark : Mark
     {
         public Guid Id { get; set; }
+        public virtual GeoMap? GeoMap { get; set; }
         public Guid GeoMapId { get; set; }
         public required string MarkName { get; set; }
         public string? MarkDescription { get; set; }

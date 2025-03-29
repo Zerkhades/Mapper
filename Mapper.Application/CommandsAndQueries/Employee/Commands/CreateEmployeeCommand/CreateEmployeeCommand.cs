@@ -1,28 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MediatR;
 
-namespace Mapper.Domain
+namespace Mapper.Application.CommandsAndQueries.Employee.Commands.CreateEmployeeCommand
 {
-    public class Employee
+    public class CreateEmployeeCommand : IRequest<Guid>
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string? Patronymic { get; set; }
-        public string FullName => $"{FirstName} {Surname} {Patronymic}";
         public string Surname { get; set; }
         public string? Phone { get; set; }
         public string? Cabinet { get; set; }
         public string? Comment { get; set; }
         public string? Email { get; set; }
-        public GeoMark GeoMark { get; set; }
         public Guid GeoMarkId { get; set; }
-        public EmployeePhoto? Photo { get; set; }
         public Guid PhotoId { get; set; }
         public bool IsArchived { get; set; }
-
-        public Employee()
-        {
-            IsArchived = false;
-        }
     }
-
 }

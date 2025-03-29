@@ -23,7 +23,7 @@ namespace Mapper.Tests.GeoMaps.Queries
         }
 
         [Fact]
-        public async Task GetNoteDetailsQueryHandler_Success()
+        public async Task GetGeoMapDetailsQueryHandler_Success()
         {
             // Arrange
             var handler = new GetGeoMapDetailsQueryHandler(Context, Mapper);

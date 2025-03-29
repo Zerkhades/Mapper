@@ -8,7 +8,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapComm
         public CreateGeoMapCommandValidator()
         {
             RuleFor(createGeoMapCommand =>
-                createGeoMapCommand.MapName).NotEmpty().MaximumLength(250);
+                createGeoMapCommand.MapName).NotEmpty().MaximumLength(100);
             RuleFor(createGeoMapCommand =>
                 createGeoMapCommand.Id).NotEqual(Guid.Empty);
         }

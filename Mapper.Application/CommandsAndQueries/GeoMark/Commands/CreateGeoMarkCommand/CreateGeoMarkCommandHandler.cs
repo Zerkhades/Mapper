@@ -32,6 +32,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMark.Commands.CreateGeoMarkCo
                 XPos = request.XPos,
                 YPos = request.YPos,
                 GeoMapId = request.GeoMapId,
+                GeoMap = request.GeoMap,
                 MarkName = request.MarkName,
                 MarkDescription = request.MarkDescription,
                 Color = request.Color,

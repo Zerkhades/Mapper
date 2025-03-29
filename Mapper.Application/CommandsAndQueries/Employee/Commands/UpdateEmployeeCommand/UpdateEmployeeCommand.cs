@@ -1,28 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Mapper.Domain
+namespace Mapper.Application.CommandsAndQueries.Employee.Commands.UpdateEmployeeCommand
 {
-    public class Employee
+    public class UpdateEmployeeCommand : IRequest
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string? Patronymic { get; set; }
-        public string FullName => $"{FirstName} {Surname} {Patronymic}";
         public string Surname { get; set; }
         public string? Phone { get; set; }
         public string? Cabinet { get; set; }
         public string? Comment { get; set; }
-        public string? Email { get; set; }
-        public GeoMark GeoMark { get; set; }
         public Guid GeoMarkId { get; set; }
-        public EmployeePhoto? Photo { get; set; }
         public Guid PhotoId { get; set; }
+        public string? Email { get; set; }
         public bool IsArchived { get; set; }
-
-        public Employee()
-        {
-            IsArchived = false;
-        }
     }
-
 }
