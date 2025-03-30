@@ -40,8 +40,8 @@ namespace Mapper.Tests.GeoMaps.Queries
 
             // Assert
             Assert.IsType<GeoMapDetailsVm>(result);
-            Assert.Equal("string", result.MapDescription);
-            Assert.Equal("string", result.MapName);
+            Assert.Equal("GeoMapForCreate", result.MapDescription);
+            Assert.Equal("GeoMapForCreate", result.MapName);
             Assert.False(result.IsArchived);
         }
     }
