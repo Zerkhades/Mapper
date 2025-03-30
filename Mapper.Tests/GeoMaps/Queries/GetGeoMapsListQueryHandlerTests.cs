@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList;
 using Mapper.Persistence;
 using Mapper.Tests.Common.QueryTestFixtures;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
+
 
 namespace Mapper.Tests.GeoMaps.Queries
 {
-    [Collection("QueryCollection")]
+    [Collection("GeoMapsQueryCollection")]
     public class GetGeoMapsListQueryHandlerTests
     {
         private readonly MapperDbContext Context;
         private readonly IMapper Mapper;
 
-        public GetGeoMapsListQueryHandlerTests(QueryTestFixture fixture)
+        public GetGeoMapsListQueryHandlerTests(GeoMapsQueryTestFixture fixture)
         {
             Context = fixture.Context;
             Mapper = fixture.Mapper;

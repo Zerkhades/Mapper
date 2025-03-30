@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails;
 using Mapper.Persistence;
 using Mapper.Tests.Common.ContextFactories;
@@ -11,13 +6,13 @@ using Mapper.Tests.Common.QueryTestFixtures;
 
 namespace Mapper.Tests.GeoMaps.Queries
 {
-    [Collection("QueryCollection")]
+    [Collection("GeoMapsQueryCollection")]
     public class GetGeoMapDetailsQueryHandlerTests
     {
         private readonly MapperDbContext Context;
         private readonly IMapper Mapper;
 
-        public GetGeoMapDetailsQueryHandlerTests(QueryTestFixture fixture)
+        public GetGeoMapDetailsQueryHandlerTests(GeoMapsQueryTestFixture fixture)
         {
             Context = fixture.Context;
             Mapper = fixture.Mapper;
