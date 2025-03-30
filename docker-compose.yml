@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   mapper.webapi:
@@ -24,10 +23,6 @@ services:
       - "1433:1433"
     networks:
       - app-network
-    # healthcheck:
-    #   test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourPassword123 -Q 'SELECT 1'"]
-    #   interval: 10s
-    #   retries: 10
 
 networks:
   app-network:
