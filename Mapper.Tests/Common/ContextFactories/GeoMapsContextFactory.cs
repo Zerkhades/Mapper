@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Mapper.Domain;
 using Mapper.Persistence;
 
-namespace Mapper.Tests.Common
+namespace Mapper.Tests.Common.ContextFactories
 {
     public class GeoMapsContextFactory
     {

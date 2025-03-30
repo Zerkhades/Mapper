@@ -1,6 +1,7 @@
 ﻿using Mapper.Application.Common.Exceptions;
 using Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand;
 using Mapper.Tests.Common;
+using Mapper.Tests.Common.ContextFactories;
 
 namespace Mapper.Tests.GeoMaps.Commands
 {

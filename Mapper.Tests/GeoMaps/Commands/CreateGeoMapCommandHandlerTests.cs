@@ -1,6 +1,7 @@
 ﻿using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
 using Mapper.Application.Common.Exceptions;
 using Mapper.Tests.Common;
+using Mapper.Tests.Common.ContextFactories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Tests.GeoMaps.Commands

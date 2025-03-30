@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mapper.Tests.Common
+namespace Mapper.Tests.Common.ContextFactories
 {
     public class EmployeesContextFactory
     {

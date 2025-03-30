@@ -1,6 +1,7 @@
 ﻿
 
 using Mapper.Persistence;
+using Mapper.Tests.Common.ContextFactories;
 
 namespace Mapper.Tests.Common
 {

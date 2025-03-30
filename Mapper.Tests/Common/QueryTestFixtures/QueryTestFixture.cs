@@ -2,8 +2,9 @@
 using Mapper.Application.Common.Mappings;
 using Mapper.Application.Interfaces;
 using Mapper.Persistence;
+using Mapper.Tests.Common.ContextFactories;
 
-namespace Mapper.Tests.Common
+namespace Mapper.Tests.Common.QueryTestFixtures
 {
     public class QueryTestFixture : IDisposable
     {

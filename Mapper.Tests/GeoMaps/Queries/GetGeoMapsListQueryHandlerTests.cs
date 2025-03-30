@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList;
 using Mapper.Persistence;
-using Mapper.Tests.Common;
+using Mapper.Tests.Common.QueryTestFixtures;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 

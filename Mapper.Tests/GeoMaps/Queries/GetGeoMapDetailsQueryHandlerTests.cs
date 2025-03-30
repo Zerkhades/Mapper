@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails;
 using Mapper.Persistence;
-using Mapper.Tests.Common;
+using Mapper.Tests.Common.ContextFactories;
+using Mapper.Tests.Common.QueryTestFixtures;
 
 namespace Mapper.Tests.GeoMaps.Queries
 {
