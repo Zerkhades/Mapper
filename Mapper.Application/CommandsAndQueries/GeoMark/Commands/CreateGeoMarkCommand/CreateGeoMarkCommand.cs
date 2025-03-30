@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using Mapper.Domain;
 using MediatR;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMark.Commands.CreateGeoMarkCommand
