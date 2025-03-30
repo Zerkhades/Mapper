@@ -8,6 +8,10 @@ namespace Mapper.Tests.GeoMaps.Commands
 {
     public class CreateGeoMapCommandHandlerTests : TestCommandBase
     {
+        public CreateGeoMapCommandHandlerTests() : base(new GeoMapsContextFactory())
+        {
+        }
+
         [Fact]
         public async Task CreateGeomapCommandHandler_Success()
         {

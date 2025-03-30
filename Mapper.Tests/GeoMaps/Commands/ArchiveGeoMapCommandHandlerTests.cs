@@ -7,6 +7,10 @@ namespace Mapper.Tests.GeoMaps.Commands
 {
     public class ArchiveGeoMapCommandHandlerTests : TestCommandBase
     {
+        public ArchiveGeoMapCommandHandlerTests() : base(new GeoMapsContextFactory())
+        {
+        }
+
         [Fact]
         public async Task ArchiveGeomapCommandHandler_Success()
         {

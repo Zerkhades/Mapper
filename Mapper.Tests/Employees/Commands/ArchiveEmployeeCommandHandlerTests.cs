@@ -12,6 +12,10 @@ namespace Mapper.Tests.Employees.Commands
 {
     public class ArchiveEmployeeCommandHandlerTests : TestCommandBase
     {
+        public ArchiveEmployeeCommandHandlerTests() : base(new EmployeesContextFactory())
+        {
+        }
+
         [Fact]
         public async Task ArchiveEmployeeCommandHandler_Success()
         {

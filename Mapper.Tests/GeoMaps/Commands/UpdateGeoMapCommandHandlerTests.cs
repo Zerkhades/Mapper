@@ -13,6 +13,10 @@ namespace Mapper.Tests.GeoMaps.Commands
 {
     public class UpdateGeoMapCommandHandlerTests : TestCommandBase
     {
+        public UpdateGeoMapCommandHandlerTests() : base(new GeoMapsContextFactory())
+        {
+        }
+
         [Fact]
         public async Task UpdateGeomapCommandHandler_Success()
         {

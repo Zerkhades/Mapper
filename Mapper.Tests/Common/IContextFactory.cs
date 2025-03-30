@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mapper.Persistence;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,7 @@ namespace Mapper.Tests.Common
 {
     public interface IContextFactory
     {
+        MapperDbContext Create();
+        void Destroy(MapperDbContext context);
     }
 }

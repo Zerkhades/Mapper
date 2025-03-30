@@ -8,6 +8,10 @@ namespace Mapper.Tests.GeoMaps.Commands
 {
     public class DeleteGeoMapCommandHandlerTests : TestCommandBase
     {
+        public DeleteGeoMapCommandHandlerTests() : base(new GeoMapsContextFactory())
+        {
+        }
+
         [Fact]
         public async Task DeleteGeoMapCommandHandler_Success()
         {

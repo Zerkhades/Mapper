@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mapper.Tests.Common.ContextFactories
 {
-    public class EmployeesContextFactory
+    public class EmployeesContextFactory : IContextFactory
     {
         public static Guid GeoMapIdForCreate = Guid.NewGuid();
         public static Guid GeoMapIdForUpdate = Guid.NewGuid();
@@ -23,6 +23,16 @@ namespace Mapper.Tests.Common.ContextFactories
         public static Guid EmployeeIdForUpdate = Guid.NewGuid();
         public static Guid EmployeeIdForDelete = Guid.NewGuid();
 
+        MapperDbContext IContextFactory.Create()
+        {
+            return Create();
+        }
+
+        void IContextFactory.Destroy(MapperDbContext context)
+        {
+            Destroy(context);
+        }
+
         public static MapperDbContext Create()
         {
             var options = new DbContextOptionsBuilder<MapperDbContext>()
@@ -35,31 +45,31 @@ namespace Mapper.Tests.Common.ContextFactories
                 new GeoMap
                 {
                     Id = GeoMapIdForCreate,
-                    MapName = "string",
-                    MapDescription = "string",
+                    MapName = "geomap1",
+                    MapDescription = "geomap1",
                     IsArchived = false
                 },
                 // Update/Archive
                 new GeoMap
                 {
                     Id = GeoMapIdForUpdate,
-                    MapName = "string",
-                    MapDescription = "string",
+                    MapName = "geomap2",
+                    MapDescription = "geomap2",
                     IsArchived = false,
                     GeoMarks =
                     [
                         new GeoMark()
                         {
                             Id = GeoMarkIdForUpdate,
-                            MarkName = "string",
+                            MarkName = "GeoMark2",
                             IsArchived = false,
                             Employees =
                             [
                                 new Employee()
                                 {
                                     Id = EmployeeIdForDelete,
-                                    FirstName = "string",
-                                    Surname = "string",
+                                    FirstName = "Employee2",
+                                    Surname = "Employee2",
                                     IsArchived = false,
 
                                 }
@@ -71,8 +81,8 @@ namespace Mapper.Tests.Common.ContextFactories
                 new GeoMap
                 {
                     Id = GeoMapIdForDelete,
-                    MapName = "string",
-                    MapDescription = "string",
+                    MapName = "GeoMap3",
+                    MapDescription = "GeoMap3",
                     IsArchived = false,
                     GeoMarks =
                     [

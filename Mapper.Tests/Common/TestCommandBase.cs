@@ -8,15 +8,17 @@ namespace Mapper.Tests.Common
     public abstract class TestCommandBase : IDisposable
     {
         protected readonly MapperDbContext Context;
+        protected readonly IContextFactory ContextFactory;
 
-        public TestCommandBase()
+        public TestCommandBase(IContextFactory contextFactory)
         {
-            Context = GeoMapsContextFactory.Create();
+            ContextFactory = contextFactory;
+            Context = ContextFactory.Create();
         }
 
         public void Dispose()
         {
-            GeoMapsContextFactory.Destroy(Context);
+            ContextFactory.Destroy(Context);
         }
     }
 }

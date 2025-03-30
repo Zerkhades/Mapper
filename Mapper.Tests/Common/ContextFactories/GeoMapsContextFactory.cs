@@ -9,11 +9,21 @@ using Mapper.Persistence;
 
 namespace Mapper.Tests.Common.ContextFactories
 {
-    public class GeoMapsContextFactory
+    public class GeoMapsContextFactory : IContextFactory
     {
         public static Guid GeoMapIdForCreate = Guid.NewGuid();
         public static Guid GeoMapIdForDelete = Guid.NewGuid();
         public static Guid GeoMapIdForUpdate = Guid.NewGuid();
+
+        MapperDbContext IContextFactory.Create()
+        {
+            return Create();
+        }
+
+        void IContextFactory.Destroy(MapperDbContext context)
+        {
+            Destroy(context);
+        }
 
         public static MapperDbContext Create()
         {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mapper.Tests.Common
 {
-    public class GeoMarksContextFactory
+    public class GeoMarksContextFactory : IContextFactory
     {
         public static Guid GeoMapIdForCreate = Guid.NewGuid();
         public static Guid GeoMapIdForUpdate = Guid.NewGuid();
@@ -19,6 +19,15 @@ namespace Mapper.Tests.Common
         public static Guid GeoMarkIdForUpdate = Guid.NewGuid();
         public static Guid GeoMarkIdForDelete = Guid.NewGuid();
 
+        MapperDbContext IContextFactory.Create()
+        {
+            return Create();
+        }
+
+        void IContextFactory.Destroy(MapperDbContext context)
+        {
+            Destroy(context);
+        }
 
         public static MapperDbContext Create()
         {
