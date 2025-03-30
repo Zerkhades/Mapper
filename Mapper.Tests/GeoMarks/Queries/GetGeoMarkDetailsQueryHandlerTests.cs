@@ -1,12 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkDetails;
+using Mapper.Persistence;
+using Mapper.Tests.Common.ContextFactories;
+using Mapper.Tests.Common.QueryTestFixtures;
 
 namespace Mapper.Tests.GeoMarks.Queries
 {
-    internal class GetGeoMarkDetailsQueryHandlerTests
+    [Collection("GeoMarksQueryCollection")]
+    public class GetGeoMarkDetailsQueryHandlerTests
     {
+        private readonly MapperDbContext Context;
+        private readonly IMapper Mapper;
+
+        public GetGeoMarkDetailsQueryHandlerTests(GeoMarksQueryTestFixture fixture)
+        {
+            Context = fixture.Context;
+            Mapper = fixture.Mapper;
+        }
+
+        [Fact]
+        public async Task GetGeoMarkDetailsQueryHandler_Success()
+        {
+            // Arrange
+            var handler = new GetGeoMarkDetailsQueryHandler(Context, Mapper);
+            var id = GeoMarksContextFactory.GeoMarkIdForCreate;
+
+            // Act
+            var result = await handler.Handle(
+                new GetGeoMarkDetailsQuery()
+                {
+                    Id = id
+                },
+                CancellationToken.None);
+
+            // Assert
+            Assert.IsType<GeoMarkDetailsVm>(result);
+            Assert.Equal("GeoMarkForCreate", result.MarkDescription);
+            Assert.Equal("GeoMarkForCreate", result.MarkName);
+            Assert.False(result.IsArchived);
+            Assert.Equal("#FF0000", result.Color);
+            Assert.Equal("\uD83D\uDE00", result.Emoji);
+            Assert.Equal(10, result.Size);
+            Assert.False(result.IsEmoji);
+            Assert.True(result.IsEditable);
+            //Assert.Equal(new DateTime(2023, 1, 1), result.CreationDate);
+            //Assert.Equal(new DateTime(2023, 1, 2), result.EditDate);
+            //Assert.Equal(Guid.Parse("00000000-0000-0000-0000-000000000001"), result.EditedBy);
+            Assert.NotNull(result.Employees);
+            Assert.NotNull(result.GeoPhotos);
+        }
     }
 }

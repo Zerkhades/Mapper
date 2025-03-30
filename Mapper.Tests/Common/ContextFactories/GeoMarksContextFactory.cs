@@ -51,7 +51,16 @@ namespace Mapper.Tests.Common.ContextFactories
                         new GeoMark()
                         {
                             Id = GeoMarkIdForCreate,
-                            MarkName = "GeoMarkForCreate"
+                            MarkName = "GeoMarkForCreate",
+                            MarkDescription = "GeoMarkForCreate",
+                            IsArchived = false,
+                            Color = "#FF0000",
+                            Emoji = "\uD83D\uDE00",
+                            IsEmoji = false,
+                            IsEditable = true,
+                            Size = 10,
+                            Employees = [],
+                            GeoPhotos = []
                         }
                     ]
 

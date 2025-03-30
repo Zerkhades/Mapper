@@ -27,8 +27,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
                 //    opt => opt.MapFrom(mapDto => mapDto.Map))
                 .ForMember(mapCommand => mapCommand.IsArchived,
                     opt => opt.MapFrom(mapDto => mapDto.IsArchived))
-            .ForMember(mapCommand => mapCommand.GeoMarks,
-                opt => opt.MapFrom(mapDto => mapDto.GeoMarks));
+                .ForMember(mapCommand => mapCommand.GeoMarks,
+                    opt => opt.MapFrom(mapDto => mapDto.GeoMarks));
         }
     }
 }

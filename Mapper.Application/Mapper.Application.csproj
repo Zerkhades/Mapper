@@ -19,8 +19,4 @@
     <ProjectReference Include="..\Mapper.Domain\Mapper.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CommandsAndQueries\Employee\Queries\" />
-  </ItemGroup>
-
 </Project>

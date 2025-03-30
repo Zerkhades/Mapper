@@ -62,8 +62,10 @@ namespace Mapper.Tests.Common.ContextFactories
                                 new Employee()
                                 {
                                     Id = EmployeeIdForCreate,
-                                    FirstName = "EmployeeForCreate",
-                                    Surname = "EmployeeForCreate"
+                                    FirstName = "John",
+                                    Surname = "Doe",
+                                    Email = "john.doe@example.com",
+                                    IsArchived = false,
                                 }
                             ]
                         }
