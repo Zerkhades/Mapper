@@ -10,7 +10,7 @@ namespace Mapper.Application.CommandsAndQueries.Employee.Commands.CreateEmployee
             RuleFor(createEmployeeCommand => createEmployeeCommand.Id).NotEqual(Guid.Empty);
             RuleFor(createEmployeeCommand => createEmployeeCommand.FirstName).NotEmpty().MaximumLength(100);
             RuleFor(createEmployeeCommand => createEmployeeCommand.Surname).NotEmpty().MaximumLength(100);
-            RuleFor(createEmployeeCommand => createEmployeeCommand.Email).NotEmpty().EmailAddress();
+            //RuleFor(createEmployeeCommand => createEmployeeCommand.Email).NotEmpty().EmailAddress();
         }
     }
 }

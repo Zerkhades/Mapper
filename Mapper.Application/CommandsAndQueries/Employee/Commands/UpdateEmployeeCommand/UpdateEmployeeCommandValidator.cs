@@ -11,8 +11,10 @@ namespace Mapper.Application.CommandsAndQueries.Employee.Commands.UpdateEmployee
                 .NotEmpty().MaximumLength(100);
             RuleFor(updateEmployeeCommand => updateEmployeeCommand.Surname)
                 .NotEmpty().MaximumLength(100);
-            RuleFor(updateEmployeeCommand => updateEmployeeCommand.Email)
-                .NotEmpty().EmailAddress();
+            RuleFor(updateEmployeeCommand => updateEmployeeCommand.FullName)
+                .NotEmpty().MaximumLength(200);
+            //RuleFor(updateEmployeeCommand => updateEmployeeCommand.Email)
+            //    .NotEmpty().EmailAddress();
         }
     }
 }

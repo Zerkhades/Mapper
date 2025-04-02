@@ -8,8 +8,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMark.Commands.CreateGeoMarkCo
     {
         [Key]
         public Guid Id { get; set; }
+        public required Guid GeoMapId { get; set; }
         public virtual Domain.GeoMap? GeoMap { get; set; }
-        public Guid GeoMapId { get; set; }
         public required string MarkName { get; set; }
         public string? MarkDescription { get; set; }
         public double XPos { get; set; }
@@ -23,7 +23,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMark.Commands.CreateGeoMarkCo
         public DateTime CreationDate { get; set; }
         public DateTime? EditDate { get; set; }
         public Guid? EditedBy { get; set; }
-        public virtual ObservableCollection<Domain.Employee>? Employees { get; set; }
-        public virtual ObservableCollection<Domain.GeoPhoto>? GeoPhotos { get; set; }
+        public virtual IList<Domain.Employee>? Employees { get; set; }
+        public virtual IList<Domain.GeoPhoto>? GeoPhotos { get; set; }
     }
 }

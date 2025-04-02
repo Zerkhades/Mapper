@@ -19,7 +19,7 @@ namespace Mapper.Application.CommandsAndQueries.Employee.Commands.UpdateEmployee
                 await _dbContext.Employees.FirstOrDefaultAsync(employee =>
                     employee.Id == request.Id, cancellationToken);
 
-            if (entity == null || entity.Id != request.Id)
+            if (entity == null)
             {
                 throw new NotFoundException(nameof(Employee), request.Id);
             }
@@ -32,7 +32,9 @@ namespace Mapper.Application.CommandsAndQueries.Employee.Commands.UpdateEmployee
             entity.Comment = request.Comment;
             entity.Email = request.Email;
             entity.GeoMarkId = request.GeoMarkId;
-            entity.PhotoId = request.PhotoId;
+            entity.GeoMark = request.GeoMark;
+            entity.EmployeePhotoId = request.EmployeePhotoId;
+            entity.EmployeePhoto = request.EmployeePhoto;
             entity.IsArchived = request.IsArchived;
 
             await _dbContext.SaveChangesAsync(cancellationToken);

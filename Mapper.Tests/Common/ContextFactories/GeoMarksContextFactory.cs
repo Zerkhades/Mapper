@@ -1,11 +1,6 @@
 ﻿using Mapper.Domain;
 using Mapper.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mapper.Tests.Common.ContextFactories
 {

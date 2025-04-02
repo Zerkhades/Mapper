@@ -32,7 +32,9 @@ namespace Mapper.Application.CommandsAndQueries.Employee.Commands.CreateEmployee
                 Comment = request.Comment,
                 Email = request.Email,
                 GeoMarkId = request.GeoMarkId,
-                PhotoId = request.PhotoId,
+                GeoMark = request.GeoMark,
+                EmployeePhotoId = request.EmployeePhotoId,
+                EmployeePhoto = request.EmployeePhoto,
                 IsArchived = request.IsArchived,
             };
             await _dbContext.Employees.AddAsync(employee, cancellationToken);

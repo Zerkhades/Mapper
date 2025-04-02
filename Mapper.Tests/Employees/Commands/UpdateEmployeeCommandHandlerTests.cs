@@ -1,5 +1,6 @@
 ﻿using Mapper.Application.CommandsAndQueries.Employee.Commands.UpdateEmployeeCommand;
 using Mapper.Application.Common.Exceptions;
+using Mapper.Domain;
 using Mapper.Tests.Common;
 using Mapper.Tests.Common.ContextFactories;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +20,18 @@ namespace Mapper.Tests.Employees.Commands
             var handler = new UpdateEmployeeCommandHandler(Context);
             var updatedFirstName = "Booba";
             var updatedSurname = "Job";
+            var updatedGeoMark = new GeoMark()
+            {
+                Id = Guid.NewGuid(),
+                MarkName = "GeoMarkForCreate",
+            };
 
             // Act
             await handler.Handle(new UpdateEmployeeCommand
             {
                 Id = EmployeesContextFactory.EmployeeIdForUpdate,
                 FirstName = updatedFirstName,
-                Surname = updatedSurname
+                Surname = updatedSurname,
             }, CancellationToken.None);
 
             // Assert
@@ -40,6 +46,13 @@ namespace Mapper.Tests.Employees.Commands
         {
             // Arrange
             var handler = new UpdateEmployeeCommandHandler(Context);
+            var updatedFirstName = "Booba";
+            var updatedSurname = "Job";
+            var updatedGeoMark = new GeoMark()
+            {
+                Id = EmployeesContextFactory.GeoMarkIdForCreate,
+                MarkName = "GeoMarkForCreate",
+            };
 
             // Act
             // Assert
@@ -48,6 +61,9 @@ namespace Mapper.Tests.Employees.Commands
                     new UpdateEmployeeCommand
                     {
                         Id = Guid.NewGuid(),
+                        FirstName = updatedFirstName,
+                        Surname = updatedSurname,
+                        GeoMark = updatedGeoMark
                     },
                     CancellationToken.None));
         }

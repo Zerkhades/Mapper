@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Mapper.Application.Common.Exceptions;
 using Mapper.Application.Interfaces;
 using MediatR;
@@ -26,7 +21,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
                 .FirstOrDefaultAsync(geoMap =>
                     geoMap.Id == request.Id, cancellationToken);
 
-            if (entity == null || entity.Id != request.Id)
+            if (entity == null)
             {
                 throw new NotFoundException(nameof(Domain.GeoMap), request.Id);
             }

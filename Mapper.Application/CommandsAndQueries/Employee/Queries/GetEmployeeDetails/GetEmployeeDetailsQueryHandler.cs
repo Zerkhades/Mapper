@@ -19,7 +19,7 @@ namespace Mapper.Application.CommandsAndQueries.Employee.Queries.GetEmployeeDeta
             var entity = await _dbContext.Employees
                 .FirstOrDefaultAsync(employee => employee.Id == request.Id, cancellationToken);
 
-            if (entity == null || entity.Id != request.Id)
+            if (entity == null)
             {
                 throw new NotFoundException(nameof(Domain.Employee), request.Id);
             }

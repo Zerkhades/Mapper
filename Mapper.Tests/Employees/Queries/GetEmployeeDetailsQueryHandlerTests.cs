@@ -39,7 +39,7 @@ namespace Mapper.Tests.Employees.Queries
             Assert.Equal("Doe", result.Surname);
             // TODO: fix
             // There is always a blank space if patronymic is empty
-            //Assert.Equal("John Doe", result.FullName);
+            Assert.Equal("John Doe", result.FullName);
             Assert.Equal("john.doe@example.com", result.Email);
             Assert.False(result.IsArchived);
             Assert.NotNull(result.GeoMark);

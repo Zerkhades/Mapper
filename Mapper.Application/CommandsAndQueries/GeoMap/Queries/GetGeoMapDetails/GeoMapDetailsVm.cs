@@ -11,8 +11,8 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
         public string MapName { get; set; } = string.Empty;
         public string MapDescription { get; set; } = string.Empty;
         //public byte[] Map { get; set; }
-        public bool IsArchived { get; set; }
         public virtual IList<Domain.GeoMark>? GeoMarks { get; set; }
+        public bool IsArchived { get; set; }
 
         public void Mapping(Profile profile)
         {

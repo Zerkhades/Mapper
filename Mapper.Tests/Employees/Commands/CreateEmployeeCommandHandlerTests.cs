@@ -20,6 +20,7 @@ namespace Mapper.Tests.Employees.Commands
             var employeeName = "John";
             var employeeSurname = "Doe";
 
+
             // Act
             var employeeId = await handler.Handle(
                 new CreateEmployeeCommand
@@ -27,7 +28,8 @@ namespace Mapper.Tests.Employees.Commands
                     Id = Guid.NewGuid(),
                     FirstName = employeeName,
                     Surname = employeeSurname,
-                    IsArchived = false
+                    IsArchived = false,
+                    GeoMarkId = EmployeesContextFactory.GeoMapIdForCreate
                 },
                 CancellationToken.None);
 
@@ -47,6 +49,14 @@ namespace Mapper.Tests.Employees.Commands
             var handler = new CreateEmployeeCommandHandler(Context);
             var employeeName = "John";
             var employeeSurname = "Doe";
+            var geoMark = new Domain.GeoMark
+            {
+                MarkName = "Test Mark",
+                Color = "Red",
+                Emoji = "😊",
+                XPos = 10.0,
+                YPos = 20.0,
+            };
 
             // Act
             // Assert
@@ -57,7 +67,8 @@ namespace Mapper.Tests.Employees.Commands
                         Id = EmployeesContextFactory.EmployeeIdForCreate,
                         FirstName = employeeName,
                         Surname = employeeSurname,
-                        IsArchived = false
+                        IsArchived = false,
+                        GeoMarkId = EmployeesContextFactory.GeoMarkIdForCreate
                     },
                     CancellationToken.None)
             );

@@ -19,7 +19,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkDetail
             var entity = await _dbContext.GeoMarks
                 .FirstOrDefaultAsync(geoMark => geoMark.Id == request.Id, cancellationToken);
 
-            if (entity == null || entity.Id != request.Id)
+            if (entity == null)
             {
                 throw new NotFoundException(nameof(Domain.GeoMark), request.Id);
             }

@@ -6,21 +6,21 @@ namespace Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkDetail
     public class GeoMarkDetailsVm : IMapWith<Domain.GeoMark>
     {
         public Guid Id { get; set; }
-        public virtual Domain.GeoMap GeoMap {get;set;}
-        public virtual Guid GeoMapId { get; set; }
+        public required Guid GeoMapId { get; set; }
+        public virtual Domain.GeoMap? GeoMap { get; set; }
         public string MarkName { get; set; } = string.Empty;
         public string? MarkDescription { get; set; }
         public string Color { get; set; } = string.Empty;
         public string Emoji { get; set; } = string.Empty;
         public int? Size { get; set; }
         public bool IsEmoji { get; set; }
-        public bool IsArchived { get; set; }
         public bool IsEditable { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? EditDate { get; set; }
         public Guid? EditedBy { get; set; }
         public virtual IList<Domain.Employee>? Employees { get; set; }
         public virtual IList<Domain.GeoPhoto>? GeoPhotos { get; set; }
+        public bool IsArchived { get; set; }
 
         public void Mapping(Profile profile)
         {

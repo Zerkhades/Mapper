@@ -48,6 +48,8 @@ namespace Mapper.Tests.GeoMaps.Commands
                     new UpdateGeoMapCommand
                     {
                         Id = Guid.NewGuid(),
+                        MapName = "Gruh",
+                        MapDescription = "Bruh"
                         // UserId = NotesContextFactory.UserAId
                     },
                     CancellationToken.None));

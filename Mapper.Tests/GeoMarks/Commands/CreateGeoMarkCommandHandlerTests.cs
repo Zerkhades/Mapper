@@ -19,6 +19,11 @@ namespace Mapper.Tests.GeoMarks.Commands
             var handler = new CreateGeoMarkCommandHandler(Context);
             var geomarkName = "geomark name";
             var geomarkDescription = "geomark description";
+            var geoMap = new Domain.GeoMap()
+            {
+                MapName = "mapname",
+                MapDescription = "mapdesc"
+            };
 
             // Act
             var geomarkId = await handler.Handle(
@@ -27,7 +32,8 @@ namespace Mapper.Tests.GeoMarks.Commands
                     Id = Guid.NewGuid(),
                     MarkName = geomarkName,
                     MarkDescription = geomarkDescription,
-                    IsArchived = false
+                    IsArchived = false,
+                    GeoMapId = GeoMarksContextFactory.GeoMarkIdForArchive
                 },
                 CancellationToken.None);
 
@@ -46,6 +52,11 @@ namespace Mapper.Tests.GeoMarks.Commands
             var handler = new CreateGeoMarkCommandHandler(Context);
             var geomarkName = "geomark name";
             var geomarkDescription = "geomark description";
+            var geoMap = new Domain.GeoMap()
+            {
+                MapName = "mapname",
+                MapDescription = "mapdesc"
+            };
 
             // Act
             // Assert
@@ -56,7 +67,8 @@ namespace Mapper.Tests.GeoMarks.Commands
                         Id = GeoMarksContextFactory.GeoMarkIdForCreate,
                         MarkName = geomarkName,
                         MarkDescription = geomarkDescription,
-                        IsArchived = false
+                        IsArchived = false,
+                        GeoMapId = GeoMarksContextFactory.GeoMapIdForCreate
                     },
                     CancellationToken.None)
             );

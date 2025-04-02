@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkList;
 using Mapper.Persistence;
+using Mapper.Tests.Common;
 using Mapper.Tests.Common.QueryTestFixtures;
 using System;
 using System.Collections.Generic;
@@ -34,8 +35,6 @@ namespace Mapper.Tests.GeoMarks.Queries
                 CancellationToken.None);
 
             // Assert
-            // TODO: add istype check
-            // Assert.IsType<List<GeoMarkListVm>>(result);
             Assert.NotEmpty(result.GeoMarks);
         }
 

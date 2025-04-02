@@ -1,11 +1,6 @@
 ﻿using Mapper.Domain;
 using Mapper.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mapper.Tests.Common.ContextFactories
 {
@@ -51,26 +46,26 @@ namespace Mapper.Tests.Common.ContextFactories
                     MapName = "GeoMapForCreate",
                     MapDescription = "GeoMapForCreate",
                     IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForCreate,
-                            MarkName = "GeoMarkForCreate",
-                            Employees =
-                            [
-                                new Employee()
+                    GeoMarks = new List<GeoMark>
+                    {
+                            new GeoMark()
+                            {
+                                Id = GeoMarkIdForCreate,
+                                MarkName = "GeoMarkForCreate",
+                                Employees = new List<Employee>
                                 {
-                                    Id = EmployeeIdForCreate,
-                                    FirstName = "John",
-                                    Surname = "Doe",
-                                    Email = "john.doe@example.com",
-                                    IsArchived = false,
+                                    new Employee()
+                                    {
+                                        Id = EmployeeIdForCreate,
+                                        FirstName = "John",
+                                        Surname = "Doe",
+                                        Email = "john.doe@example.com",
+                                        IsArchived = false,
+                                        GeoMarkId = GeoMarkIdForCreate
+                                    }
                                 }
-                            ]
-                        }
-                    ]
-
+                            }
+                    }
                 },
                 // Update
                 new GeoMap
@@ -79,24 +74,25 @@ namespace Mapper.Tests.Common.ContextFactories
                     MapName = "GeoMapForUpdate",
                     MapDescription = "GeoMapForUpdate",
                     IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForUpdate,
-                            MarkName = "GeoMarkForUpdate",
-                            Employees =
-                            [
-                                new Employee()
+                    GeoMarks = new List<GeoMark>
+                    {
+                            new GeoMark()
+                            {
+                                Id = GeoMarkIdForUpdate,
+                                MarkName = "GeoMarkForUpdate",
+                                Employees = new List<Employee>
                                 {
-                                    Id = EmployeeIdForUpdate,
-                                    FirstName = "EmployeeForUpdate",
-                                    Surname = "EmployeeForUpdate",
-                                    IsArchived = false,
+                                    new Employee()
+                                    {
+                                        Id = EmployeeIdForUpdate,
+                                        FirstName = "EmployeeForUpdate",
+                                        Surname = "EmployeeForUpdate",
+                                        IsArchived = false,
+                                        GeoMarkId = GeoMarkIdForUpdate
+                                    }
                                 }
-                            ]
-                        }
-                    ]
+                            }
+                    }
                 },
                 // Delete
                 new GeoMap
@@ -105,24 +101,25 @@ namespace Mapper.Tests.Common.ContextFactories
                     MapName = "GeoMapForDelete",
                     MapDescription = "GeoMapForDelete",
                     IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForDelete,
-                            MarkName = "GeoMarkForDelete",
-                            Employees =
-                            [
-                                new Employee()
+                    GeoMarks = new List<GeoMark>
+                    {
+                            new GeoMark()
+                            {
+                                Id = GeoMarkIdForDelete,
+                                MarkName = "GeoMarkForDelete",
+                                Employees = new List<Employee>
                                 {
-                                    Id = EmployeeIdForDelete,
-                                    FirstName = "EmployeeForDelete",
-                                    Surname = "EmployeeForDelete",
-                                    IsArchived = false,
+                                    new Employee()
+                                    {
+                                        Id = EmployeeIdForDelete,
+                                        FirstName = "EmployeeForDelete",
+                                        Surname = "EmployeeForDelete",
+                                        IsArchived = false,
+                                        GeoMarkId = GeoMarkIdForDelete
+                                    }
                                 }
-                            ]
-                        }
-                    ]
+                            }
+                    }
                 },
                 // Archive
                 new GeoMap
@@ -131,24 +128,25 @@ namespace Mapper.Tests.Common.ContextFactories
                     MapName = "GeoMapForArchive",
                     MapDescription = "GeoMapForArchive",
                     IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForArchive,
-                            MarkName = "GeoMarkForArchive",
-                            Employees =
-                            [
-                                new Employee()
+                    GeoMarks = new List<GeoMark>
+                    {
+                            new GeoMark()
+                            {
+                                Id = GeoMarkIdForArchive,
+                                MarkName = "GeoMarkForArchive",
+                                Employees = new List<Employee>
                                 {
-                                    Id = EmployeeIdForArchive,
-                                    FirstName = "EmployeeForArchive",
-                                    Surname = "EmployeeForArchive",
-                                    IsArchived = false,
+                                    new Employee()
+                                    {
+                                        Id = EmployeeIdForArchive,
+                                        FirstName = "EmployeeForArchive",
+                                        Surname = "EmployeeForArchive",
+                                        IsArchived = false,
+                                        GeoMarkId = GeoMarkIdForArchive,
+                                    }
                                 }
-                            ]
-                        }
-                    ]
+                            }
+                    }
                 }
             );
             context.SaveChanges();

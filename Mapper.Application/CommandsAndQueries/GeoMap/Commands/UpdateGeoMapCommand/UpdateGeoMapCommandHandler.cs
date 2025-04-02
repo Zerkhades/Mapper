@@ -1,13 +1,7 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mapper.Application.Interfaces;
 using Mapper.Application.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using Mapper.Domain;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand
 {
@@ -25,7 +19,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapComm
                 await _dbContext.GeoMaps.FirstOrDefaultAsync(geoMap =>
                     geoMap.Id == request.Id, cancellationToken);
 
-            if (entity == null || entity.Id != request.Id)
+            if (entity == null)
             {
                 throw new NotFoundException(nameof(GeoMap), request.Id);
             }
@@ -33,6 +27,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapComm
             entity.MapName = request.MapName;
             entity.MapDescription = request.MapDescription;
             entity.GeoMarks = request.GeoMarks;
+            entity.IsArchived = request.IsArchived;
             //entity.Map = request.Map;
 
 
