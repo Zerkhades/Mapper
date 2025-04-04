@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Mapper.Application.Common.Exceptions;
+﻿using Mapper.Application.Common.Exceptions;
 using Mapper.Application.Interfaces;
 using MediatR;
 
@@ -32,6 +27,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMark.Commands.CreateGeoMarkCo
                 XPos = request.XPos,
                 YPos = request.YPos,
                 GeoMapId = request.GeoMapId,
+                GeoMap = request.GeoMap,
                 MarkName = request.MarkName,
                 MarkDescription = request.MarkDescription,
                 Color = request.Color,

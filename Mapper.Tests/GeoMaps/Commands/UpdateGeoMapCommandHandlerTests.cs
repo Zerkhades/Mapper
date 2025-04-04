@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand;
+﻿using Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand;
 using Mapper.Application.Common.Exceptions;
 using Mapper.Tests.Common;
+using Mapper.Tests.Common.ContextFactories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Tests.GeoMaps.Commands
 {
     public class UpdateGeoMapCommandHandlerTests : TestCommandBase
     {
+        public UpdateGeoMapCommandHandlerTests() : base(new GeoMapsContextFactory())
+        {
+        }
+
         [Fact]
         public async Task UpdateGeomapCommandHandler_Success()
         {
@@ -48,6 +48,8 @@ namespace Mapper.Tests.GeoMaps.Commands
                     new UpdateGeoMapCommand
                     {
                         Id = Guid.NewGuid(),
+                        MapName = "Gruh",
+                        MapDescription = "Bruh"
                         // UserId = NotesContextFactory.UserAId
                     },
                     CancellationToken.None));

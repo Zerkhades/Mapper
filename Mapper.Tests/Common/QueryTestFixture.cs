@@ -2,17 +2,23 @@
 using Mapper.Application.Common.Mappings;
 using Mapper.Application.Interfaces;
 using Mapper.Persistence;
+using Mapper.Tests.Common.ContextFactories;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Mapper.Tests.Common
 {
-    public class QueryTestFixture : IDisposable
+    public abstract class QueryTestFixture<TContextFactory> : IDisposable
+        where TContextFactory : IContextFactory, new()
     {
-        public MapperDbContext Context;
-        public IMapper Mapper;
+        public readonly MapperDbContext Context;
+        public readonly IContextFactory ContextFactory;
+        public readonly IMapper Mapper;
 
         public QueryTestFixture()
         {
-            Context = GeoMapsContextFactory.Create();
+            ContextFactory = new TContextFactory();
+            Context = ContextFactory.Create();
+
             var configurationProvider = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new AssemblyMappingProfile(
@@ -23,10 +29,7 @@ namespace Mapper.Tests.Common
 
         public void Dispose()
         {
-            GeoMapsContextFactory.Destroy(Context);
+            ContextFactory.Destroy(Context);
         }
     }
-
-    [CollectionDefinition("QueryCollection")]
-    public class QueryCollection : ICollectionFixture<QueryTestFixture> { }
 }

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MediatR;
+
 
 namespace Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkList
 {
-    internal class GetGeoMarkListQuery
+    public class GetGeoMarkListQuery: IRequest<GeoMarkListVm>
     {
+        public Guid UserId { get; set; }
     }
 }

@@ -2,26 +2,25 @@
 
 namespace Mapper.Domain
 {
-    public  class Employee
+    public class Employee
     {
         public Guid Id { get; set; }
-        public string FirstName { get; set; }
+        public required string FirstName { get; set; }
         public string? Patronymic { get; set; }
-        public string FullName => $"{FirstName} {Surname} {Patronymic}";
-        public string Surname { get; set; }
+        public required string Surname { get; set; }
+        public string FullName => string.IsNullOrWhiteSpace(Patronymic) ? $"{FirstName} {Surname}" : $"{FirstName} {Surname} {Patronymic}";
         public string? Phone { get; set; }
         public string? Cabinet { get; set; }
         public string? Comment { get; set; }
         public string? Email { get; set; }
-        public GeoMark GeoMark { get; set; }
-        public int GeoMarkId { get; set; }
-        public EmployeePhoto? Photo { get; set; }
-        public int? PhotoId { get; set; }
+        public required Guid GeoMarkId { get; set; }
+        public Domain.GeoMark? GeoMark { get; set; }
+        public Guid? EmployeePhotoId { get; set; }
+        public virtual Domain.EmployeePhoto? EmployeePhoto { get; set; }
         public bool IsArchived { get; set; }
 
         public Employee()
         {
-            Photo = new EmployeePhoto();
             IsArchived = false;
         }
     }

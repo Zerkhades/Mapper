@@ -11,11 +11,12 @@ namespace Mapper.WebApi.Models
     {
         [Required]
         public Guid Id { get; set; }
-        public string MapName { get; set; }
-        public string MapDescription { get; set; }
+        public required string MapName { get; set; }
+        public required string MapDescription { get; set; }
         // public byte[] Map { get; set; }
+        public virtual IList<Domain.GeoMark>? GeoMarks { get; set; }
         public bool IsArchived { get; set; }
-        //public virtual ObservableCollection<GeoMark>? GeoMarks { get; set; }
+
 
         public void Mapping(Profile profile)
         {
@@ -27,9 +28,9 @@ namespace Mapper.WebApi.Models
                 //.ForMember(mapCommand => mapCommand.Map,
                 //    opt => opt.MapFrom(mapDto => mapDto.Map))
                 .ForMember(mapCommand => mapCommand.IsArchived,
-                    opt => opt.MapFrom(mapDto => mapDto.IsArchived));
-            //.ForMember(mapCommand => mapCommand.GeoMarks,
-            //    opt => opt.MapFrom(mapDto => mapDto.GeoMarks));
+                    opt => opt.MapFrom(mapDto => mapDto.IsArchived))
+                .ForMember(mapCommand => mapCommand.GeoMarks,
+                    opt => opt.MapFrom(mapDto => mapDto.GeoMarks));
         }
     }
 }

@@ -21,11 +21,10 @@ namespace Mapper.Persistence
                 // MsSql server
                 options.UseSqlServer(connectionString);
 
-                // Inmemory database purposes is only for testing
-                //options.UseInMemoryDatabase(connectionString);
+
             });
             services.AddScoped<IMapperDbContext>(provider =>
-                provider.GetService<MapperDbContext>());
+                provider.GetRequiredService<MapperDbContext>());
             return services;
         }
     }

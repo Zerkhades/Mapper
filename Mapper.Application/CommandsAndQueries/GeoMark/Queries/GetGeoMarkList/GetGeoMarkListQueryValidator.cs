@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkList
 {
-    internal class GetGeoMarkListQueryValidator
+    public class GetGeoMarkListQueryValidator : AbstractValidator<GetGeoMarkListQuery>
     {
+        public GetGeoMarkListQueryValidator()
+        {
+            RuleFor(x => x.UserId).NotEqual(Guid.Empty);
+        }
     }
 }

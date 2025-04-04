@@ -1,7 +1,4 @@
 ﻿using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Mapper.Application.Interfaces;
 using Mapper.Application.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;

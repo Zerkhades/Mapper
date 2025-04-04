@@ -1,6 +1,4 @@
 ﻿using Serilog;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using Mapper.Application.Interfaces;
 

@@ -1,11 +1,5 @@
 ﻿using Mapper.Application.Interfaces;
-using Mapper.Domain;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mapper.Application.Common.Exceptions;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand
