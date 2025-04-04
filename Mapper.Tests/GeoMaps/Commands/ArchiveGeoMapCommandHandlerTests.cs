@@ -2,6 +2,7 @@
 using Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand;
 using Mapper.Tests.Common;
 using Mapper.Tests.Common.ContextFactories;
+using Mapper.Application.CommandsAndQueries.GeoMark.Commands.ArchiveGeoMarkCommand;
 
 namespace Mapper.Tests.GeoMaps.Commands
 {
@@ -47,28 +48,21 @@ namespace Mapper.Tests.GeoMaps.Commands
                     CancellationToken.None));
         }
 
-        //[Fact]
-        //public async Task ArchiveGeomapCommandHandler_FailOnWrongUserId()
-        //{
-        //    // Arrange
-        //    var deleteHandler = new DeleteGeoMapCommandHandler(Context);
-        //    var createHandler = new CreateGeoMapCommandHandler(Context);
-        //    var noteId = await createHandler.Handle(
-        //        new CreateGeoMapCommand
-        //        {
-        //            MapName = "NoteTitle",
-        //            //UserId = GeoMapsContextFactory.UserAId
-        //        }, CancellationToken.None);
+        [Fact]
+        public async Task ArchiveGeomapCommandHandler_FailOnWrongUserId()
+        {
+            // Arrange
+            var handler = new ArchiveGeoMapCommandHandler(Context);
 
-        //    // Act
-        //    // Assert
-        //    await Assert.ThrowsAsync<NotFoundException>(async () =>
-        //        await deleteHandler.Handle(
-        //            new DeleteGeoMapCommand()
-        //            {
-        //                Id = noteId,
-        //                UserId = GeoMapsContextFactory.UserBId
-        //            }, CancellationToken.None));
-        //}
+            // Act
+            // Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
+                await handler.Handle(
+                    new ArchiveGeoMapCommand()
+                    {
+                        Id = Guid.NewGuid(),
+                    },
+                    CancellationToken.None));
+        }
     }
 }

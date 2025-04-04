@@ -14,12 +14,12 @@ namespace Mapper.Tests.GeoMarks.Queries
     [Collection("GeoMarksQueryCollection")]
     public class GetGeoMarksListQueryHandlerTests
     {
-        private readonly MapperDbContext Context;
+        private readonly IContextFactory ContextFactory;
         private readonly IMapper Mapper;
 
         public GetGeoMarksListQueryHandlerTests(GeoMarksQueryTestFixture fixture)
         {
-            Context = fixture.Context;
+            ContextFactory = fixture.ContextFactory;
             Mapper = fixture.Mapper;
         }
 
@@ -27,7 +27,8 @@ namespace Mapper.Tests.GeoMarks.Queries
         public async Task GetGeoMarksListQueryHandler_Success()
         {
             // Arrange
-            var handler = new GetGeoMarkListQueryHandler(Context, Mapper);
+            using var context = ContextFactory.Create();
+            var handler = new GetGeoMarkListQueryHandler(context, Mapper);
 
             // Act
             var result = await handler.Handle(
@@ -42,11 +43,12 @@ namespace Mapper.Tests.GeoMarks.Queries
         public async Task GetGeoMarksListQueryHandler_EmptyList()
         {
             // Arrange
-            var handler = new GetGeoMarkListQueryHandler(Context, Mapper);
+            using var context = ContextFactory.Create();
+            var handler = new GetGeoMarkListQueryHandler(context, Mapper);
 
             // Удаляем все записи из контекста для проверки пустого списка
-            Context.GeoMarks.RemoveRange(Context.GeoMarks);
-            await Context.SaveChangesAsync();
+            context.GeoMarks.RemoveRange(context.GeoMarks);
+            await context.SaveChangesAsync();
 
             // Act
             var result = await handler.Handle(
@@ -54,8 +56,6 @@ namespace Mapper.Tests.GeoMarks.Queries
                 CancellationToken.None);
 
             // Assert
-            // TODO: add istype check
-            // Assert.IsType<List<GeoMarkListVm>>(result);
             Assert.Empty(result.GeoMarks);
         }
     }
