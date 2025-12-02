@@ -1,0 +1,6 @@
+@Mapper.IdentityServer_HostAddress = http://localhost:5161
+
+GET {{Mapper.IdentityServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
