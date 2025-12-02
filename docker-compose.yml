@@ -8,9 +8,27 @@ services:
       - "8081:8081"
     depends_on:
       - db
+      - identityserver
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=db;Database=MapperDB;User Id=sa;Password=YourPassword123;
+      - Jwt__Authority=http://identityserver:8080
+      - Jwt__Audience=MapperWebAPI
+    networks:
+      - app-network
+
+  identityserver:
+    build:
+      context: ./src/Mapper.IdentityServer
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+      - "8083:8081"
+    depends_on:
+      - identitydb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=identitydb;Port=5432;Database=IdentityDb;Username=identity_user;Password=identity_pass
     networks:
       - app-network
 
@@ -24,6 +42,22 @@ services:
     networks:
       - app-network
 
+  identitydb:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: IdentityDb
+      POSTGRES_USER: identity_user
+      POSTGRES_PASSWORD: identity_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - identitydb-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  identitydb-data:
