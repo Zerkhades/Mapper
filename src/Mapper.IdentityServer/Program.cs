@@ -1,3 +1,4 @@
+using Duende.IdentityServer;
 
 namespace Mapper.IdentityServer
 {
@@ -8,11 +9,17 @@ namespace Mapper.IdentityServer
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // IdentityServer (in-memory for dev/testing)
+            builder.Services
+                .AddIdentityServer()
+                .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)
+                .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
+                .AddInMemoryClients(IdentityConfig.Clients)
+                .AddDeveloperSigningCredential();
 
             var app = builder.Build();
 
@@ -25,8 +32,10 @@ namespace Mapper.IdentityServer
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            // IdentityServer middleware
+            app.UseIdentityServer();
 
+            app.UseAuthorization();
 
             app.MapControllers();
 

@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Xunit" />
+    <ProjectReference Include="..\Mapper.Core\Mapper.Persistence\Mapper.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Mapper.Persistence\Mapper.Persistence.csproj" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

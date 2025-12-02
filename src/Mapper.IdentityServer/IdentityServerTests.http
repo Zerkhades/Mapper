@@ -1,0 +1,14 @@
+@Mapper.IdentityServer_HostAddress = http://localhost:5161
+
+### Discovery document
+GET {{Mapper.IdentityServer_HostAddress}}/.well-known/openid-configuration
+
+### Client credentials token request
+POST {{Mapper.IdentityServer_HostAddress}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=mapper.client&client_secret=secret&grant_type=client_credentials&scope=api
+
+### User info (will fail without a user login flow configured, included for completeness)
+GET {{Mapper.IdentityServer_HostAddress}}/connect/userinfo
+Authorization: Bearer {{access_token}}
