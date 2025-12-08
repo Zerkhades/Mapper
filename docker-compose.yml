@@ -1,63 +1,100 @@
+ 
+
 services:
-  mapper.webapi:
-    build:
-      context: ./src/Mapper.Core/Mapper.WebApi
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-      - "8081:8081"
-    depends_on:
-      - db
-      - identityserver
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=db;Database=MapperDB;User Id=sa;Password=YourPassword123;
-      - Jwt__Authority=http://identityserver:8080
-      - Jwt__Audience=MapperWebAPI
-    networks:
-      - app-network
-
-  identityserver:
-    build:
-      context: ./src/Mapper.IdentityServer
-      dockerfile: Dockerfile
-    ports:
-      - "8082:8080"
-      - "8083:8081"
-    depends_on:
-      - identitydb
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Host=identitydb;Port=5432;Database=IdentityDb;Username=identity_user;Password=identity_pass
-    networks:
-      - app-network
-
+  # ---------------- Infrastructure ----------------
   db:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+    image: postgres:16-alpine
+    restart: always
     environment:
-      SA_PASSWORD: "YourPassword123"
-      ACCEPT_EULA: "Y"
+      POSTGRES_DB: MapperDB
+      POSTGRES_USER: mapper_user
+      POSTGRES_PASSWORD: mapper_pass
     ports:
-      - "1433:1433"
-    networks:
-      - app-network
+      - "5432:5432"
+    volumes:
+      - mapperdb-data:/var/lib/postgresql/data
+    networks: [ geomaps-net ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mapper_user -d MapperDB"]
+      interval: 10s
+      retries: 5
 
   identitydb:
     image: postgres:16-alpine
+    restart: always
     environment:
       POSTGRES_DB: IdentityDb
       POSTGRES_USER: identity_user
       POSTGRES_PASSWORD: identity_pass
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - identitydb-data:/var/lib/postgresql/data
-    networks:
-      - app-network
+    networks: [ geomaps-net ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U identity_user -d IdentityDb"]
+      interval: 10s
+      retries: 5
+
+  proxy:
+    build: ./src/Mapper.ReverseProxy
+    ports:
+      - "8080:8080"
+    networks: [ geomaps-net ]
+
+  # ---------------- Microservices ----------------
+  mapper.webapi:
+    build:
+      context: ./src/Mapper.Core
+      dockerfile: Mapper.WebApi/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Database=MapperDB;Username=mapper_user;Password=mapper_pass
+      ASPNETCORE_URLS: http://0.0.0.0:5001
+    ports:
+      - "5001:5001"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks: [ geomaps-net ]
+    depends_on:
+      - db
+
+  identityserver:
+    build: ./src/Mapper.IdentityServer
+    environment:
+      ConnectionStrings__DefaultConnection: Host=identitydb;Database=IdentityDb;Username=identity_user;Password=identity_pass
+      ASPNETCORE_URLS: http://0.0.0.0:5002
+    ports:
+      - "5002:5002"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks: [ geomaps-net ]
+    depends_on:
+      - identitydb
+
+  # ---------------- Observability (optional) ----------------
+  prometheus:
+    image: prom/prometheus:latest
+    networks: [ geomaps-net ]
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:10.3.1
+    networks: [ geomaps-net ]
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
 
 networks:
-  app-network:
+  geomaps-net:
     driver: bridge
 
 volumes:
+  mapperdb-data:
   identitydb-data:
+  

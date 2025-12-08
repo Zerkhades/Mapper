@@ -77,7 +77,7 @@ namespace Mapper.WebApi
 
             services.AddSwaggerGen(c =>
             {
-                var swaggerAuthAuthority = Configuration["SwaggerOAuth:Authority"] ?? "http://localhost:8082"; // host URL for browser
+                var swaggerAuthAuthority = Configuration["SwaggerOAuth:Authority"] ?? "http://localhost:5002"; // host URL for browser
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.OAuth2,
@@ -119,6 +119,7 @@ namespace Mapper.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+            //app.UseSerilogRequestLogging();
             app.UseSwagger();
             app.UseSwaggerUI(config =>
             {
@@ -133,7 +134,7 @@ namespace Mapper.WebApi
             });
             app.UseCustomExceptionHandler();
             app.UseRouting();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();

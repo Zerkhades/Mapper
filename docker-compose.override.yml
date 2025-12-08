@@ -1,24 +1,100 @@
+ 
+
 services:
-  mapper.webapi:
+  # ---------------- Infrastructure ----------------
+  db:
+    image: postgres:16-alpine
+    restart: always
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
+      POSTGRES_DB: MapperDB
+      POSTGRES_USER: mapper_user
+      POSTGRES_PASSWORD: mapper_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - mapperdb-data:/var/lib/postgresql/data
+    networks: [ geomaps-net ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mapper_user -d MapperDB"]
+      interval: 10s
+      retries: 5
+
+  identitydb:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: IdentityDb
+      POSTGRES_USER: identity_user
+      POSTGRES_PASSWORD: identity_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - identitydb-data:/var/lib/postgresql/data
+    networks: [ geomaps-net ]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U identity_user -d IdentityDb"]
+      interval: 10s
+      retries: 5
+
+  proxy:
+    build: ./src/Mapper.ReverseProxy
     ports:
       - "8080:8080"
-      - "8081:8081"
+    networks: [ geomaps-net ]
+
+  # ---------------- Microservices ----------------
+  mapper.webapi:
+    build:
+      context: ./src/Mapper.Core
+      dockerfile: Mapper.WebApi/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Database=MapperDB;Username=mapper_user;Password=mapper_pass
+      ASPNETCORE_URLS: http://0.0.0.0:5001
+    ports:
+      - "5001:5001"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks: [ geomaps-net ]
+    depends_on:
+      - db
 
   identityserver:
+    build: ./src/Mapper.IdentityServer
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
+      ConnectionStrings__DefaultConnection: Host=identitydb;Database=IdentityDb;Username=identity_user;Password=identity_pass
+      ASPNETCORE_URLS: http://0.0.0.0:5002
     ports:
-      - "8082:8080"
-      - "8083:8081"
+      - "5002:5002"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks: [ geomaps-net ]
+    depends_on:
+      - identitydb
+
+  # ---------------- Observability (optional) ----------------
+  prometheus:
+    image: prom/prometheus:latest
+    networks: [ geomaps-net ]
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:10.3.1
+    networks: [ geomaps-net ]
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+
+networks:
+  geomaps-net:
+    driver: bridge
+
+volumes:
+  mapperdb-data:
+  identitydb-data:
+  

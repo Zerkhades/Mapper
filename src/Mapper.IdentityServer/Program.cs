@@ -29,7 +29,16 @@ namespace Mapper.IdentityServer
 
             // Configure IdentityServer with EF stores backed by PostgreSQL
             builder.Services
-                .AddIdentityServer()
+                .AddIdentityServer(opt =>
+                {
+                    opt.Authentication.CookieSameSiteMode = SameSiteMode.Lax;
+                    opt.Authentication.CheckSessionCookieSameSiteMode = SameSiteMode.Lax;
+
+                    opt.KeyManagement.RotationInterval = TimeSpan.FromDays(30);
+                    opt.KeyManagement.PropagationTime = TimeSpan.FromDays(2);
+                    opt.KeyManagement.RetentionDuration = TimeSpan.FromDays(7);
+                    opt.KeyManagement.DeleteRetiredKeys = false;
+                })
                 .AddConfigurationStore(options =>
                 {
                     options.ConfigureDbContext = b => b.UseNpgsql(connectionString, sql =>
@@ -43,6 +52,10 @@ namespace Mapper.IdentityServer
                     // enables automatic token cleanup. this is optional.
                     options.EnableTokenCleanup = true;
                 })
+                .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)
+                .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
+                //.AddInMemoryApiResources(IdentityConfig.ApiResources)
+                .AddInMemoryClients(IdentityConfig.Clients)
                 .AddDeveloperSigningCredential();
 
             var app = builder.Build();

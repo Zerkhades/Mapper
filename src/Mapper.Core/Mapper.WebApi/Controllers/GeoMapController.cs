@@ -42,10 +42,7 @@ namespace Mapper.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<GeoMapListVm>> GetAll()
         {
-            var query = new GetGeoMapDetailsQuery()
-            {
-                //Id = 
-            };
+            var query = new GetGeoMapListQuery();
             var vm = await Mediator.Send(query);
             return Ok(vm);
         }
@@ -99,7 +96,7 @@ namespace Mapper.WebApi.Controllers
             var command = _mapper.Map<CreateGeoMapCommand>(createGeoMapDto);
             //command.Id = UserId;
             var geomapId = await Mediator.Send(command);
-            return Ok(geomapId);
+            return CreatedAtAction(nameof(Get), new { id = geomapId }, geomapId);
         }
 
         /// <summary>
@@ -120,7 +117,7 @@ namespace Mapper.WebApi.Controllers
         //[Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Update([FromBody] UpdateGeoMapCommand updateGeoMapDto)
+        public async Task<IActionResult> Update([FromBody] UpdateGeoMapDto updateGeoMapDto)
         {
             var command = _mapper.Map<UpdateGeoMapCommand>(updateGeoMapDto);
             command.Id = UserId;
@@ -133,7 +130,7 @@ namespace Mapper.WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        /// DELETE /geomap/88DEB432-062F-43DE-8DCD-8B6EF79073D3
+        /// PUT /geomap/88DEB432-062F-43DE-8DCD-8B6EF79073D3
         /// </remarks>
         /// <param name="id">Id of the geomap (guid)</param>
         /// <returns>Returns NoContent</returns>

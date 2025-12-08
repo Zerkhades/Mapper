@@ -10,18 +10,16 @@ namespace Mapper.Persistence
         public static IServiceCollection AddPersistence(this IServiceCollection
             services, IConfiguration configuration)
         {
-            //var connectionString = configuration["DbConnection"];
-            var connectionString =
-                "Server=db;Database=MapperDB;User Id=sa;Password=YourPassword123;TrustServerCertificate=True;";
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? configuration["ConnectionStrings__DefaultConnection"]
+                ?? configuration["DbConnection"];
+
             services.AddDbContext<MapperDbContext>(options =>
             {
-                // Sqlite server
-                // options.UseSqlite(connectionString);
-
-                // MsSql server
-                options.UseSqlServer(connectionString);
-
-
+                options.UseNpgsql(connectionString, npgsql =>
+                {
+                    npgsql.EnableRetryOnFailure(5);
+                });
             });
             services.AddScoped<IMapperDbContext>(provider =>
                 provider.GetRequiredService<MapperDbContext>());

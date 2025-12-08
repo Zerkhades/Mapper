@@ -24,8 +24,15 @@ namespace Mapper.WebApi
                 var serviceProvider = scope.ServiceProvider;
                 try
                 {
-                    var context = serviceProvider.GetRequiredService<MapperDbContext>();
-                    DbInitializer.Initialize(context);
+                    // Initialize DB only when explicitly enabled via configuration
+                    var configuration = serviceProvider.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
+                    var initOnStart = configuration.GetValue<bool>("Database:InitializeOnStart");
+                    if (initOnStart)
+                    {
+                        var context = serviceProvider.GetRequiredService<MapperDbContext>();
+                        DbInitializer.Initialize(context);
+                    }
+                    Log.Information("Application initialization completed");
                 }
                 catch (Exception exception)
                 {
@@ -33,7 +40,21 @@ namespace Mapper.WebApi
                 }
             }
 
-            host.Run();
+            var lifetime = host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
+            lifetime.ApplicationStarted.Register(() => Log.Information("Host started"));
+            lifetime.ApplicationStopping.Register(() => Log.Warning("Host stopping"));
+            lifetime.ApplicationStopped.Register(() => Log.Warning("Host stopped"));
+
+            try
+            {
+                Log.Information("Starting host");
+                host.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                throw;
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

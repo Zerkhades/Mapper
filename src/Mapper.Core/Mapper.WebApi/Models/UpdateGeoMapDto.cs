@@ -1,11 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using System.ComponentModel.DataAnnotations;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
+using Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand;
 using Mapper.Application.Common.Mappings;
 
 namespace Mapper.WebApi.Models
 {
-    public class CreateGeoMapDto : IMapWith<CreateGeoMapCommand>
+    public class UpdateGeoMapDto : IMapWith<UpdateGeoMapCommand>
     {
         [Required]
         public Guid Id { get; set; }
@@ -13,10 +13,11 @@ namespace Mapper.WebApi.Models
         public required string MapDescription { get; set; }
         public bool IsArchived { get; set; }
 
-
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<CreateGeoMapDto, CreateGeoMapCommand>()
+            profile.CreateMap<UpdateGeoMapDto, UpdateGeoMapCommand>()
+                .ForMember(mapCommand => mapCommand.Id,
+                    opt => opt.MapFrom(mapDto => mapDto.Id))
                 .ForMember(mapCommand => mapCommand.MapName,
                     opt => opt.MapFrom(mapDto => mapDto.MapName))
                 .ForMember(mapCommand => mapCommand.MapDescription,

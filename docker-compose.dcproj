@@ -5,8 +5,8 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>47eafa0a-e7c2-4ee9-ae9b-356bd9a89441</ProjectGuid>
-    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
+    <DockerLaunchAction>None</DockerLaunchAction>
+    <DockerServiceUrl></DockerServiceUrl>
     <DockerServiceName>mapper.webapi</DockerServiceName>
     <AutoAddFiles>false</AutoAddFiles>
   </PropertyGroup>
