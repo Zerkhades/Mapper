@@ -5,24 +5,11 @@ using Mapper.Application.Common.Mappings;
 
 namespace Mapper.WebApi.Models
 {
-    public class CreateGeoMapDto : IMapWith<CreateGeoMapCommand>
+    public class CreateGeoMapDto
     {
-        [Required]
-        public Guid Id { get; set; }
-        public required string MapName { get; set; }
-        public required string MapDescription { get; set; }
-        public bool IsArchived { get; set; }
-
-
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<CreateGeoMapDto, CreateGeoMapCommand>()
-                .ForMember(mapCommand => mapCommand.MapName,
-                    opt => opt.MapFrom(mapDto => mapDto.MapName))
-                .ForMember(mapCommand => mapCommand.MapDescription,
-                    opt => opt.MapFrom(mapDto => mapDto.MapDescription))
-                .ForMember(mapCommand => mapCommand.IsArchived,
-                    opt => opt.MapFrom(mapDto => mapDto.IsArchived));
-        }
+        public string Name { get; set; } = default!;
+        public string? Description { get; set; }
+        public int ImageWidth { get; set; }
+        public int ImageHeight { get; set; }
     }
 }

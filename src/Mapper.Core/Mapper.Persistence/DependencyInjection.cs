@@ -22,7 +22,7 @@ namespace Mapper.Persistence
                 });
             });
             services.AddScoped<IMapperDbContext>(provider =>
-                provider.GetRequiredService<MapperDbContext>());
+                (IMapperDbContext)provider.GetRequiredService<MapperDbContext>());
             return services;
         }
     }

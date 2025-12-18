@@ -2,8 +2,8 @@
 
 namespace Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkDetails
 {
-    public class GetGeoMarkDetailsQuery : IRequest<GeoMarkDetailsVm>
-    {
-        public Guid Id { get; set; }
-    }
+    //public class GetGeoMarkDetailsQuery : IRequest<GeoMarkDetailsVm>
+    //{
+    //    public Guid Id { get; set; }
+    //}
 }

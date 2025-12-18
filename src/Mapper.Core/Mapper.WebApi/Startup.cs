@@ -1,23 +1,34 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Amazon.S3;
 using Asp.Versioning;
-using System.Reflection;
 using Asp.Versioning.ApiExplorer;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Mapper.Application;
-
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Mapper.Application.Common.Mappings;
 using Mapper.Application.Interfaces;
+using Mapper.Infrastructure.BackgroundJobs;
+using Mapper.Infrastructure.Caching;
+using Mapper.Infrastructure.Cameras;
+using Mapper.Infrastructure.Realtime;
+using Mapper.Infrastructure.Storage.S3;
 using Mapper.Persistence;
 using Mapper.WebApi.Middleware;
 using Mapper.WebApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Trace;
+using Serilog;
+using StackExchange.Redis;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Mapper.WebApi
 {
@@ -108,8 +119,33 @@ namespace Mapper.WebApi
                 });
             });
 
+            services.AddOpenTelemetry()
+                    .WithTracing(t =>
+                    {
+                        t.AddAspNetCoreInstrumentation()
+                         .AddHttpClientInstrumentation()
+                         .AddEntityFrameworkCoreInstrumentation()
+                         .AddOtlpExporter(o => o.Endpoint = new Uri(Configuration["Otel:Endpoint"]!));
+                    });
+            services.AddSignalR();
+            services.AddSingleton<IConnectionMultiplexer>(
+                _ => ConnectionMultiplexer.Connect(Configuration["Redis:ConnectionString"]!));
+            services.AddSingleton<ICacheService, RedisCacheService>();
             services.AddSingleton<ICurrentUserService, CurrentUserService>();
-            services.AddHttpContextAccessor();
+            services.AddSingleton<IAmazonS3>(_ =>
+            {
+                var cfg = Configuration;
+                var s3cfg = new AmazonS3Config { ServiceURL = cfg["S3:ServiceUrl"], ForcePathStyle = true };
+                return new AmazonS3Client(cfg["S3:AccessKey"], cfg["S3:SecretKey"], s3cfg);
+            });
+            services.AddSingleton<IMapImageStorage, S3MapImageStorage>();
+            services.AddSingleton<IMapRealtimeNotifier, MapRealtimeNotifier>();
+            services.AddSingleton<ICameraAdapter, SimpleCameraAdapter>();
+            services.AddHangfire(c =>
+                c.UsePostgreSqlStorage(Configuration.GetConnectionString("DefaultConnection")));
+                    services.AddHangfireServer();
+                    services.AddTransient<PollCameraStatusesJob>();
+                    services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
@@ -119,7 +155,7 @@ namespace Mapper.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-            //app.UseSerilogRequestLogging();
+            app.UseSerilogRequestLogging();
             app.UseSwagger();
             app.UseSwaggerUI(config =>
             {
@@ -138,10 +174,13 @@ namespace Mapper.WebApi
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseHangfireDashboard("/hangfire");
+            RecurringJob.AddOrUpdate<PollCameraStatusesJob>("poll-cameras", j => j.Execute(default), "*/30 * * * * *"); // каждые 30 сек
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<MapHub>("/hubs/map");
             });
         }
     }

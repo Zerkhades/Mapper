@@ -23,7 +23,7 @@ namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapComm
                 throw new NotFoundException(nameof(Domain.GeoMap), request.Id);
             }
 
-            entity.IsArchived = true;
+            //entity.IsArchived = true;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
         }

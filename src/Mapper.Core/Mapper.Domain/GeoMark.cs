@@ -3,23 +3,42 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mapper.Domain
 {
-    public class GeoMark : Mark
+    public enum GeoMarkType { Transition = 1, Workplace = 2, Camera = 3 }
+
+    public abstract class GeoMark
     {
-        public Guid Id { get; set; }
-        public virtual GeoMap? GeoMap { get; set; }
-        public Guid GeoMapId { get; set; }
-        public required string MarkName { get; set; }
-        public string? MarkDescription { get; set; }
-        public string Color { get; set; } = "#FF0000";
-        public string Emoji { get; set; } = "\uD83D\uDE00"; //😀
-        public int? Size { get; set; } = 16;
-        public bool IsEmoji { get; set; }
-        public bool IsArchived { get; set; }
-        public bool IsEditable { get; set; }
-        public DateTime CreationDate { get; set; }
-        public DateTime? EditDate { get; set; }
-        public Guid? EditedBy { get; set; }
-        public virtual IList<Employee>? Employees { get; set; }
-        public virtual IList<GeoPhoto>? GeoPhotos { get; set; }
+        public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid GeoMapId { get; private set; }
+
+        public GeoMarkType Type { get; private set; }
+
+        // Координаты в системе карты (рекомендую хранить НОРМАЛИЗОВАННЫЕ 0..1)
+        public double X { get; private set; }
+        public double Y { get; private set; }
+
+        public string Title { get; private set; } = default!;
+        public string? Description { get; private set; }
+
+        protected GeoMark() { } // EF
+
+        protected GeoMark(Guid geoMapId, GeoMarkType type, double x, double y, string title, string? description)
+        {
+            GeoMapId = geoMapId;
+            Type = type;
+            X = x; Y = y;
+            Title = title;
+            Description = description;
+        }
+
+        public void Move(double x, double y)
+        {
+            X = x; Y = y;
+        }
+
+        public void UpdateText(string title, string? description)
+        {
+            Title = title;
+            Description = description;
+        }
     }
 }

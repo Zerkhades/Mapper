@@ -6,27 +6,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails
 {
-    public class GetGeoMapDetailsQueryHandler : IRequestHandler<GetGeoMapDetailsQuery, GeoMapDetailsVm>
-    {
-        private readonly IMapperDbContext _dbContext;
-        private readonly IMapper _mapper;
+    //public class GetGeoMapDetailsQueryHandler : IRequestHandler<GetGeoMapDetailsQuery, GeoMapDetailsVm>
+    //{
+    //    private readonly IMapperDbContext _dbContext;
+    //    private readonly IMapper _mapper;
 
-        public GetGeoMapDetailsQueryHandler(IMapperDbContext dbContext,
-            IMapper mapper) => (_dbContext, _mapper) = (dbContext, mapper);
+    //    public GetGeoMapDetailsQueryHandler(IMapperDbContext dbContext,
+    //        IMapper mapper) => (_dbContext, _mapper) = (dbContext, mapper);
 
-        public async Task<GeoMapDetailsVm> Handle(GetGeoMapDetailsQuery request,
-            CancellationToken cancellationToken)
-        {
-            var entity = await _dbContext.GeoMaps
-                .FirstOrDefaultAsync(geoMap =>
-                    geoMap.Id == request.Id, cancellationToken);
+    //    public async Task<GeoMapDetailsVm> Handle(GetGeoMapDetailsQuery request,
+    //        CancellationToken cancellationToken)
+    //    {
+    //        var entity = await _dbContext.GeoMaps
+    //            .FirstOrDefaultAsync(geoMap =>
+    //                geoMap.Id == request.Id, cancellationToken);
 
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Domain.GeoMap), request.Id);
-            }
+    //        if (entity == null)
+    //        {
+    //            throw new NotFoundException(nameof(Domain.GeoMap), request.Id);
+    //        }
 
-            return _mapper.Map<GeoMapDetailsVm>(entity);
-        }
-    }
+    //        return _mapper.Map<GeoMapDetailsVm>(entity);
+    //    }
+    //}
 }

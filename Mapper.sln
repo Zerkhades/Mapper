@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mapper.WebApi", "Mapper.Web
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F6A7D7DE-5171-4CE7-B712-D7BD0030E9D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper.Infrastructure", "src\Mapper.Core\Mapper.Infrastructure\Mapper.Infrastructure.csproj", "{2AB4F142-0367-444D-9F28-71EA678B5DC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{09555DD8-EF74-6D6A-4832-0EC56BFEE02A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09555DD8-EF74-6D6A-4832-0EC56BFEE02A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09555DD8-EF74-6D6A-4832-0EC56BFEE02A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AB4F142-0367-444D-9F28-71EA678B5DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AB4F142-0367-444D-9F28-71EA678B5DC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AB4F142-0367-444D-9F28-71EA678B5DC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AB4F142-0367-444D-9F28-71EA678B5DC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{2B199E76-2884-3ED4-FAC5-10C6CEA15178} = {5A91EEDB-0FCD-4E62-923E-9377D0200FF6}
 		{09555DD8-EF74-6D6A-4832-0EC56BFEE02A} = {F6A7D7DE-5171-4CE7-B712-D7BD0030E9D5}
 		{5A91EEDB-0FCD-4E62-923E-9377D0200FF6} = {0E0BC54A-BA15-4884-A8D9-C2B45E883706}
+		{2AB4F142-0367-444D-9F28-71EA678B5DC1} = {60565592-FA4E-447E-8BBA-834740816CF9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9B42E4E4-8228-40D0-B140-98B185CD9718}

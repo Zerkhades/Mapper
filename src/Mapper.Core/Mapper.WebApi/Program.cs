@@ -59,40 +59,15 @@ namespace Mapper.WebApi
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseSerilog()
+                .UseSerilog((ctx, lc) =>
+                {
+                    lc.ReadFrom.Configuration(ctx.Configuration)
+                      .Enrich.FromLogContext()
+                      .WriteTo.Seq(ctx.Configuration["Seq:ServerUrl"]!);
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
-        //public static void Main(string[] args)
-        //{
-        //    var builder = WebApplication.CreateBuilder(args);
-
-        //    // Add services to the container.
-
-        //    builder.Services.AddControllers();
-        //    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        //    builder.Services.AddEndpointsApiExplorer();
-        //    builder.Services.AddSwaggerGen();
-
-        //    var app = builder.Build();
-
-        //    // Configure the HTTP request pipeline.
-        //    if (app.Environment.IsDevelopment())
-        //    {
-        //        app.UseSwagger();
-        //        app.UseSwaggerUI();
-        //    }
-
-        //    app.UseHttpsRedirection();
-
-        //    app.UseAuthorization();
-
-
-        //    app.MapControllers();
-
-        //    app.Run();
-        //}
     }
 }

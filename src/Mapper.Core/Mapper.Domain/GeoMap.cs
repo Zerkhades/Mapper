@@ -6,13 +6,27 @@ namespace Mapper.Domain
 {
     public class GeoMap
     {
-        [Key]
-        public Guid Id { get; set; }
-        public required string MapName { get; set; }
-        public required string MapDescription { get; set; }
-        //public byte[] Map { get; set; }
-        public bool IsArchived { get; set; }
-        //public DateTime CreationDate { get; set; }
-        public virtual IList<GeoMark>? GeoMarks { get; set; }
+        public Guid Id { get; private set; } = Guid.NewGuid();
+
+        public string Name { get; private set; } = default!;
+        public string? Description { get; private set; }
+
+        // Ссылка на файл изображения (не тащим blob в БД)
+        public string ImagePath { get; private set; } = default!;
+        public int ImageWidth { get; private set; }
+        public int ImageHeight { get; private set; }
+
+        public ICollection<GeoMark> Marks { get; private set; } = new List<GeoMark>();
+
+        private GeoMap() { } // EF
+
+        public GeoMap(string name, string imagePath, int width, int height, string? description = null)
+        {
+            Name = name;
+            ImagePath = imagePath;
+            ImageWidth = width;
+            ImageHeight = height;
+            Description = description;
+        }
     }
 }

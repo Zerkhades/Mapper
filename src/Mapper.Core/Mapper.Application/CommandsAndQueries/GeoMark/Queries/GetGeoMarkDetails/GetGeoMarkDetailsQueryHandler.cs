@@ -6,25 +6,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkDetails
 {
-    public class GetGeoMarkDetailsQueryHandler : IRequestHandler<GetGeoMarkDetailsQuery, GeoMarkDetailsVm>
-    {
-        private readonly IMapperDbContext _dbContext;
-        private readonly IMapper _mapper;
+    //public class GetGeoMarkDetailsQueryHandler : IRequestHandler<GetGeoMarkDetailsQuery, GeoMarkDetailsVm>
+    //{
+    //    private readonly IMapperDbContext _dbContext;
+    //    private readonly IMapper _mapper;
 
-        public GetGeoMarkDetailsQueryHandler(IMapperDbContext dbContext, IMapper mapper) =>
-            (_dbContext, _mapper) = (dbContext, mapper);
+    //    public GetGeoMarkDetailsQueryHandler(IMapperDbContext dbContext, IMapper mapper) =>
+    //        (_dbContext, _mapper) = (dbContext, mapper);
 
-        public async Task<GeoMarkDetailsVm> Handle(GetGeoMarkDetailsQuery request, CancellationToken cancellationToken)
-        {
-            var entity = await _dbContext.GeoMarks
-                .FirstOrDefaultAsync(geoMark => geoMark.Id == request.Id, cancellationToken);
+    //    public async Task<GeoMarkDetailsVm> Handle(GetGeoMarkDetailsQuery request, CancellationToken cancellationToken)
+    //    {
+    //        var entity = await _dbContext.GeoMarks
+    //            .FirstOrDefaultAsync(geoMark => geoMark.Id == request.Id, cancellationToken);
 
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Domain.GeoMark), request.Id);
-            }
+    //        if (entity == null)
+    //        {
+    //            throw new NotFoundException(nameof(Domain.GeoMark), request.Id);
+    //        }
 
-            return _mapper.Map<GeoMarkDetailsVm>(entity);
-        }
-    }
+    //        return _mapper.Map<GeoMarkDetailsVm>(entity);
+    //    }
+    //}
 }

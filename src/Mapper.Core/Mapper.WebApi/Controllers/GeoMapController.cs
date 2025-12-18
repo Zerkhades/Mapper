@@ -1,17 +1,19 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
+using Mapper.Application;
+//using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
+//using Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand;
+//using Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand;
+//using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails;
+//using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList;
+using Mapper.Application.Features;
+using Mapper.Application.Features.GeoMaps;
+using Mapper.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Asp.Versioning;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Mapper.Application;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand;
-using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails;
-using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList;
-using Mapper.WebApi.Models;
 
 
 namespace Mapper.WebApi.Controllers
@@ -26,6 +28,29 @@ namespace Mapper.WebApi.Controllers
 
         public GeomapController(IMapper mapper) => _mapper = mapper;
 
+        [HttpPost]
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<Guid>> Create([FromForm] CreateGeoMapDto dto, IFormFile file, CancellationToken ct)
+        {
+            await using var stream = file.OpenReadStream();
+
+            var id = await Mediator.Send(new Application.Features.GeoMaps.CreateGeoMapCommand(
+                dto.Name,
+                dto.Description,
+                stream,
+                file.FileName,
+                file.ContentType,
+                dto.ImageWidth,
+                dto.ImageHeight
+            ), ct);
+
+            return Ok(id);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<GeoMapDetailsDto>> Get(Guid id, CancellationToken ct)
+            => Ok(await Mediator.Send(new GetGeoMapByIdQuery(id), ct));
+
         /// <summary>
         /// Gets the list of geomaps
         /// </summary>
@@ -36,16 +61,16 @@ namespace Mapper.WebApi.Controllers
         /// <returns>Returns GeoMapListVm</returns>
         /// <response code="200">Success</response>
         /// <response code="401">If the user is unauthorized</response>
-        [HttpGet]
-        //[Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<GeoMapListVm>> GetAll()
-        {
-            var query = new GetGeoMapListQuery();
-            var vm = await Mediator.Send(query);
-            return Ok(vm);
-        }
+        //[HttpGet]
+        ////[Authorize]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //public async Task<ActionResult<GeoMapListVm>> GetAll()
+        //{
+        //    var query = new GetGeoMapListQuery();
+        //    var vm = await Mediator.Send(query);
+        //    return Ok(vm);
+        //}
 
         /// <summary>
         /// Gets the geomap by id
@@ -58,19 +83,19 @@ namespace Mapper.WebApi.Controllers
         /// <returns>Returns GeomapDetailsVm</returns>
         /// <response code="200">Success</response>
         /// <response code="401">If the user in unauthorized</response>
-        [HttpGet("{id}")]
-        //[Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<GeoMapListVm>> Get(Guid id)
-        {
-            var query = new GetGeoMapDetailsQuery()
-            {
-                Id = id
-            };
-            var vm = await Mediator.Send(query);
-            return Ok(vm);
-        }
+        //[HttpGet("{id}")]
+        ////[Authorize]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //public async Task<ActionResult<GeoMapListVm>> Get(Guid id)
+        //{
+        //    var query = new GetGeoMapDetailsQuery()
+        //    {
+        //        Id = id
+        //    };
+        //    var vm = await Mediator.Send(query);
+        //    return Ok(vm);
+        //}
 
         /// <summary>
         /// Creates geomap
@@ -87,17 +112,17 @@ namespace Mapper.WebApi.Controllers
         /// <returns>Returns id (guid)</returns>
         /// <response code="201">Success</response>
         /// <response code="401">If the user is unauthorized</response>
-        [HttpPost]
-        //[Authorize]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<Guid>> Create([FromBody] CreateGeoMapDto createGeoMapDto)
-        {
-            var command = _mapper.Map<CreateGeoMapCommand>(createGeoMapDto);
-            //command.Id = UserId;
-            var geomapId = await Mediator.Send(command);
-            return CreatedAtAction(nameof(Get), new { id = geomapId }, geomapId);
-        }
+        //[HttpPost]
+        ////[Authorize]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //public async Task<ActionResult<Guid>> Create([FromBody] CreateGeoMapDto createGeoMapDto)
+        //{
+        //    var command = _mapper.Map<Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand.CreateGeoMapCommand>(createGeoMapDto);
+        //    //command.Id = UserId;
+        //    var geomapId = await Mediator.Send(command);
+        //    return CreatedAtAction(nameof(Get), new { id = geomapId }, geomapId);
+        //}
 
         /// <summary>
         /// Updates the geomap
@@ -113,17 +138,17 @@ namespace Mapper.WebApi.Controllers
         /// <returns>Returns NoContent</returns>
         /// <response code="204">Success</response>
         /// <response code="401">If the user is unauthorized</response>
-        [HttpPut]
-        //[Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Update([FromBody] UpdateGeoMapDto updateGeoMapDto)
-        {
-            var command = _mapper.Map<UpdateGeoMapCommand>(updateGeoMapDto);
-            command.Id = UserId;
-            await Mediator.Send(command);
-            return NoContent();
-        }
+        //[HttpPut]
+        ////[Authorize]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //public async Task<IActionResult> Update([FromBody] UpdateGeoMapDto updateGeoMapDto)
+        //{
+        //    var command = _mapper.Map<UpdateGeoMapCommand>(updateGeoMapDto);
+        //    command.Id = UserId;
+        //    await Mediator.Send(command);
+        //    return NoContent();
+        //}
 
         /// <summary>
         /// Archives the geomap by id
@@ -136,19 +161,19 @@ namespace Mapper.WebApi.Controllers
         /// <returns>Returns NoContent</returns>
         /// <response code="204">Success</response>
         /// <response code="401">If the user is unauthorized</response>
-        [HttpPut("{id}")]
-        //[Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Archive(Guid id)
-        {
-            var command = new ArchiveGeoMapCommand
-            {
-                Id = id
-            };
-            await Mediator.Send(command);
-            return NoContent();
-        }
+        //[HttpPut("{id}")]
+        ////[Authorize]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //public async Task<IActionResult> Archive(Guid id)
+        //{
+        //    var command = new ArchiveGeoMapCommand
+        //    {
+        //        Id = id
+        //    };
+        //    await Mediator.Send(command);
+        //    return NoContent();
+        //}
 
         /// <summary>
         /// Deletes the geomap by id
@@ -161,18 +186,18 @@ namespace Mapper.WebApi.Controllers
         /// <returns>Returns NoContent</returns>
         /// <response code="204">Success</response>
         /// <response code="401">If the user is unauthorized</response>
-        [HttpDelete("{id}")]
-        //[Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var command = new DeleteGeoMapCommand
-            {
-                Id = id
-            };
-            await Mediator.Send(command);
-            return NoContent();
-        }
+        //[HttpDelete("{id}")]
+        ////[Authorize]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        //public async Task<IActionResult> Delete(Guid id)
+        //{
+        //    var command = new DeleteGeoMapCommand
+        //    {
+        //        Id = id
+        //    };
+        //    await Mediator.Send(command);
+        //    return NoContent();
+        //}
     }
 }

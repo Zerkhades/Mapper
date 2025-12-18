@@ -1,0 +1,19 @@
+﻿using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Mapper.Application.Features.GeoMaps
+{
+    public record CreateGeoMapCommand(
+        string Name,
+        string? Description,
+        Stream ImageStream,
+        string FileName,
+        string ContentType,
+        int ImageWidth,
+        int ImageHeight
+    ) : IRequest<Guid>;
+}
