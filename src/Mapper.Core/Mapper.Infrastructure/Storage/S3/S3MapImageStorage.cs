@@ -2,11 +2,7 @@
 using Amazon.S3.Model;
 using Mapper.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Mapper.Infrastructure.Storage.S3
 {
@@ -14,6 +10,7 @@ namespace Mapper.Infrastructure.Storage.S3
     {
         private readonly IAmazonS3 _s3;
         private readonly string _bucket;
+        private static readonly FileExtensionContentTypeProvider Ctp = new();
 
         public S3MapImageStorage(IAmazonS3 s3, IConfiguration cfg)
         {
@@ -24,6 +21,15 @@ namespace Mapper.Infrastructure.Storage.S3
         public async Task<string> SaveAsync(Stream content, string fileName, string contentType, CancellationToken ct)
         {
             var key = $"maps/{Guid.NewGuid()}_{fileName}";
+
+            if (string.IsNullOrWhiteSpace(contentType) || contentType == "application/octet-stream")
+            {
+                if (!Ctp.TryGetContentType(fileName, out contentType))
+                    contentType = "application/octet-stream";
+            }
+
+            if (content.CanSeek) content.Position = 0;
+
             var req = new PutObjectRequest
             {
                 BucketName = _bucket,
@@ -33,7 +39,7 @@ namespace Mapper.Infrastructure.Storage.S3
             };
 
             await _s3.PutObjectAsync(req, ct);
-            return key; // в БД храним key
+            return key;
         }
     }
 }

@@ -3,8 +3,21 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLaunchServiceName": "mapper.webapi",
       "serviceActions": {
-        "mapper.webapi": "StartDebugging"
+        "mapper.webapi": "StartDebugging",
+        "db": "StartWithoutDebugging",
+        "elasticsearch": "StartWithoutDebugging",
+        "grafana": "StartWithoutDebugging",
+        "identitydb": "StartWithoutDebugging",
+        "identityserver": "StartWithoutDebugging",
+        "jaeger": "StartWithoutDebugging",
+        "kibana": "StartWithoutDebugging",
+        "minio": "StartWithoutDebugging",
+        "prometheus": "StartWithoutDebugging",
+        "proxy": "StartWithoutDebugging",
+        "redis": "StartWithoutDebugging",
+        "seq": "StartWithoutDebugging"
       }
     }
   }

@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 namespace Mapper.Application.Features
 {
     public record GeoMapDetailsDto(
-        Guid Id,
-        string Name,
-        string ImageUrl,
-        int ImageWidth,
-        int ImageHeight,
-        IReadOnlyList<GeoMarkDto> Marks);
+        Guid Id = default,
+        string Name = default!,
+        string ImageUrl = default!,
+        int ImageWidth = default,
+        int ImageHeight = default,
+        IReadOnlyList<GeoMarkDto> Marks = null!);
 
     public record GeoMarkDto(
-        Guid Id,
-        GeoMarkType Type,
-        double X,
-        double Y,
-        string Title,
-        string? Description,
-        Guid? TargetGeoMapId,
-        string? WorkplaceCode,
-        IReadOnlyList<Guid>? EmployeeIds,
-        string? CameraName,
-        string? StreamUrl);
+        Guid Id = default,
+        GeoMarkType Type = default,
+        double X = default,
+        double Y = default,
+        string Title = default!,
+        string? Description = null,
+        Guid? TargetGeoMapId = null,
+        string? WorkplaceCode = null,
+        IReadOnlyList<Guid>? EmployeeIds = null,
+        string? CameraName = null,
+        string? StreamUrl = null);
 }

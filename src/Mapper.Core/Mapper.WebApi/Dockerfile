@@ -16,6 +16,7 @@ COPY ["Mapper.WebApi/Mapper.WebApi.csproj", "Mapper.WebApi/"]
 COPY ["Mapper.Application/Mapper.Application.csproj", "Mapper.Application/"]
 COPY ["Mapper.Domain/Mapper.Domain.csproj", "Mapper.Domain/"]
 COPY ["Mapper.Persistence/Mapper.Persistence.csproj", "Mapper.Persistence/"]
+Copy ["Mapper.Infrastructure/Mapper.Infrastructure.csproj", "Mapper.Infrastructure/"]
 
 # Restoring dependencies
 RUN dotnet restore "Mapper.WebApi/Mapper.WebApi.csproj"

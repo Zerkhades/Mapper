@@ -5,15 +5,17 @@ services:
     restart: always
     environment:
       POSTGRES_DB: MapperDB
-      POSTGRES_USER: mapper_user
-      POSTGRES_PASSWORD: mapper_pass
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
     ports:
       - "5432:5432"
     volumes:
-      - mapperdb-data:/var/lib/postgresql/data
+      - type: volume
+        source: mapperdb-data
+        target: /var/lib/postgresql/data
     networks: [ geomaps-net ]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mapper_user -d MapperDB"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d MapperDB"]
       interval: 10s
       retries: 5
 
@@ -22,15 +24,17 @@ services:
     restart: always
     environment:
       POSTGRES_DB: IdentityDb
-      POSTGRES_USER: identity_user
-      POSTGRES_PASSWORD: identity_pass
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
     ports:
       - "5434:5432"
     volumes:
-      - identitydb-data:/var/lib/postgresql/data
+      - type: volume
+        source: identitydb-data
+        target: /var/lib/postgresql/data
     networks: [ geomaps-net ]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U identity_user -d IdentityDb"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d IdentityDb"]
       interval: 10s
       retries: 5
 
@@ -107,7 +111,7 @@ services:
       context: ./src/Mapper.Core
       dockerfile: Mapper.WebApi/Dockerfile
     environment:
-      ConnectionStrings__DefaultConnection: Host=db;Database=MapperDB;Username=mapper_user;Password=mapper_pass
+      ConnectionStrings__DefaultConnection: Host=db;Database=MapperDB;Username=postgres;Password=pass
       ASPNETCORE_URLS: http://0.0.0.0:5001
 
       Redis__ConnectionString: redis:6379
@@ -134,7 +138,7 @@ services:
   identityserver:
     build: ./src/Mapper.IdentityServer
     environment:
-      ConnectionStrings__DefaultConnection: Host=identitydb;Database=IdentityDb;Username=identity_user;Password=identity_pass
+      ConnectionStrings__DefaultConnection: Host=identitydb;Database=IdentityDb;Username=postgres;Password=pass
       ASPNETCORE_URLS: http://0.0.0.0:5002
     ports:
       - "5002:5002"
@@ -144,6 +148,15 @@ services:
     networks: [ geomaps-net ]
     depends_on:
       - identitydb
+
+  # mapperfrontend:
+  #   build: ../Mapper.Frontend/src/Mapper.Frontend
+  #   environment:
+  #     REACT_APP_API_URL: http://localhost:8080
+  #     REACT_APP_IDENTITY_URL: http://localhost:8080
+  #   ports:
+  #     - "3001:80"
+  #   networks: [ geomaps-net ]
 
   # ---------------- Observability (optional) ----------------
   prometheus:
@@ -164,11 +177,16 @@ services:
 
 networks:
   geomaps-net:
-    driver: bridge
+    name: geomaps-net
 
 volumes:
   mapperdb-data:
+    name: mapper_mapperdb-data
   identitydb-data:
+    name: mapper_identitydb-data
   minio-data:
+    name: mapper_minio-data
   es-data:
+    name: mapper_es-data
   seq-data:
+    name: mapper_seq-data

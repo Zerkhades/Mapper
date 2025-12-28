@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,7 +30,6 @@ using Serilog;
 using StackExchange.Redis;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Mapper.WebApi
 {
@@ -42,14 +43,15 @@ namespace Mapper.WebApi
         {
             services.AddAutoMapper(config =>
             {
-                config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
-                config.AddProfile(new AssemblyMappingProfile(typeof(IMapperDbContext).Assembly));
+                config.AddProfile(new AssemblyMappingProfile(typeof(AssemblyMappingProfile).Assembly)); // Application
+                config.AddProfile(new AssemblyMappingProfile(typeof(MapperDbContext).Assembly));       // Persistence (если там есть mapping)
+                config.AddProfile(new GeoMapProfile());
+
             });
 
             services.AddApplication();
             services.AddPersistence(Configuration);
             services.AddControllers();
-
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -61,7 +63,7 @@ namespace Mapper.WebApi
             });
 
             // JWT Authentication against IdentityServer
-            var authority = Configuration["Jwt:Authority"] ?? "http://identityserver:8080"; // internal compose URL
+            var authority = Configuration["Jwt:Authority"] ?? "http://identityserver:5002";
             var audience = Configuration["Jwt:Audience"] ?? "api"; // scope-based
 
             services.AddAuthentication(config =>
@@ -73,9 +75,25 @@ namespace Mapper.WebApi
             {
                 options.Authority = authority;
                 options.Audience = audience;
-                options.RequireHttpsMetadata = false; // allow HTTP in dev/compose
+                options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters.ValidateIssuer = true;
-                options.TokenValidationParameters.ValidateAudience = false; // use scope checks
+                options.TokenValidationParameters.ValidateAudience = false;
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/map"))
+                        {
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             services.AddAuthorization();
@@ -141,11 +159,18 @@ namespace Mapper.WebApi
             services.AddSingleton<IMapImageStorage, S3MapImageStorage>();
             services.AddSingleton<IMapRealtimeNotifier, MapRealtimeNotifier>();
             services.AddSingleton<ICameraAdapter, SimpleCameraAdapter>();
+
+            var hangfireConnection = Configuration.GetConnectionString("DefaultConnection")
+                ?? Configuration["ConnectionStrings__DefaultConnection"];
+
             services.AddHangfire(c =>
-                c.UsePostgreSqlStorage(Configuration.GetConnectionString("DefaultConnection")));
-                    services.AddHangfireServer();
-                    services.AddTransient<PollCameraStatusesJob>();
-                    services.AddHttpContextAccessor();
+            {
+                c.UsePostgreSqlStorage(hangfireConnection,
+                    new PostgreSqlStorageOptions { PrepareSchemaIfNecessary = true });
+            });
+            services.AddHangfireServer();
+            services.AddTransient<PollCameraStatusesJob>();
+            services.AddHttpContextAccessor();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
@@ -175,7 +200,17 @@ namespace Mapper.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseHangfireDashboard("/hangfire");
-            RecurringJob.AddOrUpdate<PollCameraStatusesJob>("poll-cameras", j => j.Execute(default), "*/30 * * * * *"); // каждые 30 сек
+            try
+            {
+                RecurringJob.AddOrUpdate<PollCameraStatusesJob>(
+                    "poll-cameras",
+                    j => j.Execute(default),
+                    "*/1 * * * *");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to schedule recurring job 'poll-cameras'. Check database connection settings.");
+            }
 
             app.UseEndpoints(endpoints =>
             {

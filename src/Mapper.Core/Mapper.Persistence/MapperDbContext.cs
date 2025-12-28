@@ -5,11 +5,11 @@ using Mapper.Persistence.EntityTypeConfigurations;
 
 namespace Mapper.Persistence
 {
-    public class MapperDbContext : DbContext
+    public class MapperDbContext : DbContext, IMapperDbContext
     {
-        public DbSet<GeoMap> GeoMaps => Set<GeoMap>();
-        public DbSet<GeoMark> GeoMarks => Set<GeoMark>();
-        public DbSet<Employee> Employees => Set<Employee>();
+        public DbSet<GeoMap> GeoMaps { get; set; }
+        public DbSet<GeoMark> GeoMarks { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         public MapperDbContext(DbContextOptions<MapperDbContext> options) : base(options) { }
 

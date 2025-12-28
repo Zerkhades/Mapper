@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text.Json;
 using FluentValidation;
+using Amazon.S3;
 
 namespace Mapper.WebApi.Middleware
 {
@@ -36,6 +37,10 @@ namespace Mapper.WebApi.Middleware
                     break;
                 case NotFoundException:
                     code = HttpStatusCode.NotFound;
+                    break;
+                case AmazonS3Exception s3Ex:
+                    code = HttpStatusCode.BadRequest;
+                    result = JsonSerializer.Serialize(new { error = s3Ex.Message, service = "S3" });
                     break;
             }
             context.Response.ContentType = "application/json";

@@ -14,12 +14,11 @@ namespace Mapper.Persistence
                 ?? configuration["ConnectionStrings__DefaultConnection"]
                 ?? configuration["DbConnection"];
 
-            services.AddDbContext<MapperDbContext>(options =>
+            services.AddDbContext<MapperDbContext>(opt =>
             {
-                options.UseNpgsql(connectionString, npgsql =>
-                {
-                    npgsql.EnableRetryOnFailure(5);
-                });
+                opt.UseNpgsql(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    x => x.MigrationsAssembly(typeof(MapperDbContext).Assembly.FullName));
             });
             services.AddScoped<IMapperDbContext>(provider =>
                 (IMapperDbContext)provider.GetRequiredService<MapperDbContext>());

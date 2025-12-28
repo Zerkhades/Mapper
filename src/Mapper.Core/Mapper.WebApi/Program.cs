@@ -1,10 +1,11 @@
+using Mapper.Persistence;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using System;
-using Mapper.Persistence;
 
 namespace Mapper.WebApi
 {
@@ -21,25 +22,40 @@ namespace Mapper.WebApi
 
             using (var scope = host.Services.CreateScope())
             {
-                var serviceProvider = scope.ServiceProvider;
+                var sp = scope.ServiceProvider;
                 try
                 {
-                    // Initialize DB only when explicitly enabled via configuration
-                    var configuration = serviceProvider.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
-                    var initOnStart = configuration.GetValue<bool>("Database:InitializeOnStart");
-                    if (initOnStart)
+                    var configuration = sp.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
+                    var db = sp.GetRequiredService<MapperDbContext>();
+
+                    var attempts = configuration.GetValue<int?>("Database:MigrateAttempts") ?? 10;
+                    for (var i = 1; i <= attempts; i++)
                     {
-                        var context = serviceProvider.GetRequiredService<MapperDbContext>();
-                        DbInitializer.Initialize(context);
+                        try
+                        {
+                            db.Database.Migrate();
+                            break;
+                        }
+                        catch when (i < attempts)
+                        {
+                            Thread.Sleep(TimeSpan.FromSeconds(2));
+                        }
                     }
-                    Log.Information("Application initialization completed");
+
+                    var seedOnStart = configuration.GetValue<bool>("Database:SeedOnStart");
+                    if (seedOnStart)
+                    {
+                        DbInitializer.Initialize(db);
+                    }
+
+                    Log.Information("Database migration/seed completed");
                 }
-                catch (Exception exception)
+                catch (Exception ex)
                 {
-                    Log.Fatal(exception, "An error occurred while app initialization");
+                    Log.Fatal(ex, "Database migration/seed failed");
+                    throw; // лучше падать, чем работать без схемы
                 }
             }
-
             var lifetime = host.Services.GetRequiredService<Microsoft.Extensions.Hosting.IHostApplicationLifetime>();
             lifetime.ApplicationStarted.Register(() => Log.Information("Host started"));
             lifetime.ApplicationStopping.Register(() => Log.Warning("Host stopping"));
