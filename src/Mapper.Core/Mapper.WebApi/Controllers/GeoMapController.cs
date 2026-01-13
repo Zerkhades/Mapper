@@ -1,20 +1,14 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
-using Mapper.Application;
-//using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
-//using Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand;
-//using Mapper.Application.CommandsAndQueries.GeoMap.Commands.UpdateGeoMapCommand;
-//using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapDetails;
-//using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList;
-using Mapper.Application.Features;
-using Mapper.Application.Features.GeoMaps;
+using Mapper.Application.Features.DTOs;
+using Mapper.Application.Features.GeoMaps.Commands.CreateGeoMap;
+using Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById;
 using Mapper.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-
 
 namespace Mapper.WebApi.Controllers
 {
@@ -34,7 +28,7 @@ namespace Mapper.WebApi.Controllers
         {
             await using var stream = file.OpenReadStream();
 
-            var id = await Mediator.Send(new Application.Features.GeoMaps.CreateGeoMapCommand(
+            var id = await Mediator.Send(new CreateGeoMapCommand(
                 dto.Name,
                 dto.Description,
                 stream,

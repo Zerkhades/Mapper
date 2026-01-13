@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using System.ComponentModel.DataAnnotations;
-using Mapper.Application.CommandsAndQueries.GeoMap.Commands.CreateGeoMapCommand;
 using Mapper.Application.Common.Mappings;
 
 namespace Mapper.WebApi.Models

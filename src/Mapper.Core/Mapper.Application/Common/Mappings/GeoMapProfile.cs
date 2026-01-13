@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
-using Mapper.Application.Features;
+using Mapper.Application.Features.DTOs;
 using Mapper.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mapper.Application.Common.Mappings
 {

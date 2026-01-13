@@ -1,9 +1,0 @@
-﻿using MediatR;
-
-namespace Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand
-{
-    public class ArchiveGeoMapCommand : IRequest
-    {
-        public Guid Id { get; set; }
-    }
-}

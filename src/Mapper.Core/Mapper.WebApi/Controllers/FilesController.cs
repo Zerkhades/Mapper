@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -8,6 +9,8 @@ using Serilog;
 namespace Mapper.WebApi.Controllers;
 
 [ApiController]
+[AllowAnonymous]
+[ApiVersionNeutral]
 [Route("api/files")]
 public class FilesController : ControllerBase
 {
