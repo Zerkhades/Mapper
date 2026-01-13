@@ -10,6 +10,11 @@ namespace Mapper.Infrastructure.Cameras
 {
     public class SimpleCameraAdapter : ICameraAdapter
     {
+        public Task<CameraStatus> GetStatusAsync(string? streamUrl, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<bool> IsOnlineAsync(string? streamUrl, CancellationToken ct)
         {
             // MVP: если HTTP/HTTPS — можно сделать HEAD/GET
@@ -28,6 +33,11 @@ namespace Mapper.Infrastructure.Cameras
                 return completed == connectTask && client.Connected;
             }
             catch { return false; }
+        }
+
+        public Task<CameraSnapshot?> TryGetSnapshotAsync(string? streamUrl, CancellationToken ct)
+        {
+            throw new NotImplementedException();
         }
     }
 }

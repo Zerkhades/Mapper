@@ -6,18 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Mapper.WebApi.Controllers
 {
-    
-    [ApiController]
-    [Route("api/[controller]/[action]")]
+
     public abstract class BaseController : ControllerBase
     {
-        private IMediator _mediator;
-        protected IMediator Mediator =>
-            _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+        private IMediator? _mediator;
+        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
 
-        internal Guid UserId => !User.Identity.IsAuthenticated
+        protected Guid UserId => !User.Identity?.IsAuthenticated ?? true
             ? Guid.Empty
-            : Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            : Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
     }
-    
+
 }

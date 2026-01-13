@@ -1,50 +1,57 @@
 using FluentValidation;
+using Mapper.Application.Common.Exceptions;
 using Mapper.Application.Interfaces;
 using Mapper.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Mapper.Application.Common.Exceptions;
 
-namespace Mapper.Application.Features.GeoMarks.Commands.AddTransitionMark
+namespace Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands
 {
-    public record AddTransitionMarkCommand(
+    public record AddWorkplaceMarkCommand(
         Guid GeoMapId,
         double X,
         double Y,
         string Title,
         string? Description,
-        Guid TargetGeoMapId
+        string WorkplaceCode,
+        IReadOnlyList<Guid>? EmployeeIds
     ) : IRequest<Guid>;
 
-    public class AddTransitionMarkValidator : AbstractValidator<AddTransitionMarkCommand>
+    public class AddWorkplaceMarkValidator : AbstractValidator<AddWorkplaceMarkCommand>
     {
-        public AddTransitionMarkValidator()
+        public AddWorkplaceMarkValidator()
         {
             RuleFor(x => x.GeoMapId).NotEmpty();
             RuleFor(x => x.Title).NotEmpty().MaximumLength(200);
-            RuleFor(x => x.X).InclusiveBetween(0, 4000);
-            RuleFor(x => x.Y).InclusiveBetween(0, 4000);
-            RuleFor(x => x.TargetGeoMapId).NotEmpty();
+            RuleFor(x => x.X).InclusiveBetween(0, 1);
+            RuleFor(x => x.Y).InclusiveBetween(0, 1);
+            RuleFor(x => x.WorkplaceCode).NotEmpty().MaximumLength(64);
         }
     }
 
-    public class AddTransitionMarkHandler : IRequestHandler<AddTransitionMarkCommand, Guid>
+    public class AddWorkplaceMarkHandler : IRequestHandler<AddWorkplaceMarkCommand, Guid>
     {
         private readonly IMapperDbContext _db;
         private readonly ICacheService _cache;
         private readonly IMapRealtimeNotifier _notifier;
 
-        public AddTransitionMarkHandler(IMapperDbContext db, ICacheService cache, IMapRealtimeNotifier notifier)
+        public AddWorkplaceMarkHandler(IMapperDbContext db, ICacheService cache, IMapRealtimeNotifier notifier)
         {
             _db = db; _cache = cache; _notifier = notifier;
         }
 
-        public async Task<Guid> Handle(AddTransitionMarkCommand r, CancellationToken ct)
+        public async Task<Guid> Handle(AddWorkplaceMarkCommand r, CancellationToken ct)
         {
             var exists = await _db.GeoMaps.AnyAsync(x => x.Id == r.GeoMapId, ct);
             if (!exists) throw new NotFoundException($"GeoMap {r.GeoMapId} not found", r.GeoMapId);
 
-            var mark = new TransitionMark(r.GeoMapId, r.X, r.Y, r.Title, r.TargetGeoMapId, r.Description);
+            var mark = new WorkplaceMark(r.GeoMapId, r.X, r.Y, r.Title, r.WorkplaceCode, r.Description);
+
+            if (r.EmployeeIds is { Count: > 0 })
+            {
+                foreach (var empId in r.EmployeeIds.Distinct())
+                    mark.Employees.Add(new WorkplaceEmployee(mark.Id, empId));
+            }
 
             _db.GeoMarks.Add(mark);
             await _db.SaveChangesAsync(ct);
@@ -59,7 +66,8 @@ namespace Mapper.Application.Features.GeoMarks.Commands.AddTransitionMark
                 y = mark.Y,
                 title = mark.Title,
                 description = mark.Description,
-                targetGeoMapId = mark.TargetGeoMapId
+                workplaceCode = mark.WorkplaceCode,
+                employeeIds = mark.Employees.Select(e => e.EmployeeId).ToList()
             }, ct);
 
             return mark.Id;

@@ -100,7 +100,11 @@ namespace Mapper.WebApi
 
             services.AddApiVersioning()
                 .AddMvc()
-                .AddApiExplorer(opt => opt.GroupNameFormat = "'v'VVV");
+                .AddApiExplorer(opt => 
+                {
+                    opt.GroupNameFormat = "'v'VVV";
+                    opt.SubstituteApiVersionInUrl = true;
+                });
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
@@ -157,8 +161,12 @@ namespace Mapper.WebApi
                 return new AmazonS3Client(cfg["S3:AccessKey"], cfg["S3:SecretKey"], s3cfg);
             });
             services.AddSingleton<IMapImageStorage, S3MapImageStorage>();
+            services.AddSingleton<IS3ObjectStorage, S3ObjectStorage>();
             services.AddSingleton<IMapRealtimeNotifier, MapRealtimeNotifier>();
-            services.AddSingleton<ICameraAdapter, SimpleCameraAdapter>();
+
+            // ВРЕМЕННО: фейковая реализация адаптера камеры
+            services.AddSingleton<ICameraAdapter, FakeCameraAdapter>();
+            //services.AddSingleton<ICameraAdapter, SimpleCameraAdapter>();
 
             var hangfireConnection = Configuration.GetConnectionString("DefaultConnection")
                 ?? Configuration["ConnectionStrings__DefaultConnection"];

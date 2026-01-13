@@ -12,7 +12,7 @@ namespace Mapper.WebApi.Controllers;
 [AllowAnonymous]
 [ApiVersionNeutral]
 [Route("api/files")]
-public class FilesController : ControllerBase
+public class FilesController : BaseController
 {
     private readonly IAmazonS3 _s3;
     private readonly IConfiguration _cfg;
@@ -32,8 +32,11 @@ public class FilesController : ControllerBase
             return BadRequest("Empty key");
 
         // MVP-ограничение
-        if (!key.StartsWith("maps/", StringComparison.OrdinalIgnoreCase))
+        if (!(key.StartsWith("maps/", StringComparison.OrdinalIgnoreCase)
+           || key.StartsWith("cameras/", StringComparison.OrdinalIgnoreCase)))
+        {
             return Forbid();
+        }
 
         var bucket = _cfg["S3:Bucket"] ?? "mapper";
 

@@ -5,21 +5,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Infrastructure.BackgroundJobs;
 
-public class PollCameraStatusesJob
+public class FetchCameraSnapshotsJob
 {
     private readonly MapperDbContext _db;
     private readonly ICameraAdapter _adapter;
+    private readonly IS3ObjectStorage _storage;
     private readonly ICacheService _cache;
     private readonly IMapRealtimeNotifier _notifier;
 
-    public PollCameraStatusesJob(
+    public FetchCameraSnapshotsJob(
         MapperDbContext db,
         ICameraAdapter adapter,
+        IS3ObjectStorage storage,
         ICacheService cache,
         IMapRealtimeNotifier notifier)
     {
         _db = db;
         _adapter = adapter;
+        _storage = storage;
         _cache = cache;
         _notifier = notifier;
     }
@@ -34,19 +37,22 @@ public class PollCameraStatusesJob
 
         foreach (var cam in cameras)
         {
-            var status = await _adapter.GetStatusAsync(cam.StreamUrl, ct);
-            var newValue = status.IsOnline ? "online" : "offline";
+            var snap = await _adapter.TryGetSnapshotAsync(cam.StreamUrl, ct);
+            if (snap is null) continue;
 
-            var key = $"camera:{cam.Id}:status";
-            var oldValue = await _cache.GetAsync<string>(key, ct);
+            var key = $"cameras/{cam.Id}/latest.png";
 
-            // Не спамим одинаковым статусом
-            if (string.Equals(oldValue, newValue, StringComparison.OrdinalIgnoreCase))
-                continue;
+            await using var ms = new MemoryStream(snap.Bytes);
+            await _storage.PutAsync(key, ms, snap.ContentType, ct);
 
-            await _cache.SetAsync(key, newValue, TimeSpan.FromHours(12), ct);
+            await _cache.SetAsync($"camera:{cam.Id}:snapshotKey", key, TimeSpan.FromHours(12), ct);
 
-            await _notifier.CameraStatusChanged(cam.GeoMapId, cam.Id, newValue, ct);
+            // Новый realtime event (добавь в notifier, см. ниже)
+            await _notifier.MarkUpdated(cam.GeoMapId, new
+            {
+                id = cam.Id,
+                snapshotUrl = $"/api/files/{key}"
+            }, ct);
         }
     }
 }

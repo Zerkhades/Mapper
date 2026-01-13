@@ -12,7 +12,7 @@ namespace Mapper.Domain
 
         public GeoMarkType Type { get; private set; }
 
-        // Координаты в системе карты (рекомендую хранить НОРМАЛИЗОВАННЫЕ 0..1)
+        // (НОРМАЛИЗОВАННЫЕ 0..1)
         public double X { get; private set; }
         public double Y { get; private set; }
 

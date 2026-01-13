@@ -5,7 +5,7 @@ using Mapper.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mapper.Application.Features.GeoMarks.Commands.AddGeoMark
+namespace Mapper.Application.Features.GeoMarks.Commands.GeoMarkCommands
 {
     public record AddGeoMarkCommand(
         Guid GeoMapId,

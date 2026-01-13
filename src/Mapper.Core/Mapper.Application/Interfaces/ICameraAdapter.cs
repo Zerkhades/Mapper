@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace Mapper.Application.Interfaces
 {
+    public record CameraStatus(bool IsOnline, int? RttMs = null, string? Message = null);
+
+    public record CameraSnapshot(byte[] Bytes, string ContentType, string FileName);
+
     public interface ICameraAdapter
     {
-        Task<bool> IsOnlineAsync(string? streamUrl, CancellationToken ct);
+        Task<CameraStatus> GetStatusAsync(string? streamUrl, CancellationToken ct);
+        Task<CameraSnapshot?> TryGetSnapshotAsync(string? streamUrl, CancellationToken ct);
     }
 }

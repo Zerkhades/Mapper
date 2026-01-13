@@ -5,53 +5,49 @@ using Mapper.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mapper.Application.Features.GeoMarks.Commands.AddWorkplaceMark
+namespace Mapper.Application.Features.GeoMarks.Commands.CameraMarkCommands
 {
-    public record AddWorkplaceMarkCommand(
+    public record AddCameraMarkCommand(
         Guid GeoMapId,
         double X,
         double Y,
         string Title,
         string? Description,
-        string WorkplaceCode,
-        IReadOnlyList<Guid>? EmployeeIds
+        string? CameraName,
+        string? StreamUrl
     ) : IRequest<Guid>;
 
-    public class AddWorkplaceMarkValidator : AbstractValidator<AddWorkplaceMarkCommand>
+    public class AddCameraMarkValidator : AbstractValidator<AddCameraMarkCommand>
     {
-        public AddWorkplaceMarkValidator()
+        public AddCameraMarkValidator()
         {
             RuleFor(x => x.GeoMapId).NotEmpty();
             RuleFor(x => x.Title).NotEmpty().MaximumLength(200);
             RuleFor(x => x.X).InclusiveBetween(0, 1);
             RuleFor(x => x.Y).InclusiveBetween(0, 1);
-            RuleFor(x => x.WorkplaceCode).NotEmpty().MaximumLength(64);
+            RuleFor(x => x.StreamUrl)
+                .Must(url => string.IsNullOrWhiteSpace(url) || Uri.TryCreate(url, UriKind.Absolute, out _))
+                .WithMessage("StreamUrl must be a valid absolute URI");
         }
     }
 
-    public class AddWorkplaceMarkHandler : IRequestHandler<AddWorkplaceMarkCommand, Guid>
+    public class AddCameraMarkHandler : IRequestHandler<AddCameraMarkCommand, Guid>
     {
         private readonly IMapperDbContext _db;
         private readonly ICacheService _cache;
         private readonly IMapRealtimeNotifier _notifier;
 
-        public AddWorkplaceMarkHandler(IMapperDbContext db, ICacheService cache, IMapRealtimeNotifier notifier)
+        public AddCameraMarkHandler(IMapperDbContext db, ICacheService cache, IMapRealtimeNotifier notifier)
         {
             _db = db; _cache = cache; _notifier = notifier;
         }
 
-        public async Task<Guid> Handle(AddWorkplaceMarkCommand r, CancellationToken ct)
+        public async Task<Guid> Handle(AddCameraMarkCommand r, CancellationToken ct)
         {
             var exists = await _db.GeoMaps.AnyAsync(x => x.Id == r.GeoMapId, ct);
             if (!exists) throw new NotFoundException($"GeoMap {r.GeoMapId} not found", r.GeoMapId);
 
-            var mark = new WorkplaceMark(r.GeoMapId, r.X, r.Y, r.Title, r.WorkplaceCode, r.Description);
-
-            if (r.EmployeeIds is { Count: > 0 })
-            {
-                foreach (var empId in r.EmployeeIds.Distinct())
-                    mark.Employees.Add(new WorkplaceEmployee(mark.Id, empId));
-            }
+            var mark = new CameraMark(r.GeoMapId, r.X, r.Y, r.Title, r.CameraName, r.StreamUrl, r.Description);
 
             _db.GeoMarks.Add(mark);
             await _db.SaveChangesAsync(ct);
@@ -66,8 +62,8 @@ namespace Mapper.Application.Features.GeoMarks.Commands.AddWorkplaceMark
                 y = mark.Y,
                 title = mark.Title,
                 description = mark.Description,
-                workplaceCode = mark.WorkplaceCode,
-                employeeIds = mark.Employees.Select(e => e.EmployeeId).ToList()
+                cameraName = mark.CameraName,
+                streamUrl = mark.StreamUrl
             }, ct);
 
             return mark.Id;
