@@ -16,15 +16,19 @@ using Mapper.WebApi.Middleware;
 using Mapper.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
 using StackExchange.Redis;
@@ -44,7 +48,7 @@ namespace Mapper.WebApi
             services.AddAutoMapper(config =>
             {
                 config.AddProfile(new AssemblyMappingProfile(typeof(AssemblyMappingProfile).Assembly)); // Application
-                config.AddProfile(new AssemblyMappingProfile(typeof(MapperDbContext).Assembly));       // Persistence (если там есть mapping)
+                config.AddProfile(new AssemblyMappingProfile(typeof(MapperDbContext).Assembly));       // Persistence
                 config.AddProfile(new GeoMapProfile());
 
             });
@@ -98,6 +102,8 @@ namespace Mapper.WebApi
 
             services.AddAuthorization();
 
+            services.AddHealthChecks();
+
             services.AddApiVersioning()
                 .AddMvc()
                 .AddApiExplorer(opt => 
@@ -148,6 +154,13 @@ namespace Mapper.WebApi
                          .AddHttpClientInstrumentation()
                          .AddEntityFrameworkCoreInstrumentation()
                          .AddOtlpExporter(o => o.Endpoint = new Uri(Configuration["Otel:Endpoint"]!));
+                     })
+                    .WithMetrics(m =>
+                    {
+                        m.AddAspNetCoreInstrumentation()
+                         .AddHttpClientInstrumentation()
+                         .AddRuntimeInstrumentation()
+                         .AddPrometheusExporter();
                     });
             services.AddSignalR();
             services.AddSingleton<IConnectionMultiplexer>(
@@ -224,6 +237,27 @@ namespace Mapper.WebApi
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<MapHub>("/hubs/map");
+                endpoints.MapPrometheusScrapingEndpoint("/metrics");
+                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions
+                {
+                    Predicate = _ => false,
+                    ResultStatusCodes =
+                    {
+                        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+                    }
+                });
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResultStatusCodes =
+                    {
+                        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
+                    }
+                });
             });
         }
     }

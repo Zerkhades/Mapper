@@ -13,8 +13,6 @@ public class FakeCameraAdapter : ICameraAdapter
 
     public Task<CameraStatus> GetStatusAsync(string? streamUrl, CancellationToken ct)
     {
-        // Делаем "живую" динамику: каждые 30 секунд меняем статус.
-        // Так ты увидишь обновления через SignalR.
         var seconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var online = (seconds / 30) % 2 == 0;
 

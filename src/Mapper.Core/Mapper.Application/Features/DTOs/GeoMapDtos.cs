@@ -2,6 +2,13 @@ using Mapper.Domain;
 
 namespace Mapper.Application.Features.DTOs
 {
+    public record GeoMapListItemDto(
+        Guid Id = default,
+        string Name = default!,
+        string ImageUrl = default!,
+        int ImageWidth = default,
+        int ImageHeight = default);
+
     public record GeoMapDetailsDto(
         Guid Id = default,
         string Name = default!,

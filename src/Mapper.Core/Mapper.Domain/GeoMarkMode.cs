@@ -1,20 +1,19 @@
-﻿namespace Mapper.Domain
+﻿namespace Mapper.Domain;
+
+public enum GeoMarkMode
 {
-    public enum GeoMarkMode
-    {
-        /// <summary>
-        /// Создается геометка
-        /// </summary>
-        GeopointMode,
+    /// <summary>
+    /// Создается геометка
+    /// </summary>
+    GeopointMode,
 
-        /// <summary>
-        /// Создаётся конструкция с иконкой
-        /// </summary>
-        ConstructionMode,
+    /// <summary>
+    /// Создаётся конструкция с иконкой
+    /// </summary>
+    ConstructionMode,
 
-        /// <summary>
-        /// Отсутвует возможность устанавливать геометки
-        /// </summary>
-        AnimeNaAve
-    }
+    /// <summary>
+    /// Отсутвует возможность устанавливать геометки
+    /// </summary>
+    AnimeNaAve
 }

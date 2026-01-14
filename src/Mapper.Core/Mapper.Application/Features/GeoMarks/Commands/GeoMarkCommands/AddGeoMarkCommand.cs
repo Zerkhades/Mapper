@@ -42,7 +42,7 @@ namespace Mapper.Application.Features.GeoMarks.Commands.GeoMarkCommands
                 GeoMarkType.Transition => new TransitionMark(r.GeoMapId, r.X, r.Y, r.Title,
                     r.TargetGeoMapId ?? throw new ValidationException("TargetGeoMapId is required")),
 
-                GeoMarkType.Workplace => CreateWorkplace(r),
+                GeoMarkType.Workplace => await CreateWorkplaceAsync(r, ct),
 
                 GeoMarkType.Camera => new CameraMark(r.GeoMapId, r.X, r.Y, r.Title, r.CameraName, r.StreamUrl, r.Description),
 
@@ -63,7 +63,7 @@ namespace Mapper.Application.Features.GeoMarks.Commands.GeoMarkCommands
             return mark.Id;
         }
 
-        private static WorkplaceMark CreateWorkplace(AddGeoMarkCommand r)
+        private async Task<WorkplaceMark> CreateWorkplaceAsync(AddGeoMarkCommand r, CancellationToken ct)
         {
             var wm = new WorkplaceMark(
                 r.GeoMapId, r.X, r.Y, r.Title,
@@ -71,8 +71,14 @@ namespace Mapper.Application.Features.GeoMarks.Commands.GeoMarkCommands
                 r.Description);
 
             if (r.EmployeeIds is { Count: > 0 })
-                foreach (var id in r.EmployeeIds.Distinct())
-                    wm.Employees.Add(new WorkplaceEmployee(wm.Id, id));
+            {
+                var employees = await _db.Employees
+                    .Where(e => r.EmployeeIds.Distinct().Contains(e.Id))
+                    .ToListAsync(ct);
+
+                foreach (var e in employees)
+                    wm.Employees.Add(e);
+            }
 
             return wm;
         }

@@ -15,8 +15,8 @@ namespace Mapper.Application.Features.GeoMarks.Commands.CameraMarkCommands
     public record UpdateCameraMarkCommand(
         Guid GeoMapId,
         Guid MarkId,
-        float X,
-        float Y,
+        double X,
+        double Y,
         string Title,
         string? Description,
         string? CameraName,

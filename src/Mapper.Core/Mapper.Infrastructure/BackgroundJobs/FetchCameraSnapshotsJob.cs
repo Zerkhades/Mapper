@@ -47,7 +47,6 @@ public class FetchCameraSnapshotsJob
 
             await _cache.SetAsync($"camera:{cam.Id}:snapshotKey", key, TimeSpan.FromHours(12), ct);
 
-            // Новый realtime event (добавь в notifier, см. ниже)
             await _notifier.MarkUpdated(cam.GeoMapId, new
             {
                 id = cam.Id,

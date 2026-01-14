@@ -9,7 +9,7 @@ namespace Mapper.WebApi.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/geomaps/{geoMapId:guid}/marks/camera/{markId:guid}")]
-public class CameraTelemetryController : ControllerBase
+public class CameraTelemetryController : BaseController
 {
     private readonly ICacheService _cache;
 

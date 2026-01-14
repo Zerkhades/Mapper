@@ -15,8 +15,8 @@ namespace Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands
     public record UpdateWorkplaceMarkCommand(
         Guid GeoMapId,
         Guid MarkId,
-        float X,
-        float Y,
+        double X,
+        double Y,
         string Title,
         string? Description,
         string WorkplaceCode,
@@ -30,8 +30,8 @@ namespace Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands
             RuleFor(x => x.GeoMapId).NotEmpty();
             RuleFor(x => x.MarkId).NotEmpty();
             RuleFor(x => x.Title).NotEmpty().MaximumLength(200);
-            RuleFor(x => x.X).InclusiveBetween(0f, 1f);
-            RuleFor(x => x.Y).InclusiveBetween(0f, 1f);
+            RuleFor(x => x.X).InclusiveBetween(0, 1);
+            RuleFor(x => x.Y).InclusiveBetween(0, 1);
             RuleFor(x => x.WorkplaceCode).NotEmpty().MaximumLength(64);
         }
     }
@@ -65,14 +65,21 @@ namespace Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands
             var newIds = (r.EmployeeIds ?? Array.Empty<Guid>()).Distinct().ToHashSet();
 
             // remove
-            var toRemove = mark.Employees.Where(e => !newIds.Contains(e.EmployeeId)).ToList();
+            var toRemove = mark.Employees.Where(e => !newIds.Contains(e.Id)).ToList();
             foreach (var e in toRemove) mark.Employees.Remove(e);
 
             // add
-            var existing = mark.Employees.Select(e => e.EmployeeId).ToHashSet();
-            foreach (var id in newIds)
-                if (!existing.Contains(id))
-                    mark.Employees.Add(new WorkplaceEmployee(mark.Id, id));
+            var existing = mark.Employees.Select(e => e.Id).ToHashSet();
+            var missingIds = newIds.Except(existing).ToList();
+            if (missingIds.Count > 0)
+            {
+                var employeesToAdd = await _db.Employees
+                    .Where(e => missingIds.Contains(e.Id))
+                    .ToListAsync(ct);
+
+                foreach (var e in employeesToAdd)
+                    mark.Employees.Add(e);
+            }
 
             await _db.SaveChangesAsync(ct);
 
@@ -87,7 +94,7 @@ namespace Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands
                 title = mark.Title,
                 description = mark.Description,
                 workplaceCode = mark.WorkplaceCode,
-                employeeIds = mark.Employees.Select(e => e.EmployeeId).ToList()
+                employeeIds = mark.Employees.Select(e => e.Id).ToList()
             }, ct);
         }
     }

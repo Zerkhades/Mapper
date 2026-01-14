@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
-using Microsoft.Extensions.Configuration.EnvironmentVariables; // Добавьте этот using
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +19,7 @@ namespace Mapper.Persistence
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables() // Теперь метод доступен
+                .AddEnvironmentVariables()
                 .Build();
 
             var cs = configuration.GetConnectionString("DefaultConnection")

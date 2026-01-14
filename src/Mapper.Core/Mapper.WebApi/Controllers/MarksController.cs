@@ -2,6 +2,7 @@
 using Mapper.Application.Features.DTOs;
 using Mapper.Application.Features.GeoMarks.Commands;
 using Mapper.Application.Features.GeoMarks.Commands.CameraMarkCommands;
+using Mapper.Application.Features.GeoMarks.Commands.DeleteGeoMark;
 using Mapper.Application.Features.GeoMarks.Commands.TransitionMarkCommands;
 using Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands;
 using Mapper.Application.Features.GeoMarks.Queries;
@@ -44,16 +45,70 @@ public class MarksController : BaseController
             geoMapId, req.X, req.Y, req.Title, req.Description, req.TargetGeoMapId
         ), ct));
 
+    [HttpPut("transition/{geoMarkId:guid}")]
+    public async Task<IActionResult> UpdateTransitionMark(Guid geoMapId, Guid geoMarkId, [FromBody] CreateTransitionMarkRequest req, CancellationToken ct)
+    {
+        await _mediator.Send(new UpdateTransitionMarkCommand(
+            geoMapId,
+            geoMarkId,
+            req.X,
+            req.Y,
+            req.Title,
+            req.Description,
+            req.TargetGeoMapId
+        ), ct);
+        return NoContent();
+    }
+
     [HttpPost("workplace")]
     public async Task<ActionResult<Guid>> AddWorkplaceMark(Guid geoMapId, [FromBody] CreateWorkplaceMarkRequest req, CancellationToken ct)
         => Ok(await _mediator.Send(new AddWorkplaceMarkCommand(
             geoMapId, req.X, req.Y, req.Title, req.Description, req.WorkplaceCode, req.EmployeeIds
         ), ct));
 
+    [HttpPut("workplace/{geoMarkId:guid}")]
+    public async Task<IActionResult> UpdateWorkplaceMark(Guid geoMapId, Guid geoMarkId, [FromBody] CreateWorkplaceMarkRequest req, CancellationToken ct)
+    {
+        await _mediator.Send(new UpdateWorkplaceMarkCommand(
+            geoMapId,
+            geoMarkId,
+            req.X,
+            req.Y,
+            req.Title,
+            req.Description,
+            req.WorkplaceCode,
+            req.EmployeeIds
+        ), ct);
+        return NoContent();
+    }
+
     [HttpPost("camera")]
     public async Task<ActionResult<Guid>> AddCameraMark(Guid geoMapId, [FromBody] CreateCameraMarkRequest req, CancellationToken ct)
         => Ok(await _mediator.Send(new AddCameraMarkCommand(
             geoMapId, req.X, req.Y, req.Title, req.Description, req.CameraName, req.StreamUrl
         ), ct));
+
+    [HttpPut("camera/{geoMarkId:guid}")]
+    public async Task<IActionResult> UpdateCameraMark(Guid geoMapId, Guid geoMarkId, [FromBody] CreateCameraMarkRequest req, CancellationToken ct)
+    {
+        await _mediator.Send(new UpdateCameraMarkCommand(
+            geoMapId,
+            geoMarkId,
+            req.X,
+            req.Y,
+            req.Title,
+            req.Description,
+            req.CameraName,
+            req.StreamUrl
+        ), ct);
+        return NoContent();
+    }
+
+    [HttpDelete("{geoMarkId:guid}")]
+    public async Task<IActionResult> Delete(Guid geoMapId, Guid geoMarkId, CancellationToken ct)
+    {
+        await _mediator.Send(new DeleteGeoMarkCommand(geoMapId, geoMarkId), ct);
+        return NoContent();
+    }
 }
 

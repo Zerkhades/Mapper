@@ -49,8 +49,12 @@ namespace Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands
 
             if (r.EmployeeIds is { Count: > 0 })
             {
-                foreach (var empId in r.EmployeeIds.Distinct())
-                    mark.Employees.Add(new WorkplaceEmployee(mark.Id, empId));
+                var employees = await _db.Employees
+                    .Where(e => r.EmployeeIds.Distinct().Contains(e.Id))
+                    .ToListAsync(ct);
+
+                foreach (var e in employees)
+                    mark.Employees.Add(e);
             }
 
             _db.GeoMarks.Add(mark);
@@ -67,7 +71,7 @@ namespace Mapper.Application.Features.GeoMarks.Commands.WorkplaceMarkCommands
                 title = mark.Title,
                 description = mark.Description,
                 workplaceCode = mark.WorkplaceCode,
-                employeeIds = mark.Employees.Select(e => e.EmployeeId).ToList()
+                employeeIds = mark.Employees.Select(e => e.Id).ToList()
             }, ct);
 
             return mark.Id;

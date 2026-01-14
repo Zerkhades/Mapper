@@ -21,6 +21,9 @@ namespace Mapper.Persistence
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Name).IsRequired().HasMaxLength(200);
                 b.Property(x => x.ImagePath).IsRequired().HasMaxLength(500);
+                b.Property(x => x.IsDeleted).IsRequired();
+                b.Property(x => x.DeletedAt);
+                b.HasQueryFilter(x => !x.IsDeleted);
                 b.HasMany(x => x.Marks).WithOne().HasForeignKey("GeoMapId").OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -33,6 +36,10 @@ namespace Mapper.Persistence
                 b.Property(x => x.X).IsRequired();
                 b.Property(x => x.Y).IsRequired();
 
+                b.Property(x => x.IsDeleted).IsRequired();
+                b.Property(x => x.DeletedAt);
+                b.HasQueryFilter(x => !x.IsDeleted);
+
                 b.HasDiscriminator(x => x.Type)
                     .HasValue<TransitionMark>(GeoMarkType.Transition)
                     .HasValue<WorkplaceMark>(GeoMarkType.Workplace)
@@ -41,10 +48,13 @@ namespace Mapper.Persistence
                 b.HasIndex("GeoMapId");
             });
 
-            modelBuilder.Entity<WorkplaceEmployee>(b =>
+            modelBuilder.Entity<WorkplaceMark>(b =>
             {
-                b.ToTable("workplace_employees");
-                b.HasKey(x => new { x.WorkplaceMarkId, x.EmployeeId });
+                b.HasMany(x => x.Employees)
+                    .WithOne()
+                    .HasForeignKey(x => x.GeoMarkId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

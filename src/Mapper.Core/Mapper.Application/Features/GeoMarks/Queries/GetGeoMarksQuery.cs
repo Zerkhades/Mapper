@@ -34,11 +34,8 @@ public class GetGeoMarksHandler : IRequestHandler<GetGeoMarksQuery, IReadOnlyLis
             q = q.Where(m => m.Type == request.Type);
 
         // ВАЖНО: EF материализует derived-типы по discriminator, но коллекции WorkplaceEmployee не загружаются автоматически.
-        // Поэтому:
-        // 1) грузим все marks
         var marks = await q.ToListAsync(ct);
 
-        // 2) отдельно подтягиваем employeeIds для workplace marks
         var workplaceIds = marks
             .OfType<WorkplaceMark>()
             .Select(w => w.Id)
@@ -57,7 +54,6 @@ public class GetGeoMarksHandler : IRequestHandler<GetGeoMarksQuery, IReadOnlyLis
                 .ToDictionary(g => g.Key, g => g.Select(x => x.Id).ToList());
         }
 
-        // 3) маппим в DTO и проставляем employeeIds
         var dto = marks.Select(m =>
         {
             var d = _mapper.Map<GeoMarkDto>(m);
