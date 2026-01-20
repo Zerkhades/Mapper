@@ -45,14 +45,6 @@ namespace Mapper.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile(new AssemblyMappingProfile(typeof(AssemblyMappingProfile).Assembly)); // Application
-                config.AddProfile(new AssemblyMappingProfile(typeof(MapperDbContext).Assembly));       // Persistence
-                config.AddProfile(new GeoMapProfile());
-
-            });
-
             services.AddApplication();
             services.AddPersistence(Configuration);
             services.AddControllers();

@@ -1,8 +1,9 @@
-﻿using System.Reflection;
+﻿using FluentValidation;
+using Mapper.Application.Common.Behaviours;
+using Mapper.Application.Common.Mappings;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
-using Mapper.Application.Common.Behaviours;
+using System.Reflection;
 
 namespace Mapper.Application
 {
@@ -12,16 +13,21 @@ namespace Mapper.Application
             this IServiceCollection services)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            services
-                .AddValidatorsFromAssemblies(new[] { Assembly.GetExecutingAssembly() });
-            services.AddTransient(typeof(IPipelineBehavior<,>),
-                typeof(ValidationBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>),
-                typeof(LoggingBehaviour<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>),
-                typeof(PerformanceBehaviour<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>),
-                typeof(TransactionBehaviour<,>));
+
+            services.AddValidatorsFromAssemblies(new[] { Assembly.GetExecutingAssembly() });
+
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<GeoMapProfile>();
+                cfg.AddProfile<EmployeeProfile>();
+                cfg.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
+            });
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviour<,>));
+
             return services;
         }
     }

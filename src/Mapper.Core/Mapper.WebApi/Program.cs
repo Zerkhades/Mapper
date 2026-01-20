@@ -15,9 +15,15 @@ namespace Mapper.WebApi
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .WriteTo.File("MapperWebAppLog-.txt", rollingInterval:
-                    RollingInterval.Day)
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("Application", "Mapper")
+                .WriteTo.Console()
+                .WriteTo.File(
+                    path: "logs/log-.txt",
+                    rollingInterval: RollingInterval.Day,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
+
             var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())
