@@ -1,4 +1,4 @@
-﻿using Mapper.Application.CommandsAndQueries.GeoMap.Commands.DeleteGeoMapCommand;
+﻿using Mapper.Application.Features.GeoMaps.Commands.DeleteGeoMap;
 using Mapper.Application.Common.Exceptions;
 using Mapper.Tests.Common;
 using Mapper.Tests.Common.ContextFactories;
@@ -16,38 +16,35 @@ namespace Mapper.Tests.GeoMaps.Commands
         public async Task DeleteGeoMapCommandHandler_Success()
         {
             // Arrange
-            var handler = new DeleteGeoMapCommandHandler(Context);
-            var geomapId = GeoMapsContextFactory.GeoMapIdForDelete;
+            var handler = new DeleteGeoMapHandler(Context);
+            var geoMapId = GeoMapsContextFactory.GeoMapIdForDelete;
 
             // Act
             await handler.Handle(
-                new DeleteGeoMapCommand
-                {
-                    Id = geomapId
-                },
+                new DeleteGeoMapCommand(geoMapId),
                 CancellationToken.None);
 
             // Assert
-            Assert.Null(
-                await Context.GeoMaps.SingleOrDefaultAsync(note =>
-                    note.Id == geomapId));
+            var deletedMap = await Context.GeoMaps
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(m => m.Id == geoMapId);
+            
+            Assert.NotNull(deletedMap);
+            Assert.True(deletedMap.IsDeleted);
+            Assert.NotNull(deletedMap.DeletedAt);
         }
 
         [Fact]
         public async Task DeleteGeoMapCommandHandler_FailOnWrongId()
         {
             // Arrange
-            var handler = new DeleteGeoMapCommandHandler(Context);
+            var handler = new DeleteGeoMapHandler(Context);
             var wrongId = Guid.NewGuid();
 
-            // Act
-            // Assert
+            // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(async () =>
                 await handler.Handle(
-                    new DeleteGeoMapCommand
-                    {
-                        Id = wrongId
-                    },
+                    new DeleteGeoMapCommand(wrongId),
                     CancellationToken.None)
             );
         }

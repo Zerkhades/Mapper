@@ -3,7 +3,6 @@ using Mapper.Application.Common.Mappings;
 using Mapper.Application.Interfaces;
 using Mapper.Persistence;
 using Mapper.Tests.Common.ContextFactories;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Mapper.Tests.Common
 {
@@ -21,8 +20,8 @@ namespace Mapper.Tests.Common
 
             var configurationProvider = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new AssemblyMappingProfile(
-                    typeof(IMapperDbContext).Assembly));
+                cfg.AddProfile(new AssemblyMappingProfile(typeof(IMapperDbContext).Assembly));
+                cfg.AddProfile<GeoMapProfile>();
             });
             Mapper = configurationProvider.CreateMapper();
         }

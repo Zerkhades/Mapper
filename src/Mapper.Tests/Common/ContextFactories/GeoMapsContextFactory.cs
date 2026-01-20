@@ -6,10 +6,7 @@ namespace Mapper.Tests.Common.ContextFactories
 {
     public class GeoMapsContextFactory : IContextFactory
     {
-        public static Guid GeoMapIdForCreate = Guid.NewGuid();
-        public static Guid GeoMapIdForUpdate = Guid.NewGuid();
         public static Guid GeoMapIdForDelete = Guid.NewGuid();
-        public static Guid GeoMapIdForArchive = Guid.NewGuid();
 
         MapperDbContext IContextFactory.Create()
         {
@@ -28,41 +25,11 @@ namespace Mapper.Tests.Common.ContextFactories
                 .Options;
             var context = new MapperDbContext(options);
             context.Database.EnsureCreated();
-            context.GeoMaps.AddRange(
-                // Create
-                new GeoMap
-                {
-                    Id = GeoMapIdForCreate,
-                    MapName = "GeoMapForCreate",
-                    MapDescription = "GeoMapForCreate",
-                    IsArchived = false
 
-                },
-                // Update
-                new GeoMap
-                {
-                    Id = GeoMapIdForUpdate,
-                    MapName = "GeoMapForUpdate",
-                    MapDescription = "GeoMapForUpdate",
-                    IsArchived = false
-                },
-                // Delete
-                new GeoMap
-                {
-                    Id = GeoMapIdForDelete,
-                    MapName = "GeoMapForDelete",
-                    MapDescription = "GeoMapForDelete",
-                    IsArchived = false
-                },
-                // Archive
-                new GeoMap
-                {
-                    Id = GeoMapIdForArchive,
-                    MapName = "GeoMapForArchive",
-                    MapDescription = "GeoMapForArchive",
-                    IsArchived = false,
-                }
-            );
+            var mapForDelete = new GeoMap("GeoMapForDelete", "/maps/map1.jpg", 1920, 1080, "Description for delete");
+            typeof(GeoMap).GetProperty("Id")!.SetValue(mapForDelete, GeoMapIdForDelete);
+
+            context.GeoMaps.Add(mapForDelete);
             context.SaveChanges();
             return context;
         }
@@ -72,6 +39,5 @@ namespace Mapper.Tests.Common.ContextFactories
             context.Database.EnsureDeleted();
             context.Dispose();
         }
-
     }
 }

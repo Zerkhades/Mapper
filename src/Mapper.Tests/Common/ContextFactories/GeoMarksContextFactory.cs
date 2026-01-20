@@ -1,20 +1,17 @@
 ﻿using Mapper.Domain;
 using Mapper.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Mapper.Tests.Common.ContextFactories
 {
     public class GeoMarksContextFactory : IContextFactory
     {
-        public static Guid GeoMapIdForCreate = Guid.NewGuid();
-        public static Guid GeoMapIdForUpdate = Guid.NewGuid();
-        public static Guid GeoMapIdForDelete = Guid.NewGuid();
-        public static Guid GeoMapIdForArchive = Guid.NewGuid();
-
-        public static Guid GeoMarkIdForCreate = Guid.NewGuid();
-        public static Guid GeoMarkIdForUpdate = Guid.NewGuid();
-        public static Guid GeoMarkIdForDelete = Guid.NewGuid();
-        public static Guid GeoMarkIdForArchive = Guid.NewGuid();
+        public static Guid GeoMapId = Guid.NewGuid();
+        public static Guid TargetGeoMapId = Guid.NewGuid();
+        public static Guid TransitionMarkId = Guid.NewGuid();
+        public static Guid WorkplaceMarkId = Guid.NewGuid();
+        public static Guid CameraMarkId = Guid.NewGuid();
 
         MapperDbContext IContextFactory.Create()
         {
@@ -33,82 +30,18 @@ namespace Mapper.Tests.Common.ContextFactories
                 .Options;
             var context = new MapperDbContext(options);
             context.Database.EnsureCreated();
-            context.GeoMaps.AddRange(
-                // Create
-                new GeoMap
-                {
-                    Id = GeoMapIdForCreate,
-                    MapName = "GeoMapForCreate",
-                    MapDescription = "GeoMapForCreate",
-                    IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForCreate,
-                            MarkName = "GeoMarkForCreate",
-                            MarkDescription = "GeoMarkForCreate",
-                            IsArchived = false,
-                            Color = "#FF0000",
-                            Emoji = "\uD83D\uDE00",
-                            IsEmoji = false,
-                            IsEditable = true,
-                            Size = 10,
-                            Employees = [],
-                            GeoPhotos = []
-                        }
-                    ]
 
-                },
-                // Update
-                new GeoMap
-                {
-                    Id = GeoMapIdForUpdate,
-                    MapName = "GeoMapForUpdate",
-                    MapDescription = "GeoMapForUpdate",
-                    IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForUpdate,
-                            MarkName = "GeoMarkForUpdate"
-                        }
-                    ]
-                },
-                // Delete
-                new GeoMap
-                {
-                    Id = GeoMapIdForDelete,
-                    MapName = "GeoMapForDelete",
-                    MapDescription = "GeoMapForDelete",
-                    IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForDelete,
-                            MarkName = "GeoMarkForDelete"
-                        }
-                    ]
-                },
-                // Archive
-                new GeoMap
-                {
-                    Id = GeoMapIdForArchive,
-                    MapName = "GeoMapForArchive",
-                    MapDescription = "GeoMapForArchive",
-                    IsArchived = false,
-                    GeoMarks =
-                    [
-                        new GeoMark()
-                        {
-                            Id = GeoMarkIdForArchive,
-                            MarkName = "GeoMarkForArchive"
-                        }
-                    ]
-                }
-            );
+            var geoMap = CreateGeoMapWithId("Test Map", "/maps/test.jpg", 1920, 1080, "Test map for marks", GeoMapId);
+            var targetMap = CreateGeoMapWithId("Target Map", "/maps/target.jpg", 1920, 1080, "Target map", TargetGeoMapId);
+
+            context.GeoMaps.AddRange(geoMap, targetMap);
+
+            var transitionMark = CreateTransitionMarkWithId(GeoMapId, 0.5, 0.5, "Transition to Target", TargetGeoMapId, "Test transition", TransitionMarkId);
+            var workplaceMark = CreateWorkplaceMarkWithId(GeoMapId, 0.3, 0.4, "Workplace 1", "WP-001", "Test workplace", WorkplaceMarkId);
+            var cameraMark = CreateCameraMarkWithId(GeoMapId, 0.7, 0.8, "Camera 1", "CAM-001", "rtsp://test.com/stream", "Test camera", CameraMarkId);
+
+            context.GeoMarks.AddRange(transitionMark, workplaceMark, cameraMark);
+
             context.SaveChanges();
             return context;
         }
@@ -117,6 +50,34 @@ namespace Mapper.Tests.Common.ContextFactories
         {
             context.Database.EnsureDeleted();
             context.Dispose();
+        }
+
+        private static GeoMap CreateGeoMapWithId(string name, string imagePath, int width, int height, string? description, Guid id)
+        {
+            var map = new GeoMap(name, imagePath, width, height, description);
+            typeof(GeoMap).GetProperty("Id")!.SetValue(map, id);
+            return map;
+        }
+
+        private static TransitionMark CreateTransitionMarkWithId(Guid geoMapId, double x, double y, string title, Guid targetGeoMapId, string? description, Guid id)
+        {
+            var mark = new TransitionMark(geoMapId, x, y, title, targetGeoMapId, description);
+            typeof(GeoMark).GetProperty("Id")!.SetValue(mark, id);
+            return mark;
+        }
+
+        private static WorkplaceMark CreateWorkplaceMarkWithId(Guid geoMapId, double x, double y, string title, string workplaceCode, string? description, Guid id)
+        {
+            var mark = new WorkplaceMark(geoMapId, x, y, title, workplaceCode, description);
+            typeof(GeoMark).GetProperty("Id")!.SetValue(mark, id);
+            return mark;
+        }
+
+        private static CameraMark CreateCameraMarkWithId(Guid geoMapId, double x, double y, string title, string? cameraName, string? streamUrl, string? description, Guid id)
+        {
+            var mark = new CameraMark(geoMapId, x, y, title, cameraName, streamUrl, description);
+            typeof(GeoMark).GetProperty("Id")!.SetValue(mark, id);
+            return mark;
         }
     }
 }

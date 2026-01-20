@@ -1,13 +1,9 @@
 ﻿using AutoMapper;
-using Mapper.Application.CommandsAndQueries.GeoMark.Queries.GetGeoMarkList;
-using Mapper.Persistence;
+using Mapper.Application.Features.GeoMarks.Queries;
+using Mapper.Domain;
 using Mapper.Tests.Common;
+using Mapper.Tests.Common.ContextFactories;
 using Mapper.Tests.Common.QueryTestFixtures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mapper.Tests.GeoMarks.Queries
 {
@@ -24,39 +20,56 @@ namespace Mapper.Tests.GeoMarks.Queries
         }
 
         [Fact]
-        public async Task GetGeoMarksListQueryHandler_Success()
+        public async Task GetGeoMarksQuery_Success()
         {
             // Arrange
             using var context = ContextFactory.Create();
-            var handler = new GetGeoMarkListQueryHandler(context, Mapper);
+            var handler = new GetGeoMarksHandler(context, Mapper);
 
             // Act
             var result = await handler.Handle(
-                new GetGeoMarkListQuery(),
+                new GetGeoMarksQuery(GeoMarksContextFactory.GeoMapId),
                 CancellationToken.None);
 
             // Assert
-            Assert.NotEmpty(result.GeoMarks);
+            Assert.NotEmpty(result);
+            Assert.Equal(3, result.Count);
         }
 
         [Fact]
-        public async Task GetGeoMarksListQueryHandler_EmptyList()
+        public async Task GetGeoMarksQuery_FilterByType_Success()
         {
             // Arrange
             using var context = ContextFactory.Create();
-            var handler = new GetGeoMarkListQueryHandler(context, Mapper);
+            var handler = new GetGeoMarksHandler(context, Mapper);
 
-            // Удаляем все записи из контекста для проверки пустого списка
+            // Act
+            var result = await handler.Handle(
+                new GetGeoMarksQuery(GeoMarksContextFactory.GeoMapId, GeoMarkType.Camera),
+                CancellationToken.None);
+
+            // Assert
+            Assert.Single(result);
+            Assert.All(result, m => Assert.Equal(GeoMarkType.Camera, m.Type));
+        }
+
+        [Fact]
+        public async Task GetGeoMarksQuery_EmptyList_AfterDeletion()
+        {
+            // Arrange
+            using var context = ContextFactory.Create();
+            var handler = new GetGeoMarksHandler(context, Mapper);
+
             context.GeoMarks.RemoveRange(context.GeoMarks);
             await context.SaveChangesAsync();
 
             // Act
             var result = await handler.Handle(
-                new GetGeoMarkListQuery(),
+                new GetGeoMarksQuery(GeoMarksContextFactory.GeoMapId),
                 CancellationToken.None);
 
             // Assert
-            Assert.Empty(result.GeoMarks);
+            Assert.Empty(result);
         }
     }
 }

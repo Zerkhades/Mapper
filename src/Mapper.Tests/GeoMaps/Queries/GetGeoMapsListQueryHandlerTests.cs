@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
-using Mapper.Application.CommandsAndQueries.GeoMap.Queries.GetGeoMapList;
-using Mapper.Persistence;
+using Mapper.Application.Features.GeoMaps.Queries.GetGeoMapList;
 using Mapper.Tests.Common;
 using Mapper.Tests.Common.QueryTestFixtures;
-using Microsoft.EntityFrameworkCore.Internal;
-
 
 namespace Mapper.Tests.GeoMaps.Queries
 {
@@ -25,7 +22,7 @@ namespace Mapper.Tests.GeoMaps.Queries
         {
             // Arrange
             using var context = ContextFactory.Create();
-            var handler = new GetGeoMapListQueryHandler(context, Mapper);
+            var handler = new GetGeoMapListHandler(context, Mapper);
 
             // Act
             var result = await handler.Handle(
@@ -33,7 +30,8 @@ namespace Mapper.Tests.GeoMaps.Queries
                 CancellationToken.None);
 
             // Assert
-            Assert.NotEmpty(result.GeoMaps);
+            Assert.NotEmpty(result);
+            Assert.Single(result);
         }
 
         [Fact]
@@ -41,9 +39,8 @@ namespace Mapper.Tests.GeoMaps.Queries
         {
             // Arrange
             using var context = ContextFactory.Create();
-            var handler = new GetGeoMapListQueryHandler(context, Mapper);
+            var handler = new GetGeoMapListHandler(context, Mapper);
 
-            // Удаляем все записи из контекста для проверки пустого списка
             context.GeoMaps.RemoveRange(context.GeoMaps);
             await context.SaveChangesAsync();
 
@@ -53,7 +50,7 @@ namespace Mapper.Tests.GeoMaps.Queries
                 CancellationToken.None);
 
             // Assert
-            Assert.Empty(result.GeoMaps);
+            Assert.Empty(result);
         }
     }
 }

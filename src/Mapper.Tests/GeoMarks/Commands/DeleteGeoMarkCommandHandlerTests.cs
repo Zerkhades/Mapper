@@ -1,7 +1,8 @@
-﻿using Mapper.Application.CommandsAndQueries.GeoMark.Commands.DeleteGeoMarkCommand;
+﻿using Mapper.Application.Features.GeoMarks.Commands.DeleteGeoMark;
 using Mapper.Application.Common.Exceptions;
 using Mapper.Tests.Common;
 using Mapper.Tests.Common.ContextFactories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Tests.GeoMarks.Commands
 {
@@ -15,59 +16,53 @@ namespace Mapper.Tests.GeoMarks.Commands
         public async Task DeleteGeoMarkCommandHandler_Success()
         {
             // Arrange
-            var handler = new DeleteGeoMarkCommandHandler(Context);
+            var handler = new DeleteGeoMarkHandler(Context);
+            var markId = GeoMarksContextFactory.TransitionMarkId;
+            var mapId = GeoMarksContextFactory.GeoMapId;
 
             // Act
-            await handler.Handle(new DeleteGeoMarkCommand()
-            {
-                Id = GeoMarksContextFactory.GeoMarkIdForDelete,
-                // UserId = GeoMarksContextFactory.UserAId
-            }, CancellationToken.None);
+            await handler.Handle(
+                new DeleteGeoMarkCommand(mapId, markId),
+                CancellationToken.None);
 
             // Assert
-            Assert.Null(Context.GeoMarks.SingleOrDefault(geoMark =>
-                geoMark.Id == GeoMarksContextFactory.GeoMarkIdForDelete));
+            var deletedMark = await Context.GeoMarks
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(m => m.Id == markId);
+            
+            Assert.NotNull(deletedMark);
+            Assert.True(deletedMark.IsDeleted);
+            Assert.NotNull(deletedMark.DeletedAt);
         }
 
         [Fact]
         public async Task DeleteGeoMarkCommandHandler_FailOnWrongId()
         {
             // Arrange
-            var handler = new DeleteGeoMarkCommandHandler(Context);
+            var handler = new DeleteGeoMarkHandler(Context);
+            var wrongMarkId = Guid.NewGuid();
+            var mapId = GeoMarksContextFactory.GeoMapId;
 
-            // Act
-            // Assert
+            // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(async () =>
                 await handler.Handle(
-                    new DeleteGeoMarkCommand()
-                    {
-                        Id = Guid.NewGuid(),
-                    },
+                    new DeleteGeoMarkCommand(mapId, wrongMarkId),
                     CancellationToken.None));
         }
 
-        //[Fact]
-        //public async Task DeleteGeoMarkCommandHandler_FailOnWrongUserId()
-        //{
-        //    // Arrange
-        //    var deleteHandler = new DeleteGeoMarkCommandHandler(Context);
-        //    var createHandler = new CreateGeoMarkCommandHandler(Context);
-        //    var markId = await createHandler.Handle(
-        //        new CreateGeoMarkCommand
-        //        {
-        //            MarkName = "MarkTitle",
-        //            //UserId = GeoMarksContextFactory.UserAId
-        //        }, CancellationToken.None);
+        [Fact]
+        public async Task DeleteGeoMarkCommandHandler_FailOnWrongMapId()
+        {
+            // Arrange
+            var handler = new DeleteGeoMarkHandler(Context);
+            var markId = GeoMarksContextFactory.TransitionMarkId;
+            var wrongMapId = Guid.NewGuid();
 
-        //    // Act
-        //    // Assert
-        //    await Assert.ThrowsAsync<NotFoundException>(async () =>
-        //        await deleteHandler.Handle(
-        //            new DeleteGeoMarkCommand()
-        //            {
-        //                Id = markId,
-        //                UserId = GeoMarksContextFactory.UserBId
-        //            }, CancellationToken.None));
-        //}
+            // Act & Assert
+            await Assert.ThrowsAsync<NotFoundException>(async () =>
+                await handler.Handle(
+                    new DeleteGeoMarkCommand(wrongMapId, markId),
+                    CancellationToken.None));
+        }
     }
 }
