@@ -26,6 +26,12 @@ public class GeoMap
         Description = description;
     }
 
+    public void Update(string name, string? description)
+    {
+        Name = name;
+        Description = description;
+    }
+
     public void SoftDelete(DateTimeOffset? deletedAt = null)
     {
         if (IsDeleted) return;

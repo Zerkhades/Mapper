@@ -18,6 +18,10 @@ namespace Mapper.Application
                 typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>),
                 typeof(LoggingBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>),
+                typeof(PerformanceBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>),
+                typeof(TransactionBehaviour<,>));
             return services;
         }
     }

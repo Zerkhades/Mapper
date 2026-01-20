@@ -22,6 +22,7 @@ namespace Mapper.Tests.Common
             {
                 cfg.AddProfile(new AssemblyMappingProfile(typeof(IMapperDbContext).Assembly));
                 cfg.AddProfile<GeoMapProfile>();
+                cfg.AddProfile<EmployeeProfile>();
             });
             Mapper = configurationProvider.CreateMapper();
         }
