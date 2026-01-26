@@ -170,8 +170,8 @@ namespace Mapper.WebApi
             services.AddSingleton<IMapRealtimeNotifier, MapRealtimeNotifier>();
 
             // ВРЕМЕННО: фейковая реализация адаптера камеры
-            services.AddSingleton<ICameraAdapter, FakeCameraAdapter>();
-            //services.AddSingleton<ICameraAdapter, SimpleCameraAdapter>();
+            //services.AddSingleton<ICameraAdapter, FakeCameraAdapter>();
+            services.AddSingleton<ICameraAdapter, SimpleCameraAdapter>();
 
             var hangfireConnection = Configuration.GetConnectionString("DefaultConnection")
                 ?? Configuration["ConnectionStrings__DefaultConnection"];

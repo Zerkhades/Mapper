@@ -2,6 +2,7 @@ using AutoMapper;
 using Mapper.Application.Common.Exceptions;
 using Mapper.Application.Features.DTOs;
 using Mapper.Application.Interfaces;
+using Mapper.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,7 +38,38 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
             if (map is null)
                 throw new NotFoundException($"GeoMap {request.Id} not found", request.Id);
 
+            var workplaceIds = map.Marks
+                .OfType<WorkplaceMark>()
+                .Select(w => w.Id)
+                .ToList();
+
+            Dictionary<Guid, List<Guid>> employeesByWorkplace = new();
+            if (workplaceIds.Count > 0)
+            {
+                var rels = await _db.Employees
+                    .AsNoTracking()
+                    .Where(x => workplaceIds.Contains(x.GeoMarkId))
+                    .ToListAsync(ct);
+
+                employeesByWorkplace = rels
+                    .GroupBy(x => x.GeoMarkId)
+                    .ToDictionary(g => g.Key, g => g.Select(x => x.Id).ToList());
+            }
+
+            var marks = map.Marks.Select(m =>
+            {
+                var d = _mapper.Map<GeoMarkDto>(m);
+
+                if (m is WorkplaceMark wm && employeesByWorkplace.TryGetValue(wm.Id, out var empIds))
+                {
+                    d = d with { EmployeeIds = empIds };
+                }
+
+                return d;
+            }).ToList();
+
             var dto = _mapper.Map<GeoMapDetailsDto>(map);
+            dto = dto with { Marks = marks };
 
             var imageKey = map.ImagePath;
             dto = dto with

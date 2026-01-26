@@ -27,6 +27,10 @@ public class MarksController : BaseController
     public async Task<ActionResult<IReadOnlyList<GeoMarkDto>>> GetAll(Guid geoMapId, CancellationToken ct)
         => Ok(await _mediator.Send(new GetGeoMarksQuery(geoMapId, null), ct));
 
+    [HttpGet("{geoMarkId:guid}")]
+    public async Task<ActionResult<GeoMarkDto>> GetById(Guid geoMapId, Guid geoMarkId, CancellationToken ct)
+        => Ok(await _mediator.Send(new GetGeoMarkByIdQuery(geoMapId, geoMarkId), ct));
+
     [HttpGet("transition")]
     public async Task<ActionResult<IReadOnlyList<GeoMarkDto>>> GetTransitions(Guid geoMapId, CancellationToken ct)
         => Ok(await _mediator.Send(new GetGeoMarksQuery(geoMapId, GeoMarkType.Transition), ct));

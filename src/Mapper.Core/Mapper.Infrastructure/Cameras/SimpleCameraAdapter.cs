@@ -23,7 +23,8 @@ namespace Mapper.Infrastructure.Cameras
 
             if (!Uri.TryCreate(streamUrl, UriKind.Absolute, out var uri)) return false;
 
-            var port = uri.Port > 0 ? uri.Port : (uri.Scheme == "rtsp" ? 554 : 80);
+            // change 1935 to 554 later
+            var port = uri.Port > 0 ? uri.Port : (uri.Scheme == "rtsp" ? 1935 : 80);
 
             try
             {
