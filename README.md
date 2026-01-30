@@ -2,25 +2,42 @@
 
 Интерактивная карта для предприятия (API only)
 
-## Описание
+## 🎯 Описание
 
 Данный проект представляет собой решение, использующее ASP.NET Core WebAPI с использованием ORM для работы с базой данных. В проекте реализована архитектура CQRS + Mediator, что позволяет разделить логику обработки команд и запросов для улучшения поддержки и масштабируемости. В качестве базы данных используется PostgreSQL.
 
-## Технологии
+## ✨ Основной функционал
+
+### 🗺️ Основное
+- Управление интерактивными картами предприятия
+- Создание меток (Transition, Workplace, Camera)
+- Управление сотрудниками и их рабочими местами
+- Real-time уведомления через SignalR
+
+### 📹 Camera Features (Новое!)
+- **Запись видео и архив снимков с таймлайном** - Сохранение видео с метаданными и таймлайном
+- **Детектирование движения с алертами** - Автоматическое обнаружение движения с тремя уровнями severity
+- **Масштабирование изображений (Zoom)** - Получение снимков с zoom уровнями 1.0-10.0
+- **История статусов камер** - Логирование всех изменений статуса с 15 типами причин
+
+[👉 Подробная документация по Camera Features](./CAMERA_FEATURES.md)
+
+## 🛠️ Технологии
 
 ### Backend
 - **.NET 8**
 - **ASP.NET Core WebAPI**
 - **Entity Framework Core (ORM)**
 - **CQRS + Mediator (MediatR)**
-- **PostgreSQL**
+- **PostgreSQL** / **SQL Server**
 - **FluentValidation**
 - **AutoMapper**
 
 ### Infrastructure
 - **Redis** - кеширование
-- **MinIO (S3)** - хранилище изображений карт
+- **MinIO (S3)** - хранилище изображений и видео
 - **SignalR** - real-time уведомления
+- **Hangfire** - фоновые задачи (необязательно, есть встроенная поддержка)
 - **Reverse Proxy** - маршрутизация запросов
 
 ### Observability & Monitoring
@@ -35,11 +52,18 @@
 ### Authentication & Authorization
 - **IdentityServer** - аутентификация и авторизация
 
-### Planned Front-end
-- **React as web front-end** (in progress)
-- **Avalonia as desktop front-end** (in progress)
+### Front-end (in progress)
+- **React** - web фронтенд
+- **Avalonia** - desktop приложение
 
-## Установка
+## 📚 Документация
+
+- [**CAMERA_FEATURES.md**](./CAMERA_FEATURES.md) - Полное описание всех camera фич
+- [**IMPLEMENTATION_SUMMARY.md**](./IMPLEMENTATION_SUMMARY.md) - Резюме реализации
+- [**USAGE_EXAMPLES.md**](./USAGE_EXAMPLES.md) - Примеры использования API
+- [**INSTALLATION.md**](./INSTALLATION.md) - Установка и конфигурация
+
+## 🚀 Быстрый старт
 
 ### Локальная установка
 

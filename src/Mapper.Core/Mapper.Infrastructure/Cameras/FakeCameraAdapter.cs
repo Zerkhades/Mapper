@@ -35,4 +35,50 @@ public class FakeCameraAdapter : ICameraAdapter
 
         return Task.FromResult<CameraSnapshot?>(snap);
     }
+
+    public Task<CameraVideo?> TryGetVideoAsync(string? streamUrl, TimeSpan duration, CancellationToken ct)
+    {
+        // Generate fake video data
+        var videoBytes = new byte[1024];
+        new Random().NextBytes(videoBytes);
+
+        var video = new CameraVideo(
+            Bytes: videoBytes,
+            ContentType: "video/mp4",
+            FileName: "video.mp4",
+            Duration: duration
+        );
+
+        return Task.FromResult<CameraVideo?>(video);
+    }
+
+    public Task<MotionDetectionResult?> TryDetectMotionAsync(string? streamUrl, byte[] frameData, CancellationToken ct)
+    {
+        var seconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var hasMotion = (seconds / 10) % 2 == 0;
+        var motionPercentage = hasMotion ? new Random().NextDouble() * 100 : 0;
+
+        var result = new MotionDetectionResult(
+            HasMotion: hasMotion,
+            MotionPercentage: motionPercentage
+        );
+
+        return Task.FromResult<MotionDetectionResult?>(result);
+    }
+
+    public Task<CameraSnapshot?> TryGetSnapshotWithZoomAsync(
+        string? streamUrl,
+        double zoomLevel,
+        int? centerX = null,
+        int? centerY = null,
+        CancellationToken ct = default)
+    {
+        var snap = new CameraSnapshot(
+            Bytes: Png1x1,
+            ContentType: "image/png",
+            FileName: $"snapshot_zoom_{zoomLevel:F1}x.png"
+        );
+
+        return Task.FromResult<CameraSnapshot?>(snap);
+    }
 }

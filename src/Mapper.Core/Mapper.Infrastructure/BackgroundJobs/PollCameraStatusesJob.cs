@@ -40,7 +40,6 @@ public class PollCameraStatusesJob
             var key = $"camera:{cam.Id}:status";
             var oldValue = await _cache.GetAsync<string>(key, ct);
 
-            // Не спамим одинаковым статусом
             if (string.Equals(oldValue, newValue, StringComparison.OrdinalIgnoreCase))
                 continue;
 

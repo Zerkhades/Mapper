@@ -30,16 +30,12 @@ public class FilesController : BaseController
     {
         if (string.IsNullOrWhiteSpace(key))
             return BadRequest("Empty key");
-
-        // MVP-ограничение
         if (!(key.StartsWith("maps/", StringComparison.OrdinalIgnoreCase)
            || key.StartsWith("cameras/", StringComparison.OrdinalIgnoreCase)))
         {
             return Forbid();
         }
-
         var bucket = _cfg["S3:Bucket"] ?? "mapper";
-
         try
         {
             var obj = await _s3.GetObjectAsync(new GetObjectRequest
@@ -47,19 +43,13 @@ public class FilesController : BaseController
                 BucketName = bucket,
                 Key = key
             }, ct);
-
-            // 1) ContentType из S3
             var contentType = obj.Headers.ContentType;
-
-            // 2) Если он пустой или application/octet-stream — берём по расширению
             if (string.IsNullOrWhiteSpace(contentType) || contentType == "application/octet-stream")
             {
                 if (!_contentTypeProvider.TryGetContentType(key, out contentType))
                     contentType = "application/octet-stream";
             }
-
             Response.Headers.CacheControl = "public, max-age=60";
-
             return File(obj.ResponseStream, contentType);
         }
         catch (AmazonS3Exception ex)

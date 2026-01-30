@@ -48,6 +48,11 @@ namespace Mapper.WebApi
             services.AddApplication();
             services.AddPersistence(Configuration);
             services.AddControllers();
+
+            var ffmpegPath = Configuration["Camera:FfmpegPath"];
+            if (!string.IsNullOrWhiteSpace(ffmpegPath))
+                Environment.SetEnvironmentVariable("FFMPEG_PATH", ffmpegPath);
+
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -169,8 +174,6 @@ namespace Mapper.WebApi
             services.AddSingleton<IS3ObjectStorage, S3ObjectStorage>();
             services.AddSingleton<IMapRealtimeNotifier, MapRealtimeNotifier>();
 
-            // ВРЕМЕННО: фейковая реализация адаптера камеры
-            //services.AddSingleton<ICameraAdapter, FakeCameraAdapter>();
             services.AddSingleton<ICameraAdapter, SimpleCameraAdapter>();
 
             var hangfireConnection = Configuration.GetConnectionString("DefaultConnection")
@@ -182,7 +185,10 @@ namespace Mapper.WebApi
                     new PostgreSqlStorageOptions { PrepareSchemaIfNecessary = true });
             });
             services.AddHangfireServer();
-            services.AddTransient<PollCameraStatusesJob>();
+            services.AddTransient<PollCameraStatusAndLogHistoryJob>();
+            services.AddTransient<DetectCameraMotionJob>();
+            services.AddTransient<RecordCameraVideoJob>();
+            services.AddTransient<FetchCameraSnapshotsJob>();
             services.AddHttpContextAccessor();
         }
 
@@ -212,17 +218,40 @@ namespace Mapper.WebApi
             app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseHangfireDashboard("/hangfire");
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
+            });
             try
             {
-                RecurringJob.AddOrUpdate<PollCameraStatusesJob>(
-                    "poll-cameras",
+                var motionCron = Configuration["Camera:Jobs:MotionCron"] ?? "*/5 * * * *";
+                var recordCron = Configuration["Camera:Jobs:VideoCron"] ?? "*/30 * * * *";
+                var statusCron = Configuration["Camera:Jobs:StatusCron"] ?? "*/1 * * * *";
+                var snapshotCron = Configuration["Camera:Jobs:SnapshotCron"] ?? "*/1 * * * *";
+
+                RecurringJob.AddOrUpdate<DetectCameraMotionJob>(
+                    "detect-camera-motion",
                     j => j.Execute(default),
-                    "*/1 * * * *");
+                    motionCron);
+
+                RecurringJob.AddOrUpdate<RecordCameraVideoJob>(
+                    "record-camera-video",
+                    j => j.Execute(default),
+                    recordCron);
+
+                RecurringJob.AddOrUpdate<PollCameraStatusAndLogHistoryJob>(
+                    "poll-camera-status",
+                    j => j.Execute(default),
+                    statusCron);
+
+                RecurringJob.AddOrUpdate<FetchCameraSnapshotsJob>(
+                    "fetch-camera-snapshots",
+                    j => j.Execute(default),
+                    snapshotCron);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to schedule recurring job 'poll-cameras'. Check database connection settings.");
+                Log.Error(ex, "Failed to schedule camera background jobs. Check database connection settings.");
             }
 
             app.UseEndpoints(endpoints =>

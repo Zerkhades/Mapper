@@ -20,6 +20,7 @@ namespace Mapper.Application
             {
                 cfg.AddProfile<GeoMapProfile>();
                 cfg.AddProfile<EmployeeProfile>();
+                cfg.AddProfile<CameraArchiveProfile>();
                 cfg.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
             });
 

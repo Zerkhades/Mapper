@@ -22,6 +22,142 @@ namespace Mapper.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Mapper.Domain.CameraMotionAlert", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CameraMarkId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ConfirmedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("DetectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("boolean");
+
+                    b.Property<double>("MotionPercentage")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid?>("RelatedVideoArchiveId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SnapshotPath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CameraMarkId");
+
+                    b.HasIndex("DetectedAt");
+
+                    b.HasIndex("IsResolved");
+
+                    b.ToTable("camera_motion_alerts", (string)null);
+                });
+
+            modelBuilder.Entity("Mapper.Domain.CameraStatusHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CameraMarkId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ChangedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Details")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<TimeSpan?>("DurationSinceLastChange")
+                        .HasColumnType("interval");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Reason")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ResponseTimeMs")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CameraMarkId");
+
+                    b.HasIndex("ChangedAt");
+
+                    b.ToTable("camera_status_histories", (string)null);
+                });
+
+            modelBuilder.Entity("Mapper.Domain.CameraVideoArchive", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CameraMarkId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
+
+                    b.Property<long>("FileSizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("FramesPerSecond")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("HasMotionDetected")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Resolution")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ThumbnailPath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("VideoPath")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CameraMarkId");
+
+                    b.HasIndex("RecordedAt");
+
+                    b.ToTable("camera_video_archives", (string)null);
+                });
+
             modelBuilder.Entity("Mapper.Domain.Employee", b =>
                 {
                     b.Property<Guid>("Id")
@@ -210,8 +346,7 @@ namespace Mapper.Persistence.Migrations
                     b.HasOne("Mapper.Domain.WorkplaceMark", null)
                         .WithMany("Employees")
                         .HasForeignKey("GeoMarkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Mapper.Domain.GeoMark", "GeoMark")
                         .WithMany()

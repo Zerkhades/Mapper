@@ -105,6 +105,13 @@ services:
       - "4318:4318"     # OTLP HTTP
     networks: [ geomaps-net ]
 
+  go2rtc:
+    image: alexxit/go2rtc:latest
+    ports:
+      - "1984:1984"     # Web UI
+      - "8554:8554"     # RTSP
+    networks: [ geomaps-net ]
+
   # ---------------- Microservices ----------------
   mapper.webapi:
     build:
@@ -113,7 +120,7 @@ services:
     environment:
       ConnectionStrings__DefaultConnection: Host=db;Database=MapperDB;Username=postgres;Password=pass
       ASPNETCORE_URLS: http://0.0.0.0:5001
-
+      FFMPEG_PATH: /usr/bin/ffmpeg
       Redis__ConnectionString: redis:6379
 
       S3__ServiceUrl: http://minio:9000
