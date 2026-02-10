@@ -20,7 +20,6 @@ public class CameraTelemetryController : BaseController
         _cameraAdapter = cameraAdapter;
     }
 
-    //[Authorize]
     [HttpGet("status")]
     public async Task<ActionResult<object>> GetStatus(Guid geoMapId, Guid markId, CancellationToken ct)
     {
@@ -28,7 +27,6 @@ public class CameraTelemetryController : BaseController
         return Ok(new { markId, status });
     }
 
-    //[Authorize]
     [HttpGet("snapshot")]
     public async Task<ActionResult<object>> GetSnapshot(Guid geoMapId, Guid markId, CancellationToken ct)
     {

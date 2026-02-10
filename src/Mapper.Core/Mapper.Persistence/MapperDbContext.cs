@@ -54,7 +54,7 @@ namespace Mapper.Persistence
             modelBuilder.Entity<WorkplaceMark>(b =>
             {
                 b.HasMany(x => x.Employees)
-                    .WithOne()
+                    .WithOne(x => x.GeoMark)
                     .HasForeignKey(x => x.GeoMarkId)
                     .IsRequired(false)
                     .OnDelete(DeleteBehavior.Cascade);

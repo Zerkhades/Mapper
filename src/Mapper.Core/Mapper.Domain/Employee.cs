@@ -12,7 +12,7 @@ public class Employee
     public string? Comment { get; set; }
     public string? Email { get; set; }
     public required Guid GeoMarkId { get; set; }
-    public GeoMark? GeoMark { get; set; }
+    public WorkplaceMark? GeoMark { get; set; }
     public Guid? EmployeePhotoId { get; set; }
     public virtual EmployeePhoto? EmployeePhoto { get; set; }
     public bool IsArchived { get; set; }

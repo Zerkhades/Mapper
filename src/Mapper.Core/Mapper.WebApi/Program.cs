@@ -1,3 +1,6 @@
+using Amazon.S3;
+using Amazon.S3.Model;
+using Amazon.S3.Util;
 using Mapper.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +55,18 @@ namespace Mapper.WebApi
                     if (seedOnStart)
                     {
                         DbInitializer.Initialize(db);
+                    }
+
+                    var bucket = configuration["S3:Bucket"];
+                    if (!string.IsNullOrWhiteSpace(bucket))
+                    {
+                        var s3 = sp.GetRequiredService<IAmazonS3>();
+                        var exists = AmazonS3Util.DoesS3BucketExistV2Async(s3, bucket).GetAwaiter().GetResult();
+                        if (!exists)
+                        {
+                            s3.PutBucketAsync(new PutBucketRequest { BucketName = bucket }).GetAwaiter().GetResult();
+                            Log.Information("Created S3 bucket {Bucket}", bucket);
+                        }
                     }
 
                     Log.Information("Database migration/seed completed");
