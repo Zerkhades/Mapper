@@ -32,7 +32,26 @@ jobs:
       - name: Build the solution
         run: dotnet build Mapper.sln --configuration Release --no-restore
 
-      # Run tests
+      # Run tests with code coverage
       - name: Run tests
-        run: dotnet test Mapper.Tests/Mapper.Tests.csproj --verbosity normal
+        run: dotnet test src/Mapper.Tests/Mapper.Tests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+      # Install ReportGenerator tool
+      - name: Install ReportGenerator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      # Generate coverage report
+      - name: Generate coverage report
+        run: reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coverage/report -reporttypes:Html;MarkdownSummaryGithub
+
+      # Upload coverage report as artifact
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./coverage/report
+
+      # Display coverage summary in GitHub Actions
+      - name: Add coverage summary to PR
+        run: cat ./coverage/report/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
 
