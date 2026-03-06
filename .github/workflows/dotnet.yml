@@ -40,9 +40,13 @@ jobs:
       - name: Install ReportGenerator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
+      # Add .NET global tools to PATH
+      - name: Add .NET tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
       # Generate coverage report
       - name: Generate coverage report
-        run: reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coverage/report -reporttypes:Html;MarkdownSummaryGithub
+        run: reportgenerator -reports:./coverage/**/coverage.cobertura.xml -targetdir:./coverage/report -reporttypes:"Html;MarkdownSummaryGithub"
 
       # Upload coverage report as artifact
       - name: Upload coverage report
