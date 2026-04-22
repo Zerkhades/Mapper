@@ -10,18 +10,18 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
 {
     public record GetGeoMapByIdQuery(Guid Id) : IRequest<GeoMapDetailsDto>;
 
-    public class GetGeoMapByIdHandler : IRequestHandler<GetGeoMapByIdQuery, GeoMapDetailsDto>
-    {
-        private readonly IMapperDbContext _db;
-        private readonly IMapper _mapper;
-        private readonly ICacheService _cacheService;
+        public class GetGeoMapByIdHandler : IRequestHandler<GetGeoMapByIdQuery, GeoMapDetailsDto>
+        {
+            private readonly IMapperDbContext _db;
+            private readonly IMapper _mapper;
+            private readonly ICacheService _cacheService;
 
         public GetGeoMapByIdHandler(IMapperDbContext db, IMapper mapper, ICacheService cacheService)
-        {
-            _db = db;
-            _mapper = mapper;
-            _cacheService = cacheService;
-        }
+            {
+                _db = db;
+                _mapper = mapper;
+                _cacheService = cacheService;
+            }
 
         public async Task<GeoMapDetailsDto> Handle(GetGeoMapByIdQuery request, CancellationToken ct)
         {
@@ -32,13 +32,26 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
 
             var map = await _db.GeoMaps
                 .AsNoTracking()
-                .Include(x => x.Marks)
-                .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
+                .Where(x => x.Id == request.Id)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Name,
+                    x.ImagePath,
+                    x.ImageWidth,
+                    x.ImageHeight
+                })
+                .FirstOrDefaultAsync(ct);
 
             if (map is null)
                 throw new NotFoundException($"GeoMap {request.Id} not found", request.Id);
 
-            var workplaceIds = map.Marks
+            var rawMarks = await _db.GeoMarks
+                .AsNoTracking()
+                .Where(x => x.GeoMapId == request.Id)
+                .ToListAsync(ct);
+
+            var workplaceIds = rawMarks
                 .OfType<WorkplaceMark>()
                 .Select(w => w.Id)
                 .ToList();
@@ -56,7 +69,7 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
                     .ToDictionary(g => g.Key, g => g.Select(x => x.Id).ToList());
             }
 
-            var marks = map.Marks.Select(m =>
+            var marks = rawMarks.Select(m =>
             {
                 var d = _mapper.Map<GeoMarkDto>(m);
 

@@ -4,26 +4,34 @@ using Mapper.Domain;
 using Mapper.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Mapper.Infrastructure.BackgroundJobs;
 
 public class DetectCameraMotionJob
 {
+    private const int MaxParallelCameras = 4;
+
     private readonly MapperDbContext _db;
     private readonly ICameraAdapter _adapter;
     private readonly IS3ObjectStorage _storage;
+    private readonly ILogger<DetectCameraMotionJob> _logger;
     private readonly IMediator _mediator;
 
     public DetectCameraMotionJob(
         MapperDbContext db,
         ICameraAdapter adapter,
         IS3ObjectStorage storage,
-        IMediator mediator)
+        IMediator mediator,
+        ILogger<DetectCameraMotionJob> logger)
     {
         _db = db;
         _adapter = adapter;
         _storage = storage;
+        _logger = logger;
         _mediator = mediator;
+
     }
 
     public async Task Execute(CancellationToken ct = default)
@@ -34,19 +42,23 @@ public class DetectCameraMotionJob
             .Select(c => new { c.Id, c.StreamUrl })
             .ToListAsync(ct);
 
-        foreach (var cam in cameras)
+        await Parallel.ForEachAsync(cameras, new ParallelOptions
+        {
+            CancellationToken = ct,
+            MaxDegreeOfParallelism = MaxParallelCameras
+        }, async (cam, ct) =>
         {
             try
             {
                 // Get current snapshot
                 var snapshot = await _adapter.TryGetSnapshotAsync(cam.StreamUrl, ct);
-                if (snapshot is null) continue;
-
+                if (snapshot is null)
+                    return;
                 // Detect motion
                 var motionResult = await _adapter.TryDetectMotionAsync(cam.StreamUrl, snapshot.Bytes, ct);
-                if (motionResult is null) continue;
+                if (motionResult is null)
+                    return;
 
-                // If motion detected and percentage is significant, create alert
                 if (motionResult.HasMotion && motionResult.MotionPercentage > 15)
                 {
                     var severity = motionResult.MotionPercentage switch
@@ -66,7 +78,6 @@ public class DetectCameraMotionJob
                         snapshotPath = key;
                     }
 
-                    // Create motion alert
                     await _mediator.Send(new CreateCameraMotionAlertCommand(
                         cam.Id,
                         severity,
@@ -75,11 +86,14 @@ public class DetectCameraMotionJob
                     ), ct);
                 }
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                // Log error but continue with next camera
-                System.Console.WriteLine($"Motion detection error for camera {cam.Id}: {ex.Message}");
+                _logger.LogWarning(ex, "Motion detection failed for camera {CameraId}", cam.Id);
             }
-        }
+        });
     }
 }

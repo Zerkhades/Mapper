@@ -4,29 +4,36 @@ using Mapper.Domain;
 using Mapper.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Mapper.Infrastructure.BackgroundJobs;
 
 public class PollCameraStatusAndLogHistoryJob
 {
+    private const int MaxParallelCameras = 8;
+
     private readonly MapperDbContext _db;
     private readonly ICameraAdapter _adapter;
     private readonly ICacheService _cache;
     private readonly IMapRealtimeNotifier _notifier;
     private readonly IMediator _mediator;
+    private readonly ILogger<PollCameraStatusAndLogHistoryJob> _logger;
 
     public PollCameraStatusAndLogHistoryJob(
         MapperDbContext db,
         ICameraAdapter adapter,
         ICacheService cache,
         IMapRealtimeNotifier notifier,
-        IMediator mediator)
+        IMediator mediator,
+        ILogger<PollCameraStatusAndLogHistoryJob> logger)
     {
         _db = db;
         _adapter = adapter;
         _cache = cache;
         _notifier = notifier;
         _mediator = mediator;
+        _logger = logger;
     }
 
     public async Task Execute(CancellationToken ct = default)
@@ -37,7 +44,11 @@ public class PollCameraStatusAndLogHistoryJob
             .Select(c => new { c.Id, c.GeoMapId, c.StreamUrl })
             .ToListAsync(ct);
 
-        foreach (var cam in cameras)
+        await Parallel.ForEachAsync(cameras, new ParallelOptions
+        {
+            CancellationToken = ct,
+            MaxDegreeOfParallelism = MaxParallelCameras
+        }, async (cam, ct) =>
         {
             try
             {
@@ -48,7 +59,7 @@ public class PollCameraStatusAndLogHistoryJob
                 var oldValue = await _cache.GetAsync<string>(cacheKey, ct);
 
                 if (string.Equals(oldValue, newValue, StringComparison.OrdinalIgnoreCase))
-                    continue;
+                    return;
 
                 // Status changed, create history record
                 var reason = newValue == "online" 
@@ -67,11 +78,14 @@ public class PollCameraStatusAndLogHistoryJob
 
                 await _notifier.CameraStatusChanged(cam.GeoMapId, cam.Id, newValue, ct);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                // Log error but continue
-                System.Console.WriteLine($"Status polling error for camera {cam.Id}: {ex.Message}");
+                _logger.LogWarning(ex, "Status polling with history failed for camera {CameraId}", cam.Id);
             }
-        }
+        });
     }
 }

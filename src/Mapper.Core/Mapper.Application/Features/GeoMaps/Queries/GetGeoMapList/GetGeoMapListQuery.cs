@@ -21,12 +21,11 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapList
 
         public async Task<IReadOnlyList<GeoMapListItemDto>> Handle(GetGeoMapListQuery request, CancellationToken ct)
         {
-            var maps = await _db.GeoMaps
+            return await _db.GeoMaps
                 .AsNoTracking()
                 .OrderBy(x => x.Name)
+                .Select(x => _mapper.Map<GeoMapListItemDto>(x))
                 .ToListAsync(ct);
-
-            return maps.Select(_mapper.Map<GeoMapListItemDto>).ToList();
         }
     }
 }
