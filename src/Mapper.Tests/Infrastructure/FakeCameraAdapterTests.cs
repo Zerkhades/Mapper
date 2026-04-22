@@ -113,21 +113,22 @@ public class FakeCameraAdapterTests
         for (int i = 0; i < 20; i++)
         {
             result = await _adapter.TryDetectMotionAsync("rtsp://fake-url", frameData, CancellationToken.None);
-            if (result.HasMotion)
+            if (result?.HasMotion == true)
                 break;
             await Task.Delay(100);
         }
 
         // Assert
         Assert.NotNull(result);
+        var motionResult = result!;
         // Either has motion with percentage > 0, or no motion with percentage = 0
-        if (result.HasMotion)
+        if (motionResult.HasMotion)
         {
-            Assert.True(result.MotionPercentage > 0);
+            Assert.True(motionResult.MotionPercentage > 0);
         }
         else
         {
-            Assert.Equal(0, result.MotionPercentage);
+            Assert.Equal(0, motionResult.MotionPercentage);
         }
     }
 

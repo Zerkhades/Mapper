@@ -178,10 +178,15 @@ namespace Mapper.WebApi
 
             var hangfireConnection = Configuration.GetConnectionString("DefaultConnection")
                 ?? Configuration["ConnectionStrings__DefaultConnection"];
+            if (string.IsNullOrWhiteSpace(hangfireConnection))
+            {
+                throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured.");
+            }
 
             services.AddHangfire(c =>
             {
-                c.UsePostgreSqlStorage(hangfireConnection,
+                c.UsePostgreSqlStorage(
+                    options => options.UseNpgsqlConnection(hangfireConnection),
                     new PostgreSqlStorageOptions { PrepareSchemaIfNecessary = true });
             });
             services.AddHangfireServer();

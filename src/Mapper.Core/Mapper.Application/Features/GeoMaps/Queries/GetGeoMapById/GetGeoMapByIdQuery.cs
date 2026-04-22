@@ -33,14 +33,13 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
             var map = await _db.GeoMaps
                 .AsNoTracking()
                 .Where(x => x.Id == request.Id)
-                .Select(x => new
-                {
+                .Select(x => new GeoMapDetailsDto(
                     x.Id,
                     x.Name,
                     x.ImagePath,
                     x.ImageWidth,
-                    x.ImageHeight
-                })
+                    x.ImageHeight,
+                    new List<GeoMarkDto>()))
                 .FirstOrDefaultAsync(ct);
 
             if (map is null)
@@ -81,10 +80,9 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
                 return d;
             }).ToList();
 
-            var dto = _mapper.Map<GeoMapDetailsDto>(map);
-            dto = dto with { Marks = marks };
+            var dto = map with { Marks = marks };
 
-            var imageKey = map.ImagePath;
+            var imageKey = map.ImageUrl;
             dto = dto with
             {
                 ImageUrl = $"/api/files/{imageKey}"

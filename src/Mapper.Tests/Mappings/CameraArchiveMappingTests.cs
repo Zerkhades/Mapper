@@ -2,6 +2,7 @@ using AutoMapper;
 using Mapper.Application.Common.Mappings;
 using Mapper.Application.Features.DTOs;
 using Mapper.Domain;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Mapper.Tests.Mappings;
 
@@ -14,7 +15,7 @@ public class CameraArchiveMappingTests
         var configuration = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<CameraArchiveProfile>();
-        });
+        }, NullLoggerFactory.Instance);
 
         _mapper = configuration.CreateMapper();
     }
@@ -97,7 +98,7 @@ public class CameraArchiveMappingTests
         var configuration = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<CameraArchiveProfile>();
-        });
+        }, NullLoggerFactory.Instance);
 
         configuration.AssertConfigurationIsValid();
     }
