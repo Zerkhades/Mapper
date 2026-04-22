@@ -41,11 +41,11 @@ public class GetEmployeeListHandler : IRequestHandler<GetEmployeeListQuery, IRea
             query = query.Where(e => e.GeoMarkId == request.GeoMarkId.Value);
         }
 
-        var employees = await query
+        return await query
             .OrderBy(e => e.Surname)
             .ThenBy(e => e.FirstName)
+            .Select(e => _mapper.Map<EmployeeListItemDto>(e))
             .ToListAsync(ct);
 
-        return employees.Select(_mapper.Map<EmployeeListItemDto>).ToList();
     }
 }

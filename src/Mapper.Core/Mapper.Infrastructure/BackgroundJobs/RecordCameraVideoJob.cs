@@ -4,15 +4,19 @@ using Mapper.Domain;
 using Mapper.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Mapper.Infrastructure.BackgroundJobs;
 
 public class RecordCameraVideoJob
 {
+    private const int MaxParallelCameras = 2;
+
     private readonly MapperDbContext _db;
     private readonly ICameraAdapter _adapter;
     private readonly IS3ObjectStorage _storage;
     private readonly IMediator _mediator;
+    private readonly ILogger<RecordCameraVideoJob> _logger;
     private readonly int _recordDurationSeconds;
 
     public RecordCameraVideoJob(
@@ -20,12 +24,14 @@ public class RecordCameraVideoJob
         ICameraAdapter adapter,
         IS3ObjectStorage storage,
         IMediator mediator,
+        ILogger<RecordCameraVideoJob> logger,
         int recordDurationSeconds = 300) // Default 5 minutes
     {
         _db = db;
         _adapter = adapter;
         _storage = storage;
         _mediator = mediator;
+        _logger = logger;
         _recordDurationSeconds = recordDurationSeconds;
     }
 
@@ -37,7 +43,11 @@ public class RecordCameraVideoJob
             .Select(c => new { c.Id, c.StreamUrl })
             .ToListAsync(ct);
 
-        foreach (var cam in cameras)
+        await Parallel.ForEachAsync(cameras, new ParallelOptions
+        {
+            CancellationToken = ct,
+            MaxDegreeOfParallelism = MaxParallelCameras
+        }, async (cam, ct) =>
         {
             try
             {
@@ -45,7 +55,8 @@ public class RecordCameraVideoJob
 
                 // Try to get video from camera
                 var video = await _adapter.TryGetVideoAsync(cam.StreamUrl, recordDuration, ct);
-                if (video is null) continue;
+                if (video is null)
+                    return;
 
                 // Save video to storage
                 var videoKey = $"cameras/{cam.Id}/videos/{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}.mp4";
@@ -85,11 +96,14 @@ public class RecordCameraVideoJob
                     ), ct);
                 }
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
-                // Log error but continue with next camera
-                System.Console.WriteLine($"Video recording error for camera {cam.Id}: {ex.Message}");
+                _logger.LogWarning(ex, "Video recording failed for camera {CameraId}", cam.Id);
             }
-        }
+        });
     }
 }

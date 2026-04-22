@@ -1,8 +1,8 @@
-using AutoMapper;
-using Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById;
 using Mapper.Application.Common.Exceptions;
-using Mapper.Application.Interfaces;
 using Mapper.Application.Features.DTOs;
+using Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById;
+using Mapper.Application.Interfaces;
+using AutoMapper;
 using Mapper.Tests.Common;
 using Mapper.Tests.Common.ContextFactories;
 using Mapper.Tests.Common.QueryTestFixtures;

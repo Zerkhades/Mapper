@@ -1,8 +1,7 @@
 ﻿using Asp.Versioning;
 using Mapper.Application.Interfaces;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace Mapper.WebApi.Controllers;
 
@@ -13,11 +12,13 @@ public class CameraTelemetryController : BaseController
 {
     private readonly ICacheService _cache;
     private readonly ICameraAdapter _cameraAdapter;
+    private readonly IS3ObjectStorage _storage;
 
-    public CameraTelemetryController(ICacheService cache, ICameraAdapter cameraAdapter) 
+    public CameraTelemetryController(ICacheService cache, ICameraAdapter cameraAdapter, IS3ObjectStorage storage)
     { 
         _cache = cache;
         _cameraAdapter = cameraAdapter;
+        _storage = storage;
     }
 
     [HttpGet("status")]
@@ -69,8 +70,16 @@ public class CameraTelemetryController : BaseController
             if (snapshot is null)
                 return StatusCode(502, new { error = "Failed to capture zoomed snapshot from camera" });
 
-            var cacheKey = $"camera:{markId}:snapshot_zoom_{zoom:F1}";
-            await _cache.SetAsync(cacheKey, snapshot.FileName, TimeSpan.FromHours(1), ct);
+            var zoomSegment = zoom.ToString("0.0", CultureInfo.InvariantCulture).Replace('.', '_');
+            var centerXSegment = centerX?.ToString(CultureInfo.InvariantCulture) ?? "auto";
+            var centerYSegment = centerY?.ToString(CultureInfo.InvariantCulture) ?? "auto";
+            var objectKey = $"cameras/{markId}/zoom/{zoomSegment}_{centerXSegment}_{centerYSegment}.png";
+
+            await using var stream = new MemoryStream(snapshot.Bytes);
+            await _storage.PutAsync(objectKey, stream, snapshot.ContentType, ct);
+
+            var cacheKey = $"camera:{markId}:snapshot_zoom_{zoomSegment}:{centerXSegment}:{centerYSegment}";
+            await _cache.SetAsync(cacheKey, objectKey, TimeSpan.FromHours(1), ct);
 
             return Ok(new
             {
@@ -78,7 +87,7 @@ public class CameraTelemetryController : BaseController
                 zoom,
                 centerX,
                 centerY,
-                snapshotUrl = $"/api/files/{cacheKey}",
+                snapshotUrl = $"/api/files/{objectKey}",
                 contentType = snapshot.ContentType
             });
         }

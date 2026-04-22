@@ -3,6 +3,7 @@ using Mapper.Application.Common.Mappings;
 using Mapper.Application.Interfaces;
 using Mapper.Persistence;
 using Mapper.Tests.Common.ContextFactories;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Mapper.Tests.Common
 {
@@ -23,7 +24,7 @@ namespace Mapper.Tests.Common
                 cfg.AddProfile(new AssemblyMappingProfile(typeof(IMapperDbContext).Assembly));
                 cfg.AddProfile<GeoMapProfile>();
                 cfg.AddProfile<EmployeeProfile>();
-            });
+            }, NullLoggerFactory.Instance);
             Mapper = configurationProvider.CreateMapper();
         }
 

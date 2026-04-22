@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Mapper.Application.Features.GeoMaps.Queries.GetGeoMapList;
 using Mapper.Tests.Common;
 using Mapper.Tests.Common.QueryTestFixtures;

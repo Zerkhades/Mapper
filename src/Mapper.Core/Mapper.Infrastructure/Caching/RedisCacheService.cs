@@ -20,7 +20,7 @@ namespace Mapper.Infrastructure.Caching
         {
             var value = await _db.StringGetAsync(key);
             if (value.IsNullOrEmpty) return default;
-            return JsonSerializer.Deserialize<T>(value!, Opt);
+            return JsonSerializer.Deserialize<T>(value.ToString(), Opt);
         }
 
         public Task SetAsync<T>(string key, T value, TimeSpan ttl, CancellationToken ct)

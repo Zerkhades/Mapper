@@ -5,7 +5,6 @@ using Mapper.Application.Interfaces;
 using Mapper.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace Mapper.Application.Features.GeoMarks.Queries;
 
