@@ -20,4 +20,18 @@ public class DashboardController : BaseController
         var dashboard = await Mediator.Send(new GetOperatorDashboardQuery(from, to, top), ct);
         return Ok(dashboard);
     }
+
+    [HttpGet("map-graph")]
+    public async Task<ActionResult<MapGraphAnalyticsDto>> GetMapGraphAnalytics(
+        [FromQuery] Guid? sourceGeoMapId,
+        [FromQuery] Guid? targetGeoMapId,
+        [FromQuery] int top = 5,
+        CancellationToken ct = default)
+    {
+        var analytics = await Mediator.Send(
+            new GetMapGraphAnalyticsQuery(sourceGeoMapId, targetGeoMapId, top),
+            ct);
+
+        return Ok(analytics);
+    }
 }
