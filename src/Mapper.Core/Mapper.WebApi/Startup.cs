@@ -233,10 +233,19 @@ namespace Mapper.WebApi
                     new PostgreSqlStorageOptions { PrepareSchemaIfNecessary = true });
             });
             services.AddHangfireServer();
+            services.AddOptions<ArchiveRetentionCleanupJobOptions>()
+                .Bind(Configuration.GetSection(ArchiveRetentionCleanupJobOptions.SectionName))
+                .Validate(options => !string.IsNullOrWhiteSpace(options.Cron), "Retention:ArchiveCleanup:Cron must be configured.")
+                .Validate(options => options.MotionVideoRetentionDays > 0, "Retention:ArchiveCleanup:MotionVideoRetentionDays must be greater than zero.")
+                .Validate(options => options.NoMotionVideoRetentionDays > 0, "Retention:ArchiveCleanup:NoMotionVideoRetentionDays must be greater than zero.")
+                .Validate(options => options.ArchivedVideoRetentionDays > 0, "Retention:ArchiveCleanup:ArchivedVideoRetentionDays must be greater than zero.")
+                .Validate(options => options.Take > 0, "Retention:ArchiveCleanup:Take must be greater than zero.")
+                .ValidateOnStart();
             services.AddTransient<PollCameraStatusAndLogHistoryJob>();
             services.AddTransient<DetectCameraMotionJob>();
             services.AddTransient<RecordCameraVideoJob>();
             services.AddTransient<FetchCameraSnapshotsJob>();
+            services.AddTransient<CleanupArchiveRetentionJob>();
             services.AddHttpContextAccessor();
         }
 

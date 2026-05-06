@@ -14,6 +14,8 @@ public static class BackgroundJobSchedulingExtensions
             var recordCron = configuration["Camera:Jobs:VideoCron"] ?? "*/30 * * * *";
             var statusCron = configuration["Camera:Jobs:StatusCron"] ?? "*/1 * * * *";
             var snapshotCron = configuration["Camera:Jobs:SnapshotCron"] ?? "*/1 * * * *";
+            var archiveCleanupEnabled = configuration.GetValue<bool>("Retention:ArchiveCleanup:Enabled");
+            var archiveCleanupCron = configuration["Retention:ArchiveCleanup:Cron"] ?? "0 3 * * *";
 
             RecurringJob.AddOrUpdate<DetectCameraMotionJob>(
                 "detect-camera-motion",
@@ -34,6 +36,18 @@ public static class BackgroundJobSchedulingExtensions
                 "fetch-camera-snapshots",
                 j => j.Execute(default),
                 snapshotCron);
+
+            if (archiveCleanupEnabled)
+            {
+                RecurringJob.AddOrUpdate<CleanupArchiveRetentionJob>(
+                    "cleanup-archive-retention",
+                    j => j.Execute(default),
+                    archiveCleanupCron);
+            }
+            else
+            {
+                RecurringJob.RemoveIfExists("cleanup-archive-retention");
+            }
         }
         catch (Exception ex)
         {

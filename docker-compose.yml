@@ -140,6 +140,10 @@ services:
       StartupTasks__SeedDatabase: "false"
       StartupTasks__EnsureS3Bucket: "true"
       StartupTasks__MigrateAttempts: "10"
+      Retention__ArchiveCleanup__Enabled: "true"
+      Retention__ArchiveCleanup__Cron: "0 3 * * *"
+      Retention__ArchiveCleanup__DryRun: "true"
+      Retention__ArchiveCleanup__Confirm: "false"
     ports:
       - "5001:5001"
     volumes:
