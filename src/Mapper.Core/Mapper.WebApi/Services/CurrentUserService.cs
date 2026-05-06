@@ -16,7 +16,7 @@ namespace Mapper.WebApi.Services
             {
                 var id = _httpContextAccessor.HttpContext?.User?
                     .FindFirstValue(ClaimTypes.NameIdentifier);
-                return string.IsNullOrEmpty(id) ? Guid.Empty : Guid.Parse(id);
+                return Guid.TryParse(id, out var userId) ? userId : Guid.Empty;
             }
         }
     }

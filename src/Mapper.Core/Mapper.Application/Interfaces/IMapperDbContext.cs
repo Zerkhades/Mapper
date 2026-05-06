@@ -11,6 +11,7 @@ namespace Mapper.Application.Interfaces
         public DbSet<CameraVideoArchive> CameraVideoArchives { get; set; }
         public DbSet<CameraMotionAlert> CameraMotionAlerts { get; set; }
         public DbSet<CameraStatusHistory> CameraStatusHistories { get; set; }
+        public DbSet<AuditEvent> AuditEvents { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
