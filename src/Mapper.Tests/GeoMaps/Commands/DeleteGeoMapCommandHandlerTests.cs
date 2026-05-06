@@ -28,7 +28,7 @@ namespace Mapper.Tests.GeoMaps.Commands
             var deletedMap = await Context.GeoMaps
                 .IgnoreQueryFilters()
                 .SingleOrDefaultAsync(m => m.Id == geoMapId);
-            
+
             Assert.NotNull(deletedMap);
             Assert.True(deletedMap.IsDeleted);
             Assert.NotNull(deletedMap.DeletedAt);

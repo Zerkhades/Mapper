@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.Features.CameraArchive.Queries;
 
-public class GetCameraVideoArchiveHandler 
+public class GetCameraVideoArchiveHandler
     : IRequestHandler<GetCameraVideoArchiveQuery, List<CameraVideoArchiveListItemDto>>
 {
     private readonly IMapperDbContext _db;
@@ -51,7 +51,7 @@ public class GetCameraVideoArchiveHandler
     }
 }
 
-public class GetCameraVideoArchiveByIdHandler 
+public class GetCameraVideoArchiveByIdHandler
     : IRequestHandler<GetCameraVideoArchiveByIdQuery, CameraVideoArchiveDto>
 {
     private readonly IMapperDbContext _db;
@@ -84,7 +84,7 @@ public class GetCameraVideoArchiveByIdHandler
     }
 }
 
-public class GetCameraVideoArchiveTimelineHandler 
+public class GetCameraVideoArchiveTimelineHandler
     : IRequestHandler<GetCameraVideoArchiveTimelineQuery, List<CameraVideoArchiveListItemDto>>
 {
     private readonly IMapperDbContext _db;

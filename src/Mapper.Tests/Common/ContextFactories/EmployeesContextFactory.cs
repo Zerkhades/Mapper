@@ -35,7 +35,7 @@ namespace Mapper.Tests.Common.ContextFactories
 
             var workplaceMark = CreateWorkplaceMarkWithId(GeoMapId, 0.5, 0.5, "Main Workplace", "WP-MAIN", "Main workplace", WorkplaceMarkId);
             var anotherWorkplaceMark = CreateWorkplaceMarkWithId(GeoMapId, 0.6, 0.6, "Another Workplace", "WP-OTHER", "Another workplace", AnotherWorkplaceMarkId);
-            
+
             context.GeoMarks.AddRange(workplaceMark, anotherWorkplaceMark);
 
             var employee1 = new Employee

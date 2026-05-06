@@ -29,7 +29,7 @@ namespace Mapper.Tests.GeoMarks.Commands
             var deletedMark = await Context.GeoMarks
                 .IgnoreQueryFilters()
                 .SingleOrDefaultAsync(m => m.Id == markId);
-            
+
             Assert.NotNull(deletedMark);
             Assert.True(deletedMark.IsDeleted);
             Assert.NotNull(deletedMark.DeletedAt);

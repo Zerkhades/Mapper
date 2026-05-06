@@ -45,7 +45,7 @@ namespace Mapper.Tests.GeoMarks.Commands
             // Assert
             var mark = await Context.GeoMarks.OfType<TransitionMark>()
                 .SingleOrDefaultAsync(m => m.Id == markId);
-            
+
             Assert.NotNull(mark);
             Assert.Equal("New Transition", mark.Title);
             Assert.Equal(targetMapId, mark.TargetGeoMapId);
@@ -79,7 +79,7 @@ namespace Mapper.Tests.GeoMarks.Commands
             // Assert
             var mark = await Context.GeoMarks.OfType<WorkplaceMark>()
                 .SingleOrDefaultAsync(m => m.Id == markId);
-            
+
             Assert.NotNull(mark);
             Assert.Equal("New Workplace", mark.Title);
             Assert.Equal("WP-002", mark.WorkplaceCode);
@@ -111,7 +111,7 @@ namespace Mapper.Tests.GeoMarks.Commands
             // Assert
             var mark = await Context.GeoMarks.OfType<CameraMark>()
                 .SingleOrDefaultAsync(m => m.Id == markId);
-            
+
             Assert.NotNull(mark);
             Assert.Equal("New Camera", mark.Title);
             Assert.Equal("CAM-002", mark.CameraName);

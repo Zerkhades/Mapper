@@ -73,7 +73,7 @@ public class ConfirmCameraMotionAlertCommandHandlerTests : TestCommandBase
 
     private static void SetIdProperty(object obj, Guid id)
     {
-        var backingField = obj.GetType().GetField("<Id>k__BackingField", 
+        var backingField = obj.GetType().GetField("<Id>k__BackingField",
             BindingFlags.Instance | BindingFlags.NonPublic);
         backingField?.SetValue(obj, id);
     }
@@ -128,7 +128,7 @@ public class ResolveCameraMotionAlertCommandHandlerTests : TestCommandBase
 
     private static void SetIdProperty(object obj, Guid id)
     {
-        var backingField = obj.GetType().GetField("<Id>k__BackingField", 
+        var backingField = obj.GetType().GetField("<Id>k__BackingField",
             BindingFlags.Instance | BindingFlags.NonPublic);
         backingField?.SetValue(obj, id);
     }
@@ -211,7 +211,7 @@ public class LinkMotionAlertToVideoCommandHandlerTests : TestCommandBase
 
     private static void SetIdProperty(object obj, Guid id)
     {
-        var backingField = obj.GetType().GetField("<Id>k__BackingField", 
+        var backingField = obj.GetType().GetField("<Id>k__BackingField",
             BindingFlags.Instance | BindingFlags.NonPublic);
         backingField?.SetValue(obj, id);
     }
@@ -277,7 +277,7 @@ public class DeleteCameraMotionAlertCommandHandlerTests : TestCommandBase
 
     private static void SetIdProperty(object obj, Guid id)
     {
-        var backingField = obj.GetType().GetField("<Id>k__BackingField", 
+        var backingField = obj.GetType().GetField("<Id>k__BackingField",
             BindingFlags.Instance | BindingFlags.NonPublic);
         backingField?.SetValue(obj, id);
     }

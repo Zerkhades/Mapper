@@ -12,7 +12,10 @@ using Mapper.Infrastructure.Cameras;
 using Mapper.Infrastructure.Realtime;
 using Mapper.Infrastructure.Storage.S3;
 using Mapper.Persistence;
+using Mapper.WebApi.Extensions;
+using Mapper.WebApi.HealthChecks;
 using Mapper.WebApi.Middleware;
+using Mapper.WebApi.Options;
 using Mapper.WebApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -40,26 +43,58 @@ namespace Mapper.WebApi
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        {
+            Configuration = configuration;
+            Environment = environment;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplication();
             services.AddPersistence(Configuration);
             services.AddControllers();
+            services.AddProblemDetails();
+
+            services.AddOptions<CorsPolicyOptions>()
+                .Bind(Configuration.GetSection(CorsPolicyOptions.SectionName))
+                .Validate(options =>
+                    Environment.IsDevelopment()
+                    || options.AllowedOrigins.Any(origin => !string.IsNullOrWhiteSpace(origin)),
+                    "Cors:AllowedOrigins must contain at least one origin outside Development.")
+                .ValidateOnStart();
+
+            services.AddOptions<StartupTasksOptions>()
+                .Bind(Configuration.GetSection(StartupTasksOptions.SectionName))
+                .Validate(options => options.MigrateAttempts > 0, "StartupTasks:MigrateAttempts must be greater than zero.")
+                .ValidateOnStart();
+
+            services.Configure<OtelOptions>(Configuration.GetSection(OtelOptions.SectionName));
+            services.Configure<S3Options>(Configuration.GetSection(S3Options.SectionName));
 
             var ffmpegPath = Configuration["Camera:FfmpegPath"];
             if (!string.IsNullOrWhiteSpace(ffmpegPath))
-                Environment.SetEnvironmentVariable("FFMPEG_PATH", ffmpegPath);
+                System.Environment.SetEnvironmentVariable("FFMPEG_PATH", ffmpegPath);
 
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
+                    var cors = Configuration.GetSection(CorsPolicyOptions.SectionName).Get<CorsPolicyOptions>() ?? new CorsPolicyOptions();
+
                     policy.AllowAnyHeader();
                     policy.AllowAnyMethod();
-                    policy.AllowAnyOrigin();
+
+                    if (Environment.IsDevelopment() && cors.AllowAnyOriginInDevelopment)
+                    {
+                        policy.AllowAnyOrigin();
+                    }
+                    else
+                    {
+                        policy.WithOrigins(cors.AllowedOrigins.Where(origin => !string.IsNullOrWhiteSpace(origin)).ToArray());
+                    }
                 });
             });
 
@@ -99,11 +134,14 @@ namespace Mapper.WebApi
 
             services.AddAuthorization();
 
-            services.AddHealthChecks();
+            services.AddHealthChecks()
+                .AddCheck<MapperDbContextHealthCheck>("postgres", tags: new[] { "ready" })
+                .AddCheck<RedisHealthCheck>("redis", tags: new[] { "ready" })
+                .AddCheck<S3HealthCheck>("s3", tags: new[] { "ready" });
 
             services.AddApiVersioning()
                 .AddMvc()
-                .AddApiExplorer(opt => 
+                .AddApiExplorer(opt =>
                 {
                     opt.GroupNameFormat = "'v'VVV";
                     opt.SubstituteApiVersionInUrl = true;
@@ -149,9 +187,14 @@ namespace Mapper.WebApi
                     {
                         t.AddAspNetCoreInstrumentation()
                          .AddHttpClientInstrumentation()
-                         .AddEntityFrameworkCoreInstrumentation()
-                         .AddOtlpExporter(o => o.Endpoint = new Uri(Configuration["Otel:Endpoint"]!));
-                     })
+                         .AddEntityFrameworkCoreInstrumentation();
+
+                        var otelEndpoint = Configuration["Otel:Endpoint"];
+                        if (Uri.TryCreate(otelEndpoint, UriKind.Absolute, out var endpoint))
+                        {
+                            t.AddOtlpExporter(o => o.Endpoint = endpoint);
+                        }
+                    })
                     .WithMetrics(m =>
                     {
                         m.AddAspNetCoreInstrumentation()
@@ -227,37 +270,7 @@ namespace Mapper.WebApi
             {
                 Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
             });
-            try
-            {
-                var motionCron = Configuration["Camera:Jobs:MotionCron"] ?? "*/5 * * * *";
-                var recordCron = Configuration["Camera:Jobs:VideoCron"] ?? "*/30 * * * *";
-                var statusCron = Configuration["Camera:Jobs:StatusCron"] ?? "*/1 * * * *";
-                var snapshotCron = Configuration["Camera:Jobs:SnapshotCron"] ?? "*/1 * * * *";
-
-                RecurringJob.AddOrUpdate<DetectCameraMotionJob>(
-                    "detect-camera-motion",
-                    j => j.Execute(default),
-                    motionCron);
-
-                RecurringJob.AddOrUpdate<RecordCameraVideoJob>(
-                    "record-camera-video",
-                    j => j.Execute(default),
-                    recordCron);
-
-                RecurringJob.AddOrUpdate<PollCameraStatusAndLogHistoryJob>(
-                    "poll-camera-status",
-                    j => j.Execute(default),
-                    statusCron);
-
-                RecurringJob.AddOrUpdate<FetchCameraSnapshotsJob>(
-                    "fetch-camera-snapshots",
-                    j => j.Execute(default),
-                    snapshotCron);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Failed to schedule camera background jobs. Check database connection settings.");
-            }
+            app.ScheduleCameraJobs(Configuration);
 
             app.UseEndpoints(endpoints =>
             {
@@ -276,7 +289,7 @@ namespace Mapper.WebApi
                 });
                 endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
                 {
-                    Predicate = _ => true,
+                    Predicate = check => check.Tags.Contains("ready"),
                     ResultStatusCodes =
                     {
                         [HealthStatus.Healthy] = StatusCodes.Status200OK,

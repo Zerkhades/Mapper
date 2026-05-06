@@ -134,6 +134,12 @@ services:
       Seq__ServerUrl: http://seq:80
 
       Otel__Endpoint: http://jaeger:4317
+      Cors__AllowedOrigins__0: http://localhost:3000
+      Cors__AllowedOrigins__1: http://localhost:8080
+      StartupTasks__ApplyMigrations: "true"
+      StartupTasks__SeedDatabase: "false"
+      StartupTasks__EnsureS3Bucket: "true"
+      StartupTasks__MigrateAttempts: "10"
     ports:
       - "5001:5001"
     volumes:

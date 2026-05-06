@@ -11,7 +11,7 @@ public class CameraIntegrationTests
 {
     private static void SetIdProperty(object obj, Guid id)
     {
-        var backingField = obj.GetType().GetField("<Id>k__BackingField", 
+        var backingField = obj.GetType().GetField("<Id>k__BackingField",
             BindingFlags.Instance | BindingFlags.NonPublic);
         backingField?.SetValue(obj, id);
     }

@@ -21,7 +21,7 @@ namespace Mapper.Application.Interfaces
     {
         Task<CameraStatus> GetStatusAsync(string? streamUrl, CancellationToken ct);
         Task<CameraSnapshot?> TryGetSnapshotAsync(string? streamUrl, CancellationToken ct);
-        
+
         // Video and motion detection
         Task<CameraVideo?> TryGetVideoAsync(string? streamUrl, TimeSpan duration, CancellationToken ct);
         Task<MotionDetectionResult?> TryDetectMotionAsync(string? streamUrl, byte[] frameData, CancellationToken ct);

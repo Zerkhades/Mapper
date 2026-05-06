@@ -15,7 +15,7 @@ public class CameraTelemetryController : BaseController
     private readonly IS3ObjectStorage _storage;
 
     public CameraTelemetryController(ICacheService cache, ICameraAdapter cameraAdapter, IS3ObjectStorage storage)
-    { 
+    {
         _cache = cache;
         _cameraAdapter = cameraAdapter;
         _storage = storage;
@@ -42,7 +42,7 @@ public class CameraTelemetryController : BaseController
 
     [HttpGet("snapshot/zoom")]
     public async Task<ActionResult<object>> GetSnapshotWithZoom(
-        Guid geoMapId, 
+        Guid geoMapId,
         Guid markId,
         [FromQuery] double zoom = 1.0,
         [FromQuery] int? centerX = null,
@@ -54,17 +54,17 @@ public class CameraTelemetryController : BaseController
 
         // Get the camera stream URL from cache or database
         var streamUrl = await _cache.GetAsync<string>($"camera:{markId}:streamUrl", ct);
-        
+
         if (string.IsNullOrWhiteSpace(streamUrl))
             return NotFound(new { error = "Camera stream URL not found" });
 
         try
         {
             var snapshot = await _cameraAdapter.TryGetSnapshotWithZoomAsync(
-                streamUrl, 
-                zoom, 
-                centerX, 
-                centerY, 
+                streamUrl,
+                zoom,
+                centerX,
+                centerY,
                 ct);
 
             if (snapshot is null)

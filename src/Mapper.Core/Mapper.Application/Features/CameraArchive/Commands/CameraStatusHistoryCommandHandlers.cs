@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.Features.CameraArchive.Commands;
 
-public class CreateCameraStatusHistoryHandler 
+public class CreateCameraStatusHistoryHandler
     : IRequestHandler<CreateCameraStatusHistoryCommand, Guid>
 {
     private readonly IMapperDbContext _db;
@@ -52,7 +52,7 @@ public class CreateCameraStatusHistoryHandler
     }
 }
 
-public class SetCameraStatusHistoryDurationHandler 
+public class SetCameraStatusHistoryDurationHandler
     : IRequestHandler<SetCameraStatusHistoryDurationCommand>
 {
     private readonly IMapperDbContext _db;
@@ -75,7 +75,7 @@ public class SetCameraStatusHistoryDurationHandler
     }
 }
 
-public class DeleteOldCameraStatusHistoryHandler 
+public class DeleteOldCameraStatusHistoryHandler
     : IRequestHandler<DeleteOldCameraStatusHistoryCommand>
 {
     private readonly IMapperDbContext _db;
