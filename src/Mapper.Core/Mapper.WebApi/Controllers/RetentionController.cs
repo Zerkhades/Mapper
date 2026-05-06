@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using Mapper.Application.Features.Retention.Commands;
 using Mapper.Application.Features.Retention.DTOs;
 using Mapper.Application.Features.Retention.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -32,4 +33,36 @@ public class RetentionController : BaseController
 
         return Ok(preview);
     }
+
+    [HttpPost("archive/cleanup")]
+    public async Task<ActionResult<ArchiveRetentionCleanupResultDto>> CleanupArchiveRetention(
+        [FromBody] ArchiveRetentionCleanupRequest request,
+        CancellationToken ct = default)
+    {
+        var result = await Mediator.Send(
+            new CleanupArchiveRetentionCommand(
+                request.CameraMarkId,
+                request.Now,
+                request.MotionVideoRetentionDays,
+                request.NoMotionVideoRetentionDays,
+                request.ArchivedVideoRetentionDays,
+                request.Take,
+                request.DryRun,
+                request.Confirm),
+            ct);
+
+        return Ok(result);
+    }
+}
+
+public class ArchiveRetentionCleanupRequest
+{
+    public Guid? CameraMarkId { get; set; }
+    public DateTimeOffset? Now { get; set; }
+    public int MotionVideoRetentionDays { get; set; } = 90;
+    public int NoMotionVideoRetentionDays { get; set; } = 7;
+    public int ArchivedVideoRetentionDays { get; set; } = 365;
+    public int Take { get; set; } = 100;
+    public bool DryRun { get; set; } = true;
+    public bool Confirm { get; set; }
 }
