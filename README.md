@@ -1,624 +1,286 @@
 # Mapper
 
-Интерактивная карта для предприятия с интеграцией систем видеонаблюдения
+Mapper - backend для интерактивной карты предприятия с метками рабочих мест, переходов и камер. API построен на ASP.NET Core, использует CQRS через MediatR, PostgreSQL, Redis, S3-совместимое хранилище, SignalR, Hangfire и Keycloak.
 
-## 🎯 Описание
+Репозиторий сейчас ориентирован на .NET 10 и локальный запуск через Docker Compose. Фронтенд живет отдельно: https://github.com/Zerkhades/Mapper.Frontend.
 
-Mapper - это современное корпоративное решение для управления интерактивными картами предприятия с интегрированной системой видеонаблюдения. Проект построен на **ASP.NET Core 8 WebAPI** с использованием архитектуры **CQRS + Mediator** и **Clean Architecture**, что обеспечивает высокую масштабируемость, тестируемость и поддерживаемость.
+## Что есть в проекте
 
-## ✨ Основной функционал
+- Карты предприятия и метки: рабочие места, переходы между картами, камеры.
+- Управление сотрудниками и привязка сотрудников к рабочим местам.
+- Камерная телеметрия: статусы, snapshots, zoom snapshots, история статусов.
+- Видеоархив камер, motion alerts и задачи очистки архива по retention policy.
+- Операторская аналитика, граф связности карт, smart notifications и аудит команд.
+- Real-time обновления через SignalR hub `/hubs/map`.
+- Swagger/OpenAPI с OAuth2 Authorization Code + PKCE через Keycloak.
+- Health checks, Prometheus metrics, OpenTelemetry traces, Serilog + Seq.
 
-### 🗺️ Управление картами и метками
-- **Интерактивные карты предприятия** с поддержкой масштабирования и навигации
-- **Метки на картах**: Workplace (рабочие места), Transition (переходы), Camera (камеры)
-- **Управление сотрудниками** с привязкой к рабочим местам
-- **Real-time обновления** через SignalR Hub
-- **API версионирование** с поддержкой нескольких версий API
+## Стек
 
-### 📹 Система видеонаблюдения
-- **Архив видеозаписей** с метаданными и таймлайном
-- **Детектирование движения** с автоматическими алертами (Low/Medium/High severity)
-- **Автоматические снимки** с камер по расписанию
-- **Масштабирование изображений** (zoom 1.0-10.0x)
-- **История статусов камер** с логированием всех изменений (15+ типов событий)
-- **Фоновые задачи** для автоматической обработки видеопотоков
+- .NET 10, ASP.NET Core Web API
+- Entity Framework Core 10, PostgreSQL 16
+- MediatR, FluentValidation, AutoMapper
+- Redis, MinIO/S3, Hangfire
+- SignalR
+- Keycloak 26
+- OpenTelemetry, Prometheus, Grafana, Jaeger, Seq
+- xUnit, Moq, coverlet.collector
+- YARP reverse proxy
 
-[👉 Подробная документация по системе видеонаблюдения](./CAMERA_FEATURES.md)
+## Структура
 
-### 🔐 Безопасность и мониторинг
-- **OAuth 2.0 + OpenID Connect** аутентификация через Keycloak
-- **JWT Bearer токены** для API
-- **Health Checks** endpoints (liveness и readiness рrоbes)
-- **Distributed Tracing** через OpenTelemetry
-- **Структурированное логирование** с Serilog
-
-## 🛠️ Технологический стек
-
-### Backend
-- **.NET 8** с C# 12
-- **ASP.NET Core WebAPI** с API версионированием (Asp.Versioning)
-- **Entity Framework Core** - ORM для работы с БД
-- **MediatR** - реализация паттерна Mediator для CQRS
-- **PostgreSQL** - основная база данных
-- **FluentValidation** - валидация моделей
-- **AutoMapper** - маппинг между объектами
-
-### Инфраструктура
-- **Redis** - распределённое кеширование
-- **MinIO (S3-совместимое)** - хранилище изображений и видео
-- **SignalR** - real-time двусторонняя коммуникация
-- **Hangfire** - планирование и выполнение фоновых задач
-- **FFmpeg** - обработка видео и изображений с камер
-
-### Observability (Наблюдаемость)
-- **OpenTelemetry** - трейсы и метрики
-  - ASP.NET Core инструментация
-  - HTTP Client инструментация
-  - Entity Framework Core инструментация
-- **Prometheus** - сбор и хранение метрик
-- **Grafana** - визуализация метрик и дашборды
-- **Jaeger** - распределённая трассировка (distributed tracing)
-- **Elasticsearch + Kibana** - поиск и аналитика логов
-- **Seq** - структурированное логирование
-- **Serilog** - библиотека логирования
-
-### Аутентификация и авторизация
-- **В данный момент JWT-аутентификация подключена, но большинство контроллеров еще не закрыты `[Authorize]`**
-- **Keycloak** - OAuth 2.0 / OpenID Connect провайдер
-- **JWT Bearer** - токены для API аутентификации
-
-### DevOps & Контейнеризация
-- **Docker** - контейнеризация приложений
-- **Docker Compose** - оркестрация мульти-контейнерных приложений
-
-### Front-end
-- **React** - https://github.com/Zerkhades/Mapper.Frontend
-- **Avalonia** - кроссплатформенное desktop приложение
-
-## 📚 Документация
-
-- [**CAMERA_FEATURES.md**](./CAMERA_FEATURES.md) - Полное описание функций видеонаблюдения
-- [**IMPLEMENTATION_SUMMARY.md**](./IMPLEMENTATION_SUMMARY.md) - Резюме технической реализации
-- [**auth-keycloak.md**](./docs/auth-keycloak.md) - Локальная схема Keycloak, клиенты и тестовые учетные данные
-- [**USAGE_EXAMPLES.md**](./USAGE_EXAMPLES.md) - Примеры использования API
-- [**INSTALLATION.md**](./INSTALLATION.md) - Руководство по установке и конфигурации
-
-## 🚀 Быстрый старт
-
-### Предварительные требования
-
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) (для контейнерной установки)
-- [PostgreSQL 14+](https://www.postgresql.org/download/) (для локальной установки)
-- [Redis](https://redis.io/download) (для локальной установки)
-- [FFmpeg](https://ffmpeg.org/download.html) (для работы с камерами)
-
-### Установка с помощью Docker Compose (рекомендуется)
-
-**Для разворачивания через IDE:**
-1. Откройте решение в Visual Studio 2022+
-2. Выберите **docker-compose** как startup project
-3. Нажмите F5 или Start Debugging
-
-**Для разворачивания через командную строку:**
-
-1. Клонируйте репозиторий:
-   ```bash
-   git clone https://github.com/Zerkhades/Mapper.git
-   cd Mapper
-   ```
-
-2. Запустите все сервисы:
-   ```bash
-   docker-compose up -d
-   ```
-
-3. Дождитесь запуска всех контейнеров (обычно 1-2 минуты)
-
-4. Доступ к сервисам:
-   - **WebAPI Swagger**: http://localhost:5001
-   - **Reverse Proxy / Swagger**: http://localhost:8080
-   - **Keycloak**: http://localhost:8080/auth/admin
-   - **Keycloak direct debug port**: http://localhost:5002/auth/admin
-   - **Hangfire Dashboard**: http://localhost:5001/hangfire
-   - **MinIO Console**: http://localhost:9001 (minioadmin/minioadmin)
-   - **Seq Logs**: http://localhost:5341 (admin/admin123!)
-   - **Kibana**: http://localhost:5601
-   - **Jaeger UI**: http://localhost:16686
-   - **Prometheus**: http://localhost:9090
-   - **Grafana**: http://localhost:3000 (admin/admin)
-
-### Локальная установка
-
-1. Клонируйте репозиторий:
-   ```bash
-   git clone https://github.com/Zerkhades/Mapper.git
-   cd Mapper
-   ```
-
-2. Восстановите зависимости:
-   ```bash
-   dotnet restore
-   ```
-
-3. Обновите `appsettings.Development.json`:
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Host=localhost;Port=5432;Database=MapperDB;Username=postgres;Password=yourpassword"
-     },
-     "Redis": {
-       "ConnectionString": "localhost:6379"
-     },
-     "S3": {
-       "ServiceUrl": "http://localhost:9000",
-       "AccessKey": "minioadmin",
-       "SecretKey": "minioadmin",
-       "Bucket": "mapper"
-     },
-     "Jwt": {
-      "Authority": "http://localhost:8080/auth/realms/mapper",
-       "Audience": "api"
-     },
-     "Otel": {
-       "Endpoint": "http://localhost:4317"
-     },
-     "Camera": {
-       "FfmpegPath": "C:\\ffmpeg\\bin\\ffmpeg.exe",
-       "Jobs": {
-         "MotionCron": "*/5 * * * *",
-         "VideoCron": "*/30 * * * *",
-         "StatusCron": "*/1 * * * *",
-         "SnapshotCron": "*/1 * * * *"
-       }
-     }
-   }
-   ```
-
-4. Примените миграции базы данных:
-   ```bash
-   cd src/Mapper.Core/Mapper.WebApi
-   dotnet ef database update --project ../Mapper.Persistence
-   ```
-
-5. Запустите приложение:
-   ```bash
-   dotnet run --project src/Mapper.Core/Mapper.WebApi
-   ```
-
-## 🏗️ Архитектура
-
-Проект следует принципам **Clean Architecture** и **Domain-Driven Design (DDD)** с явным разделением на слои:
-
-```
-┌─────────────────────────────────────────────┐
-│          Presentation Layer                 │
-│     (WebAPI, Controllers, SignalR)          │
-└─────────────────┬───────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────┐
-│         Application Layer                   │
-│  (CQRS Handlers, Validation, DTOs)          │
-└─────────────────┬───────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────┐
-│           Domain Layer                      │
-│    (Entities, Value Objects, Rules)         │
-└─────────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────┐
-│        Infrastructure Layer                 │
-│  (EF Core, Redis, S3, Cameras, Jobs)        │
-└─────────────────────────────────────────────┘
+```text
+src/
+  Mapper.Core/
+    Mapper.Domain/          доменные сущности и бизнес-правила
+    Mapper.Application/     CQRS handlers, DTO, validators, behaviours, interfaces
+    Mapper.Persistence/     EF Core DbContext, configurations, migrations
+    Mapper.Infrastructure/  Redis, S3, cameras, SignalR, Hangfire jobs
+    Mapper.WebApi/          API host, controllers, middleware, health checks
+  Mapper.ReverseProxy/      YARP reverse proxy для API и Keycloak
+  Mapper.Tests/             xUnit tests
+docs/
+  auth-keycloak.md          локальная схема Keycloak
+  frontend-new-endpoints.md актуальные endpoint-контракты для фронтенда
+ops/
+  keycloak/mapper-realm.json
+  prometheus.yml
 ```
 
-### Слои приложения
+В корне также есть старые папки `Mapper.Application`, `Mapper.Domain`, `Mapper.Persistence`, `Mapper.WebApi`, `Mapper.Tests`. Актуальные проекты подключены в `Mapper.sln` из `src/`.
 
-#### Core (Ядро)
-- **Mapper.Domain**: Доменные модели, entities, value objects, бизнес-правила
-- **Mapper.Application**: Прикладная логика, CQRS команды/запросы, валидация, интерфейсы
-  - Commands & Queries (CreateGeoMap, GetEmployeeById и т.д.)
-  - Validators (FluentValidation)
-  - DTOs и Mapping Profiles (AutoMapper)
+## Быстрый старт через Docker Compose
 
-#### Infrastructure (Инфраструктура)
-- **Mapper.Persistence**: Data Access Layer с Entity Framework Core
-  - DbContext, миграции, конфигурации сущностей
-- **Mapper.Infrastructure**: Реализация инфраструктурных сервисов
-  - `BackgroundJobs/` - Hangfire задачи для камер
-  - `Caching/` - Redis кеширование
-  - `Cameras/` - адаптеры для работы с камерами (SimpleCameraAdapter, FakeCameraAdapter)
-  - `Realtime/` - SignalR хабы для real-time обновлений
-  - `Storage/` - S3-совместимое хранилище (MinIO)
+Требования:
 
-#### Presentation (Представление)
-- **Mapper.WebApi**: REST API контроллеры, middleware, конфигурация
-  - Controllers с API версионированием
-  - Swagger/OpenAPI документация
-  - JWT аутентификация
-  - Health checks endpoints
+- Docker Desktop
+- .NET 10 SDK, если нужно собирать и тестировать локально без контейнера
 
-#### Authentication
-- **Keycloak**: OAuth 2.0 / OpenID Connect провайдер в Docker Compose
+Запуск:
 
-#### Tests
-- **Mapper.Tests**: Юнит и интеграционные тесты
-  - Domain тесты
-  - Command/Query handler тесты
-  - Validator тесты
-  - Integration тесты
-
-## 📁 Структура проекта
-
-```plaintext
-Mapper/
-├── src/
-│   ├── Mapper.Core/
-│   │   ├── Mapper.Application/              # Application Layer
-│   │   │   ├── CommandsAndQueries/
-│   │   │   │   ├── Employee/                # Employee CQRS
-│   │   │   │   ├── GeoMap/                  # Map CQRS
-│   │   │   │   ├── GeoMark/                 # Mark CQRS
-│   │   │   │   └── CameraArchive/           # Camera archive CQRS
-│   │   │   ├── Common/
-│   │   │   │   ├── Mappings/                # AutoMapper profiles
-│   │   │   │   ├── Behaviors/               # MediatR behaviors
-│   │   │   │   └── Exceptions/              # Custom exceptions
-│   │   │   ├── Interfaces/                  # Application interfaces
-│   │   │   └── DependencyInjection.cs
-│   │   ├── Mapper.Domain/                   # Domain Layer
-│   │   │   ├── Employee.cs
-│   │   │   ├── GeoMap.cs
-│   │   │   ├── GeoMark.cs (abstract)
-│   │   │   ├── WorkplaceMark.cs
-│   │   │   ├── TransitionMark.cs
-│   │   │   ├── CameraMark.cs
-│   │   │   ├── CameraVideoArchive.cs
-│   │   │   ├── CameraMotionAlert.cs
-│   │   │   └── CameraStatusHistory.cs
-│   │   ├── Mapper.Persistence/              # Data Access Layer
-│   │   │   ├── MapperDbContext.cs
-│   │   │   ├── Migrations/
-│   │   │   └── Configurations/              # EF Core configurations
-│   │   ├── Mapper.Infrastructure/           # Infrastructure Layer
-│   │   │   ├── BackgroundJobs/
-│   │   │   │   ├── DetectCameraMotionJob.cs
-│   │   │   │   ├── RecordCameraVideoJob.cs
-│   │   │   │   ├── PollCameraStatusAndLogHistoryJob.cs
-│   │   │   │   └── FetchCameraSnapshotsJob.cs
-│   │   │   ├── Caching/
-│   │   │   │   └── RedisCacheService.cs
-│   │   │   ├── Cameras/
-│   │   │   │   ├── SimpleCameraAdapter.cs   # Real camera integration
-│   │   │   │   └── FakeCameraAdapter.cs     # Testing adapter
-│   │   │   ├── Realtime/
-│   │   │   │   ├── MapHub.cs                # SignalR Hub
-│   │   │   │   └── MapRealtimeNotifier.cs
-│   │   │   └── Storage/
-│   │   │       └── S3/
-│   │   │           ├── S3MapImageStorage.cs
-│   │   │           └── S3ObjectStorage.cs
-│   │   └── Mapper.WebApi/                   # Presentation Layer
-│   │       ├── Controllers/
-│   │       │   ├── EmployeesController.cs
-│   │       │   ├── GeoMapController.cs
-│   │       │   ├── GeoMarkController.cs
-│   │       │   └── CameraTelemetryController.cs
-│   │       ├── Middleware/
-│   │       ├── Services/
-│   │       │   ├── CurrentUserService.cs
-│   │       │   └── HangfireDashboardAuthorizationFilter.cs
-│   │       ├── Models/
-│   │       ├── Program.cs
-│   │       ├── Startup.cs
-│   │       ├── appsettings.json
-│   │       └── Dockerfile
-│   ├── Mapper.ReverseProxy/                 # Reverse Proxy
-│   └── Mapper.Tests/                        # Tests
-│       ├── Domain/
-│       ├── Integration/
-│       ├── Validators/
-│       ├── Mappings/
-│       └── CameraArchive/
-├── ops/
-│   └── prometheus.yml                       # Prometheus config
-├── docker-compose.yml                       # Production compose
-├── docker-compose.override.yml              # Development overrides
-└── Mapper.sln
+```bash
+docker compose up --build -d
 ```
 
-## 🌐 API Endpoints
+Основные URL:
 
-API документация доступна через **Swagger UI**:
-- Локально: http://localhost:5001
-- Через Reverse Proxy: http://localhost:8080
+| Сервис | URL |
+| --- | --- |
+| Reverse Proxy / Swagger | `http://localhost:8080` |
+| WebApi direct Swagger | `http://localhost:5001` |
+| Keycloak admin через proxy | `http://localhost:8080/auth/admin` |
+| Keycloak direct debug | `http://localhost:5002/auth/admin` |
+| Hangfire Dashboard | `http://localhost:5001/hangfire` |
+| MinIO Console | `http://localhost:9001` |
+| Seq | `http://localhost:5341` |
+| Jaeger | `http://localhost:16686` |
+| Prometheus | `http://localhost:9090` |
+| Grafana | `http://localhost:3000` |
+| go2rtc | `http://localhost:1984` |
 
-### API версионирование
+Локальные учетные данные:
 
-API поддерживает версионирование через URL:
-- `GET /api/v1/GeoMap` - версия 1.0
-- `GET /api/v2/GeoMap` - версия 2.0 (если доступна)
+| Сервис | Логин | Пароль |
+| --- | --- | --- |
+| Keycloak admin | `admin` | `admin` |
+| Keycloak test user | `mapper.admin` | `mapper-admin` |
+| MinIO | `minioadmin` | `minioadmin` |
+| Seq | `admin` | `admin123!` |
+| Grafana | `admin` | `admin` |
 
-### Основные группы endpoints
+При запуске compose для `mapper.webapi` включены startup tasks:
 
-#### 🗺️ GeoMap (Карты)
-- `GET /api/v1/GeoMap` - получить список карт
-- `GET /api/v1/GeoMap/{id}` - получить карту по ID
-- `POST /api/v1/GeoMap` - создать новую карту
-- `PUT /api/v1/GeoMap` - обновить карту
-- `DELETE /api/v1/GeoMap/{id}` - удалить карту
+- `StartupTasks__ApplyMigrations=true` - применить EF Core migrations.
+- `StartupTasks__EnsureS3Bucket=true` - создать S3 bucket `mapper`, если его нет.
+- `StartupTasks__SeedDatabase=false` - не сидировать базу по умолчанию.
 
-#### 📍 GeoMark (Метки)
-- `GET /api/v1/GeoMark` - получить все метки
-- `GET /api/v1/GeoMark/{id}` - получить метку по ID
-- `POST /api/v1/GeoMark` - создать метку (Workplace/Transition/Camera)
-- `PUT /api/v1/GeoMark` - обновить метку
-- `DELETE /api/v1/GeoMark/{id}` - удалить метку
+## Локальный запуск API без контейнера
 
-#### 👥 Employees (Сотрудники)
-- `GET /api/v1/Employees` - получить список сотрудников
-- `GET /api/v1/Employees/{id}` - получить сотрудника по ID
-- `POST /api/v1/Employees` - создать сотрудника
-- `PUT /api/v1/Employees` - обновить сотрудника
-- `POST /api/v1/Employees/{id}/archive` - архивировать сотрудника
+Инфраструктуру удобнее поднять через compose, а сам API запустить из IDE или `dotnet run`.
 
-#### 📹 CameraTelemetry (Телеметрия камер)
-- `GET /api/v1/CameraTelemetry/status` - получить статусы всех камер
-- `GET /api/v1/CameraTelemetry/{id}/history` - история статусов камеры
-- `GET /api/v1/CameraTelemetry/{id}/motion-alerts` - алерты движения
-- `GET /api/v1/CameraTelemetry/{id}/video-archive` - архив видео
-
-### Health Checks
-
-- `GET /health/live` - Liveness probe (приложение запущено)
-- `GET /health/ready` - Readiness probe (приложение готово принимать запросы)
-
-### Мониторинг
-
-- `GET /metrics` - Prometheus метрики
-- `GET /hangfire` - Hangfire Dashboard (требуется аутентификация)
-
-## 🔄 Real-time обновления (SignalR)
-
-Подключение к SignalR Hub для получения обновлений в реальном времени:
-
-**Endpoint**: `http://localhost:5001/hubs/map`
-
-**Поддерживаемые события**:
-- `MapUpdated` - карта обновлена
-- `MarkCreated` - создана новая метка
-- `MarkUpdated` - метка обновлена
-- `MarkDeleted` - метка удалена
-- `EmployeeUpdated` - сотрудник обновлен
-- `CameraStatusChanged` - изменился статус камеры
-
-**Пример подключения (JavaScript)**:
-```javascript
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5001/hubs/map?access_token=YOUR_JWT_TOKEN")
-    .build();
-
-connection.on("MapUpdated", (mapId) => {
-    console.log(`Map ${mapId} was updated`);
-});
-
-await connection.start();
+```bash
+docker compose up -d db keycloakdb keycloak redis minio seq jaeger prometheus grafana
+dotnet restore Mapper.sln
+dotnet run --project src/Mapper.Core/Mapper.WebApi/Mapper.WebApi.csproj
 ```
 
-## 🔐 Аутентификация
+Для запуска API вне Docker проверьте `src/Mapper.Core/Mapper.WebApi/appsettings.Development.json` или user secrets. Минимально нужны:
 
-### OAuth 2.0 / OpenID Connect Flow
-
-1. **Получение токена** через Keycloak:
-   ```
-   POST http://localhost:8080/auth/realms/mapper/protocol/openid-connect/token
-   Content-Type: application/x-www-form-urlencoded
-   
-   grant_type=authorization_code&
-   client_id=mapper.swagger&
-   code=AUTHORIZATION_CODE&
-   redirect_uri=http://localhost:5001/swagger/oauth2-redirect.html&
-   code_verifier=CODE_VERIFIER
-   ```
-
-2. **Использование токена** в API запросах:
-   ```
-   GET http://localhost:5001/api/v1/GeoMap
-   Authorization: Bearer YOUR_JWT_TOKEN
-   ```
-
-### Swagger OAuth
-
-Swagger UI настроен для OAuth2 Authorization Code Flow с PKCE:
-- Client ID: `mapper.swagger`
-- Scopes: `api`, `openid`, `profile`
-
-Нажмите **Authorize** в Swagger UI и следуйте инструкциям.
-
-## 📊 Мониторинг и наблюдаемость
-
-### Логирование
-
-**Serilog** настроен для записи логов в несколько sink'ов:
-- Console (разработка)
-- Seq (структурированные логи)
-- Elasticsearch (поиск и аналитика)
-
-**Просмотр логов**:
-- Seq: http://localhost:5341 (admin/admin123!)
-- Kibana: http://localhost:5601
-
-### Распределённая трассировка
-
-**OpenTelemetry** экспортирует трейсы в Jaeger:
-- Jaeger UI: http://localhost:16686
-
-Трейсы включают:
-- HTTP requests (ASP.NET Core)
-- HTTP client calls
-- Database queries (EF Core)
-
-### Метрики
-
-**Prometheus** собирает метрики с endpoint `/metrics`:
-- Prometheus UI: http://localhost:9090
-- Grafana dashboards: http://localhost:3000
-
-Метрики включают:
-- ASP.NET Core метрики (requests, latency)
-- HTTP Client метрики
-- .NET Runtime метрики (GC, threads, exceptions)
-
-## 🎯 Фоновые задачи (Hangfire)
-
-Настроены следующие recurring jobs для автоматизации работы с камерами:
-
-| Job | Schedule | Описание |
-|-----|----------|----------|
-| `detect-camera-motion` | `*/5 * * * *` | Каждые 5 минут детектирует движение на камерах |
-| `record-camera-video` | `*/30 * * * *` | Каждые 30 минут записывает видео с камер |
-| `poll-camera-status` | `*/1 * * * *` | Каждую минуту проверяет статус камер |
-| `fetch-camera-snapshots` | `*/1 * * * *` | Каждую минуту делает снимки с камер |
-
-Schedule можно настроить в `appsettings.json`:
 ```json
-"Camera": {
-  "Jobs": {
-    "MotionCron": "*/5 * * * *",
-    "VideoCron": "*/30 * * * *",
-    "StatusCron": "*/1 * * * *",
-    "SnapshotCron": "*/1 * * * *"
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=MapperDB;Username=postgres;Password=pass"
+  },
+  "Redis": {
+    "ConnectionString": "localhost:6379"
+  },
+  "S3": {
+    "ServiceUrl": "http://localhost:9000",
+    "AccessKey": "minioadmin",
+    "SecretKey": "minioadmin",
+    "Bucket": "mapper"
+  },
+  "Jwt": {
+    "Authority": "http://localhost:5002/auth/realms/mapper",
+    "Audience": "api"
+  },
+  "SwaggerOAuth": {
+    "Authority": "http://localhost:5002/auth/realms/mapper",
+    "ClientId": "mapper.swagger"
   }
 }
 ```
 
-**Hangfire Dashboard**: http://localhost:5001/hangfire
-
-## 🧪 Тестирование
-
-Проект включает comprehensive test suite:
+Если миграции не применяются автоматически, используйте:
 
 ```bash
-# Запустить все тесты
-dotnet test
-
-# Запустить тесты с покрытием
-dotnet test /p:CollectCoverage=true
+dotnet ef database update -p src/Mapper.Core/Mapper.Persistence -s src/Mapper.Core/Mapper.WebApi
 ```
 
-**Тестовые проекты**:
-- Domain тесты (Employee, GeoMap, CameraMark и т.д.)
-- Application тесты (Command/Query handlers)
-- Validator тесты (FluentValidation)
-- Integration тесты
-- Infrastructure тесты (FakeCameraAdapter)
-
-## 🚢 Развёртывание
-
-### Docker Production Build
+## Основные команды
 
 ```bash
-# Build production images
-docker-compose -f docker-compose.yml build
-
-# Run in production mode
-docker-compose -f docker-compose.yml up -d
+dotnet restore Mapper.sln
+dotnet build Mapper.sln --configuration Release
+dotnet test src/Mapper.Tests/Mapper.Tests.csproj
+dotnet test src/Mapper.Tests/Mapper.Tests.csproj --collect:"XPlat Code Coverage" --results-directory ./coverage
+dotnet format Mapper.sln --verify-no-changes --no-restore
 ```
 
-### Environment Variables
+## API
 
-Основные переменные окружения для production:
+Базовый префикс версионированных endpoints: `/api/v1`.
 
-```bash
-# Database
-ConnectionStrings__DefaultConnection="Host=postgres;Port=5432;Database=MapperDB;Username=postgres;Password=STRONG_PASSWORD"
+Основные группы:
 
-# Redis
-Redis__ConnectionString="redis:6379"
+| Группа | Префикс |
+| --- | --- |
+| Карты | `/api/v1/geomaps` |
+| Метки карты | `/api/v1/geomaps/{geoMapId}/marks` |
+| Сотрудники | `/api/v1/employees` |
+| Камерная телеметрия | `/api/v1/geomaps/{geoMapId}/marks/camera/{markId}` |
+| Архив камеры | `/api/v1/geomaps/{geoMapId}/marks/camera/{cameraMarkId}/archive` |
+| Dashboard | `/api/v1/dashboard` |
+| Smart notifications | `/api/v1/notifications/smart` |
+| Audit events | `/api/v1/audit/events` |
+| Retention | `/api/v1/retention` |
+| Files | `/api/files/{key}` |
 
-# S3 (MinIO)
-S3__ServiceUrl="http://minio:9000"
-S3__AccessKey="MINIO_ACCESS_KEY"
-S3__SecretKey="MINIO_SECRET_KEY"
-S3__Bucket="mapper"
+Служебные endpoints:
 
-# JWT
-Jwt__Authority="http://localhost:8080/auth/realms/mapper"
-Jwt__MetadataAddress="http://keycloak:8080/auth/realms/mapper/.well-known/openid-configuration"
-Jwt__Audience="api"
+| Endpoint | Назначение |
+| --- | --- |
+| `/health/live` | liveness probe |
+| `/health/ready` | readiness probe: PostgreSQL, Redis, S3 |
+| `/metrics` | Prometheus scraping endpoint |
+| `/hangfire` | Hangfire Dashboard |
+| `/hubs/map` | SignalR hub |
 
-# OpenTelemetry
-Otel__Endpoint="http://jaeger:4317"
+Подробные контракты новых frontend endpoints: [docs/frontend-new-endpoints.md](docs/frontend-new-endpoints.md).
 
-# FFmpeg
-Camera__FfmpegPath="/usr/bin/ffmpeg"
+## Аутентификация
+
+API настроен на JWT Bearer tokens от Keycloak. Swagger использует public client `mapper.swagger` и Authorization Code + PKCE со scopes:
+
+```text
+openid profile api
 ```
 
-## 🔧 Troubleshooting
+В локальном Docker Compose WebApi валидирует issuer через публичный адрес:
 
-### Частые проблемы
-
-**1. Ошибка подключения к базе данных**
-```
-Solution: Проверьте ConnectionString и убедитесь, что PostgreSQL запущен
-```
-
-**2. Hangfire jobs не запускаются**
-```
-Solution: Проверьте логи в Seq/Kibana. Возможно, схема Hangfire не создана (PrepareSchemaIfNecessary=true)
+```text
+Jwt__Authority=http://localhost:8080/auth/realms/mapper
+Jwt__MetadataAddress=http://keycloak:8080/auth/realms/mapper/.well-known/openid-configuration
+Jwt__Audience=api
+SwaggerOAuth__Authority=http://localhost:8080/auth/realms/mapper
+SwaggerOAuth__ClientId=mapper.swagger
 ```
 
-**3. Camera jobs завершаются с ошибкой**
+Больше деталей и пример service token: [docs/auth-keycloak.md](docs/auth-keycloak.md).
+
+Важно: JWT authentication подключена, но не все контроллеры закрыты `[Authorize]`. Если endpoint должен стать приватным, добавляйте авторизацию явно или вводите fallback policy осознанно.
+
+## SignalR
+
+Hub доступен по адресу:
+
+```text
+/hubs/map
 ```
-Solution: Убедитесь, что FFmpeg установлен и Camera:FfmpegPath настроен правильно
+
+Клиент может подписаться на группу конкретной карты:
+
+```javascript
+await connection.invoke("JoinMap", geoMapId);
 ```
 
-**4. SignalR не работает**
+Группы имеют формат `map:{geoMapId}`. Уведомления отправляются через `IMapRealtimeNotifier` из infrastructure layer.
+
+## Фоновые задачи
+
+Hangfire планирует recurring jobs при старте WebApi:
+
+| Job | Настройка cron | По умолчанию |
+| --- | --- | --- |
+| `detect-camera-motion` | `Camera:Jobs:MotionCron` | `*/5 * * * *` |
+| `record-camera-video` | `Camera:Jobs:VideoCron` | `*/30 * * * *` |
+| `poll-camera-status` | `Camera:Jobs:StatusCron` | `*/1 * * * *` |
+| `fetch-camera-snapshots` | `Camera:Jobs:SnapshotCron` | `*/1 * * * *` |
+| `cleanup-archive-retention` | `Retention:ArchiveCleanup:Cron` | `0 3 * * *` |
+
+Retention cleanup по умолчанию работает в безопасном режиме `DryRun=true`. Реальное удаление требует `DryRun=false` и `Confirm=true`.
+
+## Конфигурация
+
+Часто используемые переменные окружения:
+
+```text
+ConnectionStrings__DefaultConnection=Host=db;Database=MapperDB;Username=postgres;Password=pass
+Redis__ConnectionString=redis:6379
+S3__ServiceUrl=http://minio:9000
+S3__AccessKey=minioadmin
+S3__SecretKey=minioadmin
+S3__Bucket=mapper
+Seq__ServerUrl=http://seq:80
+Otel__Endpoint=http://jaeger:4317
+Jwt__Authority=http://localhost:8080/auth/realms/mapper
+Jwt__MetadataAddress=http://keycloak:8080/auth/realms/mapper/.well-known/openid-configuration
+Jwt__Audience=api
+SwaggerOAuth__Authority=http://localhost:8080/auth/realms/mapper
+SwaggerOAuth__ClientId=mapper.swagger
+Cors__AllowedOrigins__0=http://localhost:3000
 ```
-Solution: Проверьте CORS настройки и access_token в query string
-```
 
-## 👨‍💻 Разработка
+Секреты, реальные пароли и machine-specific пути не коммитим.
 
-### Требования
+## Разработка
 
-- Visual Studio 2022+ или Rider 2023+
-- .NET 8 SDK
-- Docker Desktop (опционально)
+- Целевой framework актуальных проектов: `net10.0`.
+- Nullable включен.
+- Версии NuGet централизованы в `Directory.Packages.props`.
+- Clean Architecture остается основной границей: Domain не зависит от Application, Persistence и Infrastructure подключаются через интерфейсы Application.
+- Новые features лучше добавлять вертикально: command/query, validator, DTO/mapping, controller, tests.
+- Для новых handler/validator/persistence-sensitive изменений добавляйте тесты рядом с существующими группами в `src/Mapper.Tests`.
 
-### Рекомендуемые расширения Visual Studio
+## Документация
 
-- ReSharper / Rider
-- EF Core Power Tools
-- Docker Tools
+- [docs/auth-keycloak.md](docs/auth-keycloak.md) - Keycloak, клиенты, test user, token examples.
+- [docs/frontend-new-endpoints.md](docs/frontend-new-endpoints.md) - актуальные endpoint-контракты для frontend.
+- [src/Mapper.Tests/README.md](src/Mapper.Tests/README.md) - заметки по тестовому проекту, если нужны детали по тестам.
 
-### Соглашения по коду
+## Troubleshooting
 
-- Следуйте C# Coding Conventions
-- Используйте async/await для I/O операций
-- Пишите юнит-тесты для новой бизнес-логики
-- Документируйте публичные API с XML комментариями
+**Swagger не может авторизоваться через Keycloak.**
+Проверьте, что открываете Swagger через тот же origin, который есть в realm import и настройках OAuth. Для compose основной путь: `http://localhost:8080`.
 
-## 🤝 Вклад в проект
+**API в контейнере не видит Keycloak metadata.**
+В compose должен быть задан `Jwt__MetadataAddress=http://keycloak:8080/auth/realms/mapper/.well-known/openid-configuration`, а `Jwt__Authority` должен оставаться публичным issuer `http://localhost:8080/auth/realms/mapper`.
 
-Если вы хотите внести вклад в проект:
+**Readiness probe возвращает unhealthy.**
+Проверьте PostgreSQL, Redis и MinIO: `/health/ready` включает все три проверки.
 
-1. Fork репозитория
-2. Создайте feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit изменения (`git commit -m 'Add some AmazingFeature'`)
-4. Push в branch (`git push origin feature/AmazingFeature`)
-5. Откройте Pull Request
+**Hangfire jobs не появились.**
+Проверьте подключение к PostgreSQL и dashboard `/hangfire`. Планирование выполняется при старте WebApi.
 
-## 📝 Лицензия
-
-Этот проект распространяется под лицензией MIT. См. файл `LICENSE` для подробностей.
-
-## 📧 Контакты
-
-**Maintainer**: Zerkhades
-
-**GitHub**: https://github.com/Zerkhades/Mapper
-
----
-
-⭐ Если проект был полезен, поставьте звезду на GitHub!
+**S3 bucket отсутствует.**
+В compose включен `StartupTasks__EnsureS3Bucket=true`. При локальном запуске без контейнера включите `StartupTasks:EnsureS3Bucket` или создайте bucket `mapper` в MinIO вручную.
