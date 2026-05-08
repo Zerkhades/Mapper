@@ -117,8 +117,9 @@ Mapper - это современное корпоративное решение
 
 4. Доступ к сервисам:
    - **WebAPI Swagger**: http://localhost:5001
-   - **Keycloak**: http://localhost:5002/auth/admin
-   - **Reverse Proxy**: http://localhost:8080
+   - **Reverse Proxy / Swagger**: http://localhost:8080
+   - **Keycloak**: http://localhost:8080/auth/admin
+   - **Keycloak direct debug port**: http://localhost:5002/auth/admin
    - **Hangfire Dashboard**: http://localhost:5001/hangfire
    - **MinIO Console**: http://localhost:9001 (minioadmin/minioadmin)
    - **Seq Logs**: http://localhost:5341 (admin/admin123!)
@@ -156,7 +157,7 @@ Mapper - это современное корпоративное решение
        "Bucket": "mapper"
      },
      "Jwt": {
-       "Authority": "http://localhost:5002/auth/realms/mapper",
+      "Authority": "http://localhost:8080/auth/realms/mapper",
        "Audience": "api"
      },
      "Otel": {
@@ -410,7 +411,7 @@ await connection.start();
 
 1. **Получение токена** через Keycloak:
    ```
-   POST http://localhost:5002/auth/realms/mapper/protocol/openid-connect/token
+   POST http://localhost:8080/auth/realms/mapper/protocol/openid-connect/token
    Content-Type: application/x-www-form-urlencoded
    
    grant_type=authorization_code&
@@ -542,7 +543,7 @@ S3__SecretKey="MINIO_SECRET_KEY"
 S3__Bucket="mapper"
 
 # JWT
-Jwt__Authority="http://localhost:5002/auth/realms/mapper"
+Jwt__Authority="http://localhost:8080/auth/realms/mapper"
 Jwt__MetadataAddress="http://keycloak:8080/auth/realms/mapper/.well-known/openid-configuration"
 Jwt__Audience="api"
 

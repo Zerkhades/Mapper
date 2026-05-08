@@ -56,6 +56,42 @@
           }
         }
       ]
+    },
+    {
+      "name": "profile",
+      "description": "Standard OIDC profile claims for browser clients",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "preferred-username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-property-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "full-name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-full-name-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
     }
   ],
   "clients": [
@@ -76,13 +112,17 @@
         "http://localhost:8080/swagger/oauth2-redirect.html",
         "https://localhost:8081/swagger/oauth2-redirect.html",
         "http://localhost:8080/oauth2-redirect.html",
-        "https://localhost:8081/oauth2-redirect.html"
+        "https://localhost:8081/oauth2-redirect.html",
+        "http://localhost:5173/*",
+        "http://localhost:3001/*"
       ],
       "webOrigins": [
         "http://localhost:5001",
         "https://localhost:7193",
         "http://localhost:8080",
-        "https://localhost:8081"
+        "https://localhost:8081",
+        "http://localhost:5173",
+        "http://localhost:3001"
       ],
       "defaultClientScopes": [
         "web-origins",
