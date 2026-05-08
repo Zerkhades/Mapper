@@ -26,7 +26,7 @@ Mapper - это современное корпоративное решение
 [👉 Подробная документация по системе видеонаблюдения](./CAMERA_FEATURES.md)
 
 ### 🔐 Безопасность и мониторинг
-- **OAuth 2.0 + OpenID Connect** аутентификация через IdentityServer
+- **OAuth 2.0 + OpenID Connect** аутентификация через Keycloak
 - **JWT Bearer токены** для API
 - **Health Checks** endpoints (liveness и readiness рrоbes)
 - **Distributed Tracing** через OpenTelemetry
@@ -63,8 +63,8 @@ Mapper - это современное корпоративное решение
 - **Serilog** - библиотека логирования
 
 ### Аутентификация и авторизация
-- **В данный момент авторизация полностью отключена**
-- **IdentityServer** - OAuth 2.0 / OpenID Connect провайдер
+- **В данный момент JWT-аутентификация подключена, но большинство контроллеров еще не закрыты `[Authorize]`**
+- **Keycloak** - OAuth 2.0 / OpenID Connect провайдер
 - **JWT Bearer** - токены для API аутентификации
 
 ### DevOps & Контейнеризация
@@ -79,6 +79,7 @@ Mapper - это современное корпоративное решение
 
 - [**CAMERA_FEATURES.md**](./CAMERA_FEATURES.md) - Полное описание функций видеонаблюдения
 - [**IMPLEMENTATION_SUMMARY.md**](./IMPLEMENTATION_SUMMARY.md) - Резюме технической реализации
+- [**auth-keycloak.md**](./docs/auth-keycloak.md) - Локальная схема Keycloak, клиенты и тестовые учетные данные
 - [**USAGE_EXAMPLES.md**](./USAGE_EXAMPLES.md) - Примеры использования API
 - [**INSTALLATION.md**](./INSTALLATION.md) - Руководство по установке и конфигурации
 
@@ -116,8 +117,9 @@ Mapper - это современное корпоративное решение
 
 4. Доступ к сервисам:
    - **WebAPI Swagger**: http://localhost:5001
-   - **IdentityServer**: http://localhost:5002
-   - **Reverse Proxy**: http://localhost:8080
+   - **Reverse Proxy / Swagger**: http://localhost:8080
+   - **Keycloak**: http://localhost:8080/auth/admin
+   - **Keycloak direct debug port**: http://localhost:5002/auth/admin
    - **Hangfire Dashboard**: http://localhost:5001/hangfire
    - **MinIO Console**: http://localhost:9001 (minioadmin/minioadmin)
    - **Seq Logs**: http://localhost:5341 (admin/admin123!)
@@ -155,7 +157,7 @@ Mapper - это современное корпоративное решение
        "Bucket": "mapper"
      },
      "Jwt": {
-       "Authority": "http://localhost:5002",
+      "Authority": "http://localhost:8080/auth/realms/mapper",
        "Audience": "api"
      },
      "Otel": {
@@ -237,7 +239,7 @@ Mapper - это современное корпоративное решение
   - Health checks endpoints
 
 #### Authentication
-- **Mapper.IdentityServer**: OAuth 2.0 / OpenID Connect сервер
+- **Keycloak**: OAuth 2.0 / OpenID Connect провайдер в Docker Compose
 
 #### Tests
 - **Mapper.Tests**: Юнит и интеграционные тесты
@@ -311,7 +313,6 @@ Mapper/
 │   │       ├── Startup.cs
 │   │       ├── appsettings.json
 │   │       └── Dockerfile
-│   ├── Mapper.IdentityServer/               # Authentication
 │   ├── Mapper.ReverseProxy/                 # Reverse Proxy
 │   └── Mapper.Tests/                        # Tests
 │       ├── Domain/
@@ -408,9 +409,9 @@ await connection.start();
 
 ### OAuth 2.0 / OpenID Connect Flow
 
-1. **Получение токена** через IdentityServer:
+1. **Получение токена** через Keycloak:
    ```
-   POST http://localhost:5002/connect/token
+   POST http://localhost:8080/auth/realms/mapper/protocol/openid-connect/token
    Content-Type: application/x-www-form-urlencoded
    
    grant_type=authorization_code&
@@ -542,7 +543,8 @@ S3__SecretKey="MINIO_SECRET_KEY"
 S3__Bucket="mapper"
 
 # JWT
-Jwt__Authority="http://identityserver:5002"
+Jwt__Authority="http://localhost:8080/auth/realms/mapper"
+Jwt__MetadataAddress="http://keycloak:8080/auth/realms/mapper/.well-known/openid-configuration"
 Jwt__Audience="api"
 
 # OpenTelemetry

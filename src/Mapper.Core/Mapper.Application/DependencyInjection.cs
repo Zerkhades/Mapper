@@ -28,6 +28,7 @@ namespace Mapper.Application
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuditBehaviour<,>));
 
             return services;
         }

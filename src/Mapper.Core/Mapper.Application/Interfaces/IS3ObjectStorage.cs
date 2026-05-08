@@ -9,5 +9,6 @@ namespace Mapper.Application.Interfaces
     public interface IS3ObjectStorage
     {
         Task<string> PutAsync(string key, Stream content, string contentType, CancellationToken ct);
+        Task DeleteAsync(string key, CancellationToken ct);
     }
 }

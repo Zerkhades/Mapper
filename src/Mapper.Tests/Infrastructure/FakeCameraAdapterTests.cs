@@ -107,7 +107,7 @@ public class FakeCameraAdapterTests
     {
         // Arrange
         var frameData = new byte[1024];
-        
+
         // Try multiple times to get a motion detection
         MotionDetectionResult? result = null;
         for (int i = 0; i < 20; i++)

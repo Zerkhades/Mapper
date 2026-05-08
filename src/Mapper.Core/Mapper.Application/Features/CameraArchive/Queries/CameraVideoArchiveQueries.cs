@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Mapper.Application.Features.CameraArchive.Queries;
 
-public record GetCameraVideoArchiveQuery(Guid CameraMarkId, int Skip = 0, int Take = 50) 
+public record GetCameraVideoArchiveQuery(Guid CameraMarkId, int Skip = 0, int Take = 50)
     : IRequest<List<CameraVideoArchiveListItemDto>>;
 
 public record GetCameraVideoArchiveByIdQuery(Guid CameraMarkId, Guid VideoArchiveId)

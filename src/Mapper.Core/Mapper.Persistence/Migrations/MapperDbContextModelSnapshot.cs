@@ -17,10 +17,52 @@ namespace Mapper.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Mapper.Domain.AuditEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("MetadataJson")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityId");
+
+                    b.HasIndex("EntityType");
+
+                    b.HasIndex("OccurredAt");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("audit_events", (string)null);
+                });
 
             modelBuilder.Entity("Mapper.Domain.CameraMotionAlert", b =>
                 {
@@ -183,9 +225,6 @@ namespace Mapper.Persistence.Migrations
                     b.Property<Guid>("GeoMarkId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("GeoMarkId1")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean");
 
@@ -204,8 +243,6 @@ namespace Mapper.Persistence.Migrations
                     b.HasIndex("EmployeePhotoId");
 
                     b.HasIndex("GeoMarkId");
-
-                    b.HasIndex("GeoMarkId1");
 
                     b.ToTable("Employees");
                 });
@@ -343,16 +380,10 @@ namespace Mapper.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("EmployeePhotoId");
 
-                    b.HasOne("Mapper.Domain.WorkplaceMark", null)
+                    b.HasOne("Mapper.Domain.WorkplaceMark", "GeoMark")
                         .WithMany("Employees")
                         .HasForeignKey("GeoMarkId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Mapper.Domain.GeoMark", "GeoMark")
-                        .WithMany()
-                        .HasForeignKey("GeoMarkId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("EmployeePhoto");
 

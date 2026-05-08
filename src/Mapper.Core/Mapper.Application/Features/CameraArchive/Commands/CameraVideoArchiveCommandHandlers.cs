@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.Features.CameraArchive.Commands;
 
-public class CreateCameraVideoArchiveHandler 
+public class CreateCameraVideoArchiveHandler
     : IRequestHandler<CreateCameraVideoArchiveCommand, Guid>
 {
     private readonly IMapperDbContext _db;
@@ -42,7 +42,7 @@ public class CreateCameraVideoArchiveHandler
     }
 }
 
-public class MarkVideoArchiveAsArchivedHandler 
+public class MarkVideoArchiveAsArchivedHandler
     : IRequestHandler<MarkVideoArchiveAsArchivedCommand>
 {
     private readonly IMapperDbContext _db;
@@ -65,7 +65,7 @@ public class MarkVideoArchiveAsArchivedHandler
     }
 }
 
-public class DeleteCameraVideoArchiveHandler 
+public class DeleteCameraVideoArchiveHandler
     : IRequestHandler<DeleteCameraVideoArchiveCommand>
 {
     private readonly IMapperDbContext _db;
@@ -88,7 +88,7 @@ public class DeleteCameraVideoArchiveHandler
     }
 }
 
-public class UpdateVideoArchiveMotionDetectionHandler 
+public class UpdateVideoArchiveMotionDetectionHandler
     : IRequestHandler<UpdateVideoArchiveMotionDetectionCommand>
 {
     private readonly IMapperDbContext _db;

@@ -19,30 +19,37 @@ services:
       interval: 10s
       retries: 5
 
-  identitydb:
+  keycloakdb:
     image: postgres:16-alpine
     restart: always
     environment:
-      POSTGRES_DB: IdentityDb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
     ports:
       - "5434:5432"
     volumes:
       - type: volume
-        source: identitydb-data
+        source: keycloakdb-data
         target: /var/lib/postgresql/data
     networks: [ geomaps-net ]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d IdentityDb"]
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
       interval: 10s
       retries: 5
 
   proxy:
-    build: ./src/Mapper.ReverseProxy
+    build:
+      context: .
+      dockerfile: src/Mapper.ReverseProxy/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:8080
     ports:
       - "8080:8080"
     networks: [ geomaps-net ]
+    depends_on:
+      - mapper.webapi
+      - keycloak
 
   redis:
     image: redis:7-alpine
@@ -115,8 +122,8 @@ services:
   # ---------------- Microservices ----------------
   mapper.webapi:
     build:
-      context: ./src/Mapper.Core
-      dockerfile: Mapper.WebApi/Dockerfile
+      context: .
+      dockerfile: src/Mapper.Core/Mapper.WebApi/Dockerfile
     environment:
       ConnectionStrings__DefaultConnection: Host=db;Database=MapperDB;Username=postgres;Password=pass
       ASPNETCORE_URLS: http://0.0.0.0:5001
@@ -133,6 +140,11 @@ services:
       Seq__ServerUrl: http://seq:80
 
       Otel__Endpoint: http://jaeger:4317
+      Jwt__Authority: http://localhost:8080/auth/realms/mapper
+      Jwt__MetadataAddress: http://keycloak:8080/auth/realms/mapper/.well-known/openid-configuration
+      Jwt__Audience: api
+      SwaggerOAuth__Authority: http://localhost:8080/auth/realms/mapper
+      SwaggerOAuth__ClientId: mapper.swagger
     ports:
       - "5001:5001"
     volumes:
@@ -141,20 +153,31 @@ services:
     networks: [ geomaps-net ]
     depends_on:
       - db
+      - keycloak
 
-  identityserver:
-    build: ./src/Mapper.IdentityServer
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.0
+    command: start-dev --import-realm
     environment:
-      ConnectionStrings__DefaultConnection: Host=identitydb;Database=IdentityDb;Username=postgres;Password=pass
-      ASPNETCORE_URLS: http://0.0.0.0:5002
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloakdb
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HOSTNAME: http://localhost:8080/auth
+      KC_HOSTNAME_STRICT: "false"
+      KC_HEALTH_ENABLED: "true"
     ports:
-      - "5002:5002"
+      - "5002:8080"
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./ops/keycloak/mapper-realm.json:/opt/keycloak/data/import/mapper-realm.json:ro
     networks: [ geomaps-net ]
     depends_on:
-      - identitydb
+      keycloakdb:
+        condition: service_healthy
 
   # mapperfrontend:
   #   build: ../Mapper.Frontend/src/Mapper.Frontend
@@ -189,8 +212,8 @@ networks:
 volumes:
   mapperdb-data:
     name: mapper_mapperdb-data
-  identitydb-data:
-    name: mapper_identitydb-data
+  keycloakdb-data:
+    name: mapper_keycloakdb-data
   minio-data:
     name: mapper_minio-data
   es-data:

@@ -29,6 +29,7 @@
     <ProjectReference Include="..\Mapper.Core\Mapper.Application\Mapper.Application.csproj" />
     <ProjectReference Include="..\Mapper.Core\Mapper.Domain\Mapper.Domain.csproj" />
     <ProjectReference Include="..\Mapper.Core\Mapper.Infrastructure\Mapper.Infrastructure.csproj" />
+    <ProjectReference Include="..\Mapper.Core\Mapper.WebApi\Mapper.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

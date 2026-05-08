@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.Features.CameraArchive.Commands;
 
-public class CreateCameraMotionAlertHandler 
+public class CreateCameraMotionAlertHandler
     : IRequestHandler<CreateCameraMotionAlertCommand, Guid>
 {
     private readonly IMapperDbContext _db;
@@ -39,7 +39,7 @@ public class CreateCameraMotionAlertHandler
     }
 }
 
-public class ConfirmCameraMotionAlertHandler 
+public class ConfirmCameraMotionAlertHandler
     : IRequestHandler<ConfirmCameraMotionAlertCommand>
 {
     private readonly IMapperDbContext _db;
@@ -62,7 +62,7 @@ public class ConfirmCameraMotionAlertHandler
     }
 }
 
-public class ResolveCameraMotionAlertHandler 
+public class ResolveCameraMotionAlertHandler
     : IRequestHandler<ResolveCameraMotionAlertCommand>
 {
     private readonly IMapperDbContext _db;
@@ -85,7 +85,7 @@ public class ResolveCameraMotionAlertHandler
     }
 }
 
-public class LinkMotionAlertToVideoHandler 
+public class LinkMotionAlertToVideoHandler
     : IRequestHandler<LinkMotionAlertToVideoCommand>
 {
     private readonly IMapperDbContext _db;
@@ -114,7 +114,7 @@ public class LinkMotionAlertToVideoHandler
     }
 }
 
-public class DeleteCameraMotionAlertHandler 
+public class DeleteCameraMotionAlertHandler
     : IRequestHandler<DeleteCameraMotionAlertCommand>
 {
     private readonly IMapperDbContext _db;

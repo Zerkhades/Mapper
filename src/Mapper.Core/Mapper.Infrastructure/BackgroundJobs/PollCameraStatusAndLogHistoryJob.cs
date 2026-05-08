@@ -62,8 +62,8 @@ public class PollCameraStatusAndLogHistoryJob
                     return;
 
                 // Status changed, create history record
-                var reason = newValue == "online" 
-                    ? CameraStatusReason.NetworkConnected 
+                var reason = newValue == "online"
+                    ? CameraStatusReason.NetworkConnected
                     : CameraStatusReason.NetworkDisconnected;
 
                 await _mediator.Send(new CreateCameraStatusHistoryCommand(

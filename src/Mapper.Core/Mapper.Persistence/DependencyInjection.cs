@@ -17,7 +17,7 @@ namespace Mapper.Persistence
             services.AddDbContext<MapperDbContext>(opt =>
             {
                 opt.UseNpgsql(
-                    configuration.GetConnectionString("DefaultConnection"),
+                    connectionString,
                     x => x.MigrationsAssembly(typeof(MapperDbContext).Assembly.FullName));
             });
             services.AddScoped<IMapperDbContext>(provider =>

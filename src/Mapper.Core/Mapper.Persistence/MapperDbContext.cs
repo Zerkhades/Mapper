@@ -13,6 +13,7 @@ namespace Mapper.Persistence
         public DbSet<CameraVideoArchive> CameraVideoArchives { get; set; }
         public DbSet<CameraMotionAlert> CameraMotionAlerts { get; set; }
         public DbSet<CameraStatusHistory> CameraStatusHistories { get; set; }
+        public DbSet<AuditEvent> AuditEvents { get; set; }
 
         public MapperDbContext(DbContextOptions<MapperDbContext> options) : base(options) { }
 
@@ -110,6 +111,22 @@ namespace Mapper.Persistence
                 b.Property(x => x.ResponseTimeMs);
                 b.HasIndex(x => x.CameraMarkId);
                 b.HasIndex(x => x.ChangedAt);
+            });
+
+            modelBuilder.Entity<AuditEvent>(b =>
+            {
+                b.ToTable("audit_events");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Action).IsRequired().HasMaxLength(100);
+                b.Property(x => x.EntityType).IsRequired().HasMaxLength(100);
+                b.Property(x => x.EntityId);
+                b.Property(x => x.UserId);
+                b.Property(x => x.OccurredAt).IsRequired();
+                b.Property(x => x.MetadataJson).HasMaxLength(4000);
+                b.HasIndex(x => x.OccurredAt);
+                b.HasIndex(x => x.EntityType);
+                b.HasIndex(x => x.EntityId);
+                b.HasIndex(x => x.UserId);
             });
         }
     }

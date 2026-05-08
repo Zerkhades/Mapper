@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.Features.CameraArchive.Queries;
 
-public class GetCameraStatusHistoryHandler 
+public class GetCameraStatusHistoryHandler
     : IRequestHandler<GetCameraStatusHistoryQuery, List<CameraStatusHistoryListItemDto>>
 {
     private readonly IMapperDbContext _db;
@@ -50,7 +50,7 @@ public class GetCameraStatusHistoryHandler
     }
 }
 
-public class GetCameraStatusHistoryInDateRangeHandler 
+public class GetCameraStatusHistoryInDateRangeHandler
     : IRequestHandler<GetCameraStatusHistoryInDateRangeQuery, List<CameraStatusHistoryListItemDto>>
 {
     private readonly IMapperDbContext _db;
@@ -95,7 +95,7 @@ public class GetCameraStatusHistoryInDateRangeHandler
     }
 }
 
-public class GetCameraCurrentStatusHandler 
+public class GetCameraCurrentStatusHandler
     : IRequestHandler<GetCameraCurrentStatusQuery, CameraStatusHistoryDto?>
 {
     private readonly IMapperDbContext _db;

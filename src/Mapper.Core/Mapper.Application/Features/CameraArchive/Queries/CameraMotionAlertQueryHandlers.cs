@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mapper.Application.Features.CameraArchive.Queries;
 
-public class GetCameraMotionAlertsHandler 
+public class GetCameraMotionAlertsHandler
     : IRequestHandler<GetCameraMotionAlertsQuery, List<CameraMotionAlertListItemDto>>
 {
     private readonly IMapperDbContext _db;
@@ -50,7 +50,7 @@ public class GetCameraMotionAlertsHandler
     }
 }
 
-public class GetCameraMotionAlertByIdHandler 
+public class GetCameraMotionAlertByIdHandler
     : IRequestHandler<GetCameraMotionAlertByIdQuery, CameraMotionAlertDto>
 {
     private readonly IMapperDbContext _db;
@@ -95,7 +95,7 @@ public class GetCameraMotionAlertByIdHandler
     }
 }
 
-public class GetUnresolvedCameraMotionAlertsHandler 
+public class GetUnresolvedCameraMotionAlertsHandler
     : IRequestHandler<GetUnresolvedCameraMotionAlertsQuery, List<CameraMotionAlertListItemDto>>
 {
     private readonly IMapperDbContext _db;
@@ -135,7 +135,7 @@ public class GetUnresolvedCameraMotionAlertsHandler
     }
 }
 
-public class GetCameraMotionAlertsInDateRangeHandler 
+public class GetCameraMotionAlertsInDateRangeHandler
     : IRequestHandler<GetCameraMotionAlertsInDateRangeQuery, List<CameraMotionAlertListItemDto>>
 {
     private readonly IMapperDbContext _db;

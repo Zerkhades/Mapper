@@ -1,29 +1,28 @@
-# См. статью по ссылке https://aka.ms/customizecontainer, чтобы узнать как настроить контейнер отладки и как Visual Studio использует этот Dockerfile для создания образов для ускорения отладки.
+# See https://aka.ms/customizecontainer to learn how to customize the debug container and how Visual Studio uses this Dockerfile.
 
-# Этот этап используется при запуске из VS в быстром режиме (по умолчанию для конфигурации отладки)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# This stage is used when running from Visual Studio in fast mode.
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 #EXPOSE 8080
 #EXPOSE 8081
 
-
-# Этот этап используется для сборки проекта службы
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# This stage is used to build the service project.
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Mapper.ReverseProxy.csproj", "."]
+COPY ["Directory.Packages.props", "."]
+COPY ["src/Mapper.ReverseProxy/Mapper.ReverseProxy.csproj", "."]
 RUN dotnet restore "./Mapper.ReverseProxy.csproj"
-COPY . .
-WORKDIR "/src/."
+COPY ["src/Mapper.ReverseProxy/", "."]
 RUN dotnet build "./Mapper.ReverseProxy.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# Этот этап используется для публикации проекта службы, который будет скопирован на последний этап
+# This stage is used to publish the service project.
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Mapper.ReverseProxy.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Этот этап используется в рабочей среде или при запуске из VS в обычном режиме (по умолчанию, когда конфигурация отладки не используется)
+# This stage is used in production or when Visual Studio fast mode is disabled.
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

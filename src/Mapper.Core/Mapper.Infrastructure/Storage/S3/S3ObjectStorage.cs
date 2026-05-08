@@ -30,4 +30,13 @@ public class S3ObjectStorage : IS3ObjectStorage
 
         return key;
     }
+
+    public Task DeleteAsync(string key, CancellationToken ct)
+    {
+        return _s3.DeleteObjectAsync(new DeleteObjectRequest
+        {
+            BucketName = _bucket,
+            Key = key
+        }, ct);
+    }
 }

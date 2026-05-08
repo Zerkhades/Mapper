@@ -10,18 +10,18 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
 {
     public record GetGeoMapByIdQuery(Guid Id) : IRequest<GeoMapDetailsDto>;
 
-        public class GetGeoMapByIdHandler : IRequestHandler<GetGeoMapByIdQuery, GeoMapDetailsDto>
-        {
-            private readonly IMapperDbContext _db;
-            private readonly IMapper _mapper;
-            private readonly ICacheService _cacheService;
+    public class GetGeoMapByIdHandler : IRequestHandler<GetGeoMapByIdQuery, GeoMapDetailsDto>
+    {
+        private readonly IMapperDbContext _db;
+        private readonly IMapper _mapper;
+        private readonly ICacheService _cacheService;
 
         public GetGeoMapByIdHandler(IMapperDbContext db, IMapper mapper, ICacheService cacheService)
-            {
-                _db = db;
-                _mapper = mapper;
-                _cacheService = cacheService;
-            }
+        {
+            _db = db;
+            _mapper = mapper;
+            _cacheService = cacheService;
+        }
 
         public async Task<GeoMapDetailsDto> Handle(GetGeoMapByIdQuery request, CancellationToken ct)
         {

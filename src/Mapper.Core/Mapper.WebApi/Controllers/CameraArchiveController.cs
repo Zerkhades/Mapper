@@ -14,10 +14,10 @@ namespace Mapper.WebApi.Controllers;
 public class CameraArchiveController : BaseController
 {
     // ============== VIDEO ARCHIVE ==============
-    
+
     [HttpGet("videos")]
     public async Task<ActionResult<List<CameraVideoArchiveListItemDto>>> GetVideoArchive(
-        Guid geoMapId, 
+        Guid geoMapId,
         Guid cameraMarkId,
         [FromQuery] int skip = 0,
         [FromQuery] int take = 50,
