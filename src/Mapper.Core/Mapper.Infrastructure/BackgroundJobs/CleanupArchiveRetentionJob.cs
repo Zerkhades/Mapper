@@ -3,6 +3,7 @@ using Mapper.Application.Features.Retention.Commands;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace Mapper.Infrastructure.BackgroundJobs;
 
@@ -32,21 +33,38 @@ public class CleanupArchiveRetentionJob
             return;
         }
 
-        var result = await _mediator.Send(new CleanupArchiveRetentionCommand(
-            Now: DateTimeOffset.UtcNow,
-            MotionVideoRetentionDays: options.MotionVideoRetentionDays,
-            NoMotionVideoRetentionDays: options.NoMotionVideoRetentionDays,
-            ArchivedVideoRetentionDays: options.ArchivedVideoRetentionDays,
-            Take: options.Take,
-            DryRun: options.DryRun,
-            Confirm: options.Confirm), ct);
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            var result = await _mediator.Send(new CleanupArchiveRetentionCommand(
+                Now: DateTimeOffset.UtcNow,
+                MotionVideoRetentionDays: options.MotionVideoRetentionDays,
+                NoMotionVideoRetentionDays: options.NoMotionVideoRetentionDays,
+                ArchivedVideoRetentionDays: options.ArchivedVideoRetentionDays,
+                Take: options.Take,
+                DryRun: options.DryRun,
+                Confirm: options.Confirm), ct);
 
-        _logger.LogInformation(
-            "Archive retention cleanup completed. DryRun={DryRun}, Confirmed={Confirmed}, Candidates={CandidateCount}, Deleted={DeletedCount}, ReclaimableBytes={ReclaimableBytes}",
-            result.DryRun,
-            result.Confirmed,
-            result.CandidateCount,
-            result.DeletedCount,
-            result.ReclaimableBytes);
+            stopwatch.Stop();
+            BackgroundJobMetrics.RecordArchiveRetentionCleanupSuccess(result, stopwatch.Elapsed);
+
+            _logger.LogInformation(
+                "Archive retention cleanup completed. DryRun={DryRun}, Confirmed={Confirmed}, Candidates={CandidateCount}, Deleted={DeletedCount}, ReclaimableBytes={ReclaimableBytes}, DurationMs={DurationMs}",
+                result.DryRun,
+                result.Confirmed,
+                result.CandidateCount,
+                result.DeletedCount,
+                result.ReclaimableBytes,
+                stopwatch.ElapsedMilliseconds);
+        }
+        catch
+        {
+            stopwatch.Stop();
+            BackgroundJobMetrics.RecordArchiveRetentionCleanupFailure(
+                options.DryRun,
+                options.Confirm,
+                stopwatch.Elapsed);
+            throw;
+        }
     }
 }

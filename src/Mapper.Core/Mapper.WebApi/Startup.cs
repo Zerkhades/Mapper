@@ -200,6 +200,7 @@ namespace Mapper.WebApi
                         m.AddAspNetCoreInstrumentation()
                          .AddHttpClientInstrumentation()
                          .AddRuntimeInstrumentation()
+                         .AddMeter(BackgroundJobMetrics.MeterName)
                          .AddPrometheusExporter();
                     });
             services.AddSignalR();
