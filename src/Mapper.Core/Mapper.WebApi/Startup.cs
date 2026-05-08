@@ -98,9 +98,10 @@ namespace Mapper.WebApi
                 });
             });
 
-            // JWT Authentication against IdentityServer
-            var authority = Configuration["Jwt:Authority"] ?? "http://identityserver:5002";
-            var audience = Configuration["Jwt:Audience"] ?? "api"; // scope-based
+            // JWT Authentication against Keycloak.
+            var authority = Configuration["Jwt:Authority"] ?? "http://localhost:5002/auth/realms/mapper";
+            var metadataAddress = Configuration["Jwt:MetadataAddress"];
+            var audience = Configuration["Jwt:Audience"] ?? "api";
 
             services.AddAuthentication(config =>
             {
@@ -112,8 +113,14 @@ namespace Mapper.WebApi
                 options.Authority = authority;
                 options.Audience = audience;
                 options.RequireHttpsMetadata = false;
+                if (!string.IsNullOrWhiteSpace(metadataAddress))
+                {
+                    options.MetadataAddress = metadataAddress;
+                }
                 options.TokenValidationParameters.ValidateIssuer = true;
-                options.TokenValidationParameters.ValidateAudience = false;
+                options.TokenValidationParameters.ValidateAudience = true;
+                options.TokenValidationParameters.NameClaimType = "preferred_username";
+                options.TokenValidationParameters.RoleClaimType = "roles";
 
                 options.Events = new JwtBearerEvents
                 {
@@ -151,7 +158,7 @@ namespace Mapper.WebApi
 
             services.AddSwaggerGen(c =>
             {
-                var swaggerAuthAuthority = Configuration["SwaggerOAuth:Authority"] ?? "http://localhost:5002"; // host URL for browser
+                var swaggerAuthAuthority = Configuration["SwaggerOAuth:Authority"] ?? "http://localhost:5002/auth/realms/mapper";
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.OAuth2,
@@ -159,8 +166,8 @@ namespace Mapper.WebApi
                     {
                         AuthorizationCode = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri($"{swaggerAuthAuthority}/connect/authorize"),
-                            TokenUrl = new Uri($"{swaggerAuthAuthority}/connect/token"),
+                            AuthorizationUrl = new Uri($"{swaggerAuthAuthority}/protocol/openid-connect/auth"),
+                            TokenUrl = new Uri($"{swaggerAuthAuthority}/protocol/openid-connect/token"),
                             Scopes = new Dictionary<string, string>
                             {
                                 { "openid", "OpenID" },
@@ -266,7 +273,7 @@ namespace Mapper.WebApi
                     config.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                     config.RoutePrefix = string.Empty;
                 }
-                config.OAuthClientId("mapper.swagger");
+                config.OAuthClientId(Configuration["SwaggerOAuth:ClientId"] ?? "mapper.swagger");
                 config.OAuthUsePkce();
                 config.OAuthScopes("api", "openid", "profile");
             });

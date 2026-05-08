@@ -7,7 +7,7 @@
 
 ## Авторизация
 
-API настроен на JWT Bearer токены от IdentityServer.
+API настроен на JWT Bearer токены от Keycloak.
 
 Текущее состояние в коде: для новых endpoints из этого документа нет `[Authorize]`, и глобальная fallback policy тоже не включена. Это значит, что сейчас они технически доступны без токена, если инфраструктура перед API не ограничивает доступ отдельно.
 
@@ -29,26 +29,26 @@ Authorization: Bearer <access_token>
 
 Рекомендуемый flow для браузерного фронтенда: Authorization Code + PKCE.
 
-IdentityServer endpoints:
+Keycloak endpoints для realm `mapper`:
 
 | Endpoint | Назначение |
 | --- | --- |
-| `/connect/authorize` | Начать login flow. |
-| `/connect/token` | Обменять authorization code на tokens. |
-| `/connect/userinfo` | Получить профиль, если нужен UI. |
-| `/connect/endsession` | Logout flow. |
+| `/auth/realms/mapper/protocol/openid-connect/auth` | Начать login flow. |
+| `/auth/realms/mapper/protocol/openid-connect/token` | Обменять authorization code на tokens. |
+| `/auth/realms/mapper/protocol/openid-connect/userinfo` | Получить профиль, если нужен UI. |
+| `/auth/realms/mapper/protocol/openid-connect/logout` | Logout flow. |
 
 Клиент для фронтенда/Swagger в текущей конфигурации:
 
 | Поле | Значение |
 | --- | --- |
-| `client_id` | `mapper.swagger` или `mapper.client` |
+| `client_id` | `mapper.swagger` |
 | `grant_type` | Authorization Code |
 | PKCE | обязательно |
 | client secret | не требуется |
 | scopes | `openid profile api` |
 
-Локальные redirect origins, которые уже есть в IdentityServer:
+Локальные redirect origins, которые уже есть в Keycloak:
 
 | Origin | Комментарий |
 | --- | --- |
@@ -57,7 +57,7 @@ IdentityServer endpoints:
 | `http://localhost:8080` | Docker compose HTTP. |
 | `https://localhost:8081` | Docker compose HTTPS. |
 
-Если фронтенд запускается на другом origin, его нужно добавить в `AllowedCorsOrigins` клиента IdentityServer и в `Cors:AllowedOrigins` WebApi для non-development окружений.
+Если фронтенд запускается на другом origin, его нужно добавить в `webOrigins`/redirect URIs клиента Keycloak и в `Cors:AllowedOrigins` WebApi для non-development окружений.
 
 Обработка ошибок авторизации на фронтенде:
 
