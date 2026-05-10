@@ -28,12 +28,12 @@ public class AuditBehaviourTests : TestCommandBase
         // Act
         var result = await behavior.Handle(
             request,
-            () => Task.FromResult(entityId),
+            _ => Task.FromResult(entityId),
             CancellationToken.None);
 
         // Assert
         Assert.Equal(entityId, result);
-        var auditEvent = await Context.AuditEvents.SingleAsync();
+        var auditEvent = await Context.AuditEvents.SingleAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal("Create", auditEvent.Action);
         Assert.Equal("Widget", auditEvent.EntityType);
         Assert.Equal(entityId, auditEvent.EntityId);
@@ -52,11 +52,11 @@ public class AuditBehaviourTests : TestCommandBase
         // Act
         await behavior.Handle(
             new GetWidgetQuery(Guid.NewGuid()),
-            () => Task.FromResult(Guid.NewGuid()),
+            _ => Task.FromResult(Guid.NewGuid()),
             CancellationToken.None);
 
         // Assert
-        Assert.False(await Context.AuditEvents.AnyAsync());
+        Assert.False(await Context.AuditEvents.AnyAsync(cancellationToken: TestContext.Current.CancellationToken));
     }
 
     private sealed record CreateWidgetCommand(string Name) : IRequest<Guid>;

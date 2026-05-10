@@ -35,7 +35,7 @@ public class GetAuditEventsQueryHandlerTests : TestCommandBase
             Guid.NewGuid(),
             userId,
             occurredAt: DateTimeOffset.UtcNow));
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetAuditEventsQueryHandler(Context);
 

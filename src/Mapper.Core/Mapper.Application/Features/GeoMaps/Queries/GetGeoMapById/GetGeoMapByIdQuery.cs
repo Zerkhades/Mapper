@@ -40,10 +40,7 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
                     x.ImageWidth,
                     x.ImageHeight,
                     new List<GeoMarkDto>()))
-                .FirstOrDefaultAsync(ct);
-
-            if (map is null)
-                throw new NotFoundException($"GeoMap {request.Id} not found", request.Id);
+                .FirstOrDefaultAsync(ct) ?? throw new NotFoundException($"GeoMap {request.Id} not found", request.Id);
 
             var rawMarks = await _db.GeoMarks
                 .AsNoTracking()
@@ -55,7 +52,7 @@ namespace Mapper.Application.Features.GeoMaps.Queries.GetGeoMapById
                 .Select(w => w.Id)
                 .ToList();
 
-            Dictionary<Guid, List<Guid>> employeesByWorkplace = new();
+            Dictionary<Guid, List<Guid>> employeesByWorkplace = [];
             if (workplaceIds.Count > 0)
             {
                 var rels = await _db.Employees

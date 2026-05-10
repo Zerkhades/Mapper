@@ -71,9 +71,9 @@ namespace Mapper.Tests.Employees.Queries
             var handler = new GetEmployeeDetailsHandler(context, Mapper);
             var employeeId = EmployeesContextFactory.EmployeeIdForDelete;
 
-            var employee = await context.Employees.FindAsync(employeeId);
+            var employee = await context.Employees.FindAsync(new object?[] { employeeId }, TestContext.Current.CancellationToken);
             employee!.IsArchived = true;
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             // Act & Assert
             await Assert.ThrowsAsync<NotFoundException>(async () =>

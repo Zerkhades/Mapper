@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning.ApiExplorer;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
@@ -8,6 +8,8 @@ namespace Mapper.WebApi
 {
     public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
     {
+        private const string SecuritySchemeName = "Bearer";
+
         private readonly IApiVersionDescriptionProvider _provider;
 
         public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) =>
@@ -42,37 +44,30 @@ namespace Mapper.WebApi
                         }
                     });
 
-                //options.AddSecurityDefinition($"AuthToken {apiVersion}",
-                //    new OpenApiSecurityScheme
-                //    {
-                //        In = ParameterLocation.Header,
-                //        Type = SecuritySchemeType.Http,
-                //        BearerFormat = "JWT",
-                //        Scheme = "bearer",
-                //        Name = "Authorization",
-                //        Description = "Authorization token"
-                //    });
-
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = $"AuthToken {apiVersion}"
-                            }
-                        },
-                        new string[] { }
-                    }
-                });
-
                 options.CustomOperationIds(apiDescription =>
                     apiDescription.TryGetMethodInfo(out MethodInfo methodInfo)
                         ? methodInfo.Name
                         : null);
             }
+
+            options.AddSecurityDefinition(SecuritySchemeName,
+                new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer",
+                    Name = "Authorization",
+                    Description = "Authorization token"
+                });
+
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecuritySchemeReference(SecuritySchemeName, document, null),
+                    new List<string>()
+                }
+            });
         }
     }
 

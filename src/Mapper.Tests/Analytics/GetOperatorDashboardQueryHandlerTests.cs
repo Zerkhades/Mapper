@@ -37,7 +37,7 @@ public class GetOperatorDashboardQueryHandlerTests : TestCommandBase
         AddAlert(_factory.CameraMarkId, MotionSeverity.Low, 20, false, now.AddHours(-3));
         AddAlert(_factory.CameraMarkId, MotionSeverity.Low, 10, true, now.AddHours(-26));
         AddVideo(_factory.CameraMarkId, now.AddHours(-4));
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetOperatorDashboardQueryHandler(Context);
 
@@ -72,7 +72,7 @@ public class GetOperatorDashboardQueryHandlerTests : TestCommandBase
             AddAlert(_factory.CameraMarkId, MotionSeverity.High, 70 + i, false, now.AddHours(-i));
         }
 
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var handler = new GetOperatorDashboardQueryHandler(Context);
 
         // Act

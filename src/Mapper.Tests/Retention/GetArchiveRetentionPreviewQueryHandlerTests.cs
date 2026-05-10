@@ -24,7 +24,7 @@ public class GetArchiveRetentionPreviewQueryHandlerTests : TestCommandBase
         AddVideo("/videos/motion-old.mp4", now.AddDays(-91), 200, hasMotion: true, isArchived: false);
         AddVideo("/videos/archived-old.mp4", now.AddDays(-366), 300, hasMotion: true, isArchived: true);
         AddVideo("/videos/recent.mp4", now.AddDays(-2), 400, hasMotion: false, isArchived: false);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetArchiveRetentionPreviewQueryHandler(Context);
 
@@ -55,7 +55,7 @@ public class GetArchiveRetentionPreviewQueryHandlerTests : TestCommandBase
         Context.GeoMarks.Add(otherCamera);
         AddVideo("/videos/target.mp4", now.AddDays(-8), 100, hasMotion: false, isArchived: false, _factory.CameraMarkId);
         AddVideo("/videos/other.mp4", now.AddDays(-8), 200, hasMotion: false, isArchived: false, otherCamera.Id);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetArchiveRetentionPreviewQueryHandler(Context);
 

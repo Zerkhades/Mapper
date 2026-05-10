@@ -61,7 +61,7 @@ namespace Mapper.Tests.GeoMarks.Queries
             var handler = new GetGeoMarksHandler(context, Mapper);
 
             context.GeoMarks.RemoveRange(context.GeoMarks);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             // Act
             var result = await handler.Handle(

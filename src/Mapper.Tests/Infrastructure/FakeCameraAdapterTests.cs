@@ -5,7 +5,8 @@ namespace Mapper.Tests.Infrastructure;
 
 public class FakeCameraAdapterTests
 {
-    private readonly ICameraAdapter _adapter;
+    private readonly FakeCameraAdapter _adapter;
+    private const string TestUrl = "rtsp://fake-url";
 
     public FakeCameraAdapterTests()
     {
@@ -16,7 +17,7 @@ public class FakeCameraAdapterTests
     public async Task GetStatusAsync_ShouldReturnCameraStatus()
     {
         // Act
-        var status = await _adapter.GetStatusAsync("rtsp://fake-url", CancellationToken.None);
+        var status = await _adapter.GetStatusAsync(TestUrl, CancellationToken.None);
 
         // Assert
         Assert.NotNull(status);
@@ -27,9 +28,9 @@ public class FakeCameraAdapterTests
     public async Task GetStatusAsync_ShouldAlternateOnlineStatus()
     {
         // Act
-        var status1 = await _adapter.GetStatusAsync("rtsp://fake-url", CancellationToken.None);
-        await Task.Delay(100); // Small delay to potentially change state
-        var status2 = await _adapter.GetStatusAsync("rtsp://fake-url", CancellationToken.None);
+        var status1 = await _adapter.GetStatusAsync(TestUrl, CancellationToken.None);
+        await Task.Delay(100, TestContext.Current.CancellationToken); // Small delay to potentially change state
+        var status2 = await _adapter.GetStatusAsync(TestUrl, CancellationToken.None);
 
         // Assert
         Assert.NotNull(status1);
@@ -45,7 +46,7 @@ public class FakeCameraAdapterTests
     public async Task TryGetSnapshotAsync_ShouldReturnValidSnapshot()
     {
         // Act
-        var snapshot = await _adapter.TryGetSnapshotAsync("rtsp://fake-url", CancellationToken.None);
+        var snapshot = await _adapter.TryGetSnapshotAsync(TestUrl, CancellationToken.None);
 
         // Assert
         Assert.NotNull(snapshot);
@@ -58,7 +59,7 @@ public class FakeCameraAdapterTests
     public async Task TryGetSnapshotAsync_ShouldReturnValidPngData()
     {
         // Act
-        var snapshot = await _adapter.TryGetSnapshotAsync("rtsp://fake-url", CancellationToken.None);
+        var snapshot = await _adapter.TryGetSnapshotAsync(TestUrl, CancellationToken.None);
 
         // Assert
         Assert.NotNull(snapshot);
@@ -77,7 +78,7 @@ public class FakeCameraAdapterTests
         var duration = TimeSpan.FromSeconds(30);
 
         // Act
-        var video = await _adapter.TryGetVideoAsync("rtsp://fake-url", duration, CancellationToken.None);
+        var video = await _adapter.TryGetVideoAsync(TestUrl, duration, CancellationToken.None);
 
         // Assert
         Assert.NotNull(video);
@@ -94,7 +95,7 @@ public class FakeCameraAdapterTests
         var frameData = new byte[1024];
 
         // Act
-        var result = await _adapter.TryDetectMotionAsync("rtsp://fake-url", frameData, CancellationToken.None);
+        var result = await _adapter.TryDetectMotionAsync(TestUrl, frameData, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -112,10 +113,10 @@ public class FakeCameraAdapterTests
         MotionDetectionResult? result = null;
         for (int i = 0; i < 20; i++)
         {
-            result = await _adapter.TryDetectMotionAsync("rtsp://fake-url", frameData, CancellationToken.None);
+            result = await _adapter.TryDetectMotionAsync(TestUrl, frameData, CancellationToken.None);
             if (result?.HasMotion == true)
                 break;
-            await Task.Delay(100);
+            await Task.Delay(100, TestContext.Current.CancellationToken);
         }
 
         // Assert
@@ -142,7 +143,7 @@ public class FakeCameraAdapterTests
 
         // Act
         var snapshot = await _adapter.TryGetSnapshotWithZoomAsync(
-            "rtsp://fake-url",
+            TestUrl,
             zoomLevel,
             centerX,
             centerY,
@@ -163,7 +164,7 @@ public class FakeCameraAdapterTests
     {
         // Act
         var snapshot = await _adapter.TryGetSnapshotWithZoomAsync(
-            "rtsp://fake-url",
+            TestUrl,
             zoomLevel,
             ct: CancellationToken.None);
 

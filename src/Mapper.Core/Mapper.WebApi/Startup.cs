@@ -29,7 +29,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -93,7 +92,7 @@ namespace Mapper.WebApi
                     }
                     else
                     {
-                        policy.WithOrigins(cors.AllowedOrigins.Where(origin => !string.IsNullOrWhiteSpace(origin)).ToArray());
+                        policy.WithOrigins([.. cors.AllowedOrigins.Where(origin => !string.IsNullOrWhiteSpace(origin))]);
                     }
                 });
             });
@@ -142,9 +141,9 @@ namespace Mapper.WebApi
             services.AddAuthorization();
 
             services.AddHealthChecks()
-                .AddCheck<MapperDbContextHealthCheck>("postgres", tags: new[] { "ready" })
-                .AddCheck<RedisHealthCheck>("redis", tags: new[] { "ready" })
-                .AddCheck<S3HealthCheck>("s3", tags: new[] { "ready" });
+                .AddCheck<MapperDbContextHealthCheck>("postgres", tags: ["ready"])
+                .AddCheck<RedisHealthCheck>("redis", tags: ["ready"])
+                .AddCheck<S3HealthCheck>("s3", tags: ["ready"]);
 
             services.AddApiVersioning()
                 .AddMvc()
@@ -156,38 +155,7 @@ namespace Mapper.WebApi
 
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
-            services.AddSwaggerGen(c =>
-            {
-                var swaggerAuthAuthority = Configuration["SwaggerOAuth:Authority"] ?? "http://localhost:5002/auth/realms/mapper";
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
-                    {
-                        AuthorizationCode = new OpenApiOAuthFlow
-                        {
-                            AuthorizationUrl = new Uri($"{swaggerAuthAuthority}/protocol/openid-connect/auth"),
-                            TokenUrl = new Uri($"{swaggerAuthAuthority}/protocol/openid-connect/token"),
-                            Scopes = new Dictionary<string, string>
-                            {
-                                { "openid", "OpenID" },
-                                { "profile", "User profile" },
-                                { "api", "Mapper API" }
-                            }
-                        }
-                    }
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-                        },
-                        new [] { "api", "openid", "profile" }
-                    }
-                });
-            });
+            services.AddSwaggerGen();
 
             services.AddOpenTelemetry()
                     .WithTracing(t =>
@@ -285,7 +253,7 @@ namespace Mapper.WebApi
             app.UseAuthorization();
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
+                Authorization = [new HangfireDashboardAuthorizationFilter()]
             });
             app.ScheduleCameraJobs(Configuration);
 

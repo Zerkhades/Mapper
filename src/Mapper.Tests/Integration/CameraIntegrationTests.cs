@@ -36,7 +36,7 @@ public class CameraIntegrationTests
 
         context.GeoMaps.Add(geoMap);
         context.GeoMarks.Add(cameraMark);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var adapter = new FakeCameraAdapter();
 
@@ -58,11 +58,11 @@ public class CameraIntegrationTests
         );
 
         context.CameraStatusHistories.Add(statusHistory);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Verify it was saved
         var savedHistory = await context.CameraStatusHistories
-            .FirstOrDefaultAsync(x => x.CameraMarkId == cameraMarkId);
+            .FirstOrDefaultAsync(x => x.CameraMarkId == cameraMarkId, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(savedHistory);
         Assert.Equal(cameraMarkId, savedHistory.CameraMarkId);
@@ -81,7 +81,7 @@ public class CameraIntegrationTests
         // Create GeoMap - use auto-generated Id
         var geoMap = new GeoMap("Floor 1", "/maps/floor1.png", 2000, 1500);
         context.GeoMaps.Add(geoMap);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var geoMapId = geoMap.Id;
 
         // Create CameraMark - use auto-generated Id
@@ -94,7 +94,7 @@ public class CameraIntegrationTests
             "rtsp://192.168.1.100/stream"
         );
         context.GeoMarks.Add(cameraMark);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var cameraMarkId = cameraMark.Id;
 
         var adapter = new FakeCameraAdapter();
@@ -119,7 +119,7 @@ public class CameraIntegrationTests
         );
 
         context.CameraVideoArchives.Add(archive);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Detect motion
         var motionResult = await adapter.TryDetectMotionAsync(
@@ -139,14 +139,14 @@ public class CameraIntegrationTests
             );
 
             context.CameraMotionAlerts.Add(alert);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             // Link alert to video
             alert.LinkToVideo(archive.Id);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             var linkedAlert = await context.CameraMotionAlerts
-                .FirstOrDefaultAsync(x => x.RelatedVideoArchiveId == archive.Id);
+                .FirstOrDefaultAsync(x => x.RelatedVideoArchiveId == archive.Id, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(linkedAlert);
         }
@@ -154,10 +154,10 @@ public class CameraIntegrationTests
         // Verify all entities
         var savedCamera = await context.GeoMarks
             .OfType<CameraMark>()
-            .FirstOrDefaultAsync(x => x.Id == cameraMarkId);
+            .FirstOrDefaultAsync(x => x.Id == cameraMarkId, cancellationToken: TestContext.Current.CancellationToken);
 
         var savedArchive = await context.CameraVideoArchives
-            .FirstOrDefaultAsync(x => x.CameraMarkId == cameraMarkId);
+            .FirstOrDefaultAsync(x => x.CameraMarkId == cameraMarkId, cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(savedCamera);
         Assert.NotNull(savedArchive);
@@ -184,7 +184,7 @@ public class CameraIntegrationTests
 
         context.GeoMaps.Add(geoMap);
         context.GeoMarks.Add(cameraMark);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act - Simulate status changes
         var statuses = new[]
@@ -205,16 +205,16 @@ public class CameraIntegrationTests
             );
 
             context.CameraStatusHistories.Add(statusHistory);
-            await Task.Delay(10); // Small delay to ensure different timestamps
+            await Task.Delay(10, TestContext.Current.CancellationToken); // Small delay to ensure different timestamps
         }
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         var histories = await context.CameraStatusHistories
             .Where(x => x.CameraMarkId == cameraMarkId)
             .OrderBy(x => x.ChangedAt)
-            .ToListAsync();
+            .ToListAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.Equal(5, histories.Count);
         Assert.True(histories[0].IsOnline); // PowerOn

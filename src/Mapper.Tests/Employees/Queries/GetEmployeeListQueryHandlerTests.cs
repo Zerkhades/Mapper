@@ -87,7 +87,7 @@ namespace Mapper.Tests.Employees.Queries
             {
                 employee.IsArchived = true;
             }
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             // Act
             var result = await handler.Handle(

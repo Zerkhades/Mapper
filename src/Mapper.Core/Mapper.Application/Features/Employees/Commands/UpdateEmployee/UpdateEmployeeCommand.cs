@@ -47,18 +47,12 @@ public class UpdateEmployeeHandler : IRequestHandler<UpdateEmployeeCommand>
     public async Task Handle(UpdateEmployeeCommand request, CancellationToken ct)
     {
         var employee = await _db.Employees
-            .FirstOrDefaultAsync(x => x.Id == request.Id, ct);
-
-        if (employee is null)
-            throw new NotFoundException($"Employee {request.Id} not found", request.Id);
+            .FirstOrDefaultAsync(x => x.Id == request.Id, ct) ?? throw new NotFoundException($"Employee {request.Id} not found", request.Id);
 
         // Проверяем, что новый GeoMark существует и это WorkplaceMark
         var geoMark = await _db.GeoMarks
             .OfType<WorkplaceMark>()
-            .FirstOrDefaultAsync(x => x.Id == request.GeoMarkId, ct);
-
-        if (geoMark is null)
-            throw new NotFoundException($"WorkplaceMark {request.GeoMarkId} not found", request.GeoMarkId);
+            .FirstOrDefaultAsync(x => x.Id == request.GeoMarkId, ct) ?? throw new NotFoundException($"WorkplaceMark {request.GeoMarkId} not found", request.GeoMarkId);
 
         employee.FirstName = request.FirstName;
         employee.Surname = request.Surname;

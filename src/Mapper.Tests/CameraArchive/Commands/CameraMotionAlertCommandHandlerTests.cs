@@ -35,7 +35,7 @@ public class CreateCameraMotionAlertCommandHandlerTests : TestCommandBase
 
         // Assert
         Assert.NotEqual(Guid.Empty, result);
-        var alert = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == result);
+        var alert = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == result, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(alert);
         Assert.Equal(_factory.CameraMarkId, alert.CameraMarkId);
         Assert.Equal(MotionSeverity.High, alert.Severity);
@@ -90,7 +90,7 @@ public class ConfirmCameraMotionAlertCommandHandlerTests : TestCommandBase
         SetIdProperty(alert, alertId);
 
         Context.CameraMotionAlerts.Add(alert);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var command = new ConfirmCameraMotionAlertCommand(alertId);
         var handler = new ConfirmCameraMotionAlertHandler(Context);
@@ -99,7 +99,7 @@ public class ConfirmCameraMotionAlertCommandHandlerTests : TestCommandBase
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var confirmed = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId);
+        var confirmed = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(confirmed);
         Assert.NotNull(confirmed.ConfirmedAt);
     }
@@ -145,7 +145,7 @@ public class ResolveCameraMotionAlertCommandHandlerTests : TestCommandBase
         SetIdProperty(alert, alertId);
 
         Context.CameraMotionAlerts.Add(alert);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var notes = "False alarm - maintenance work";
         var command = new ResolveCameraMotionAlertCommand(alertId, notes);
@@ -155,7 +155,7 @@ public class ResolveCameraMotionAlertCommandHandlerTests : TestCommandBase
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var resolved = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId);
+        var resolved = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(resolved);
         Assert.True(resolved.IsResolved);
         Assert.Equal(notes, resolved.ResolutionNotes);
@@ -173,7 +173,7 @@ public class ResolveCameraMotionAlertCommandHandlerTests : TestCommandBase
         SetIdProperty(alert, alertId);
 
         Context.CameraMotionAlerts.Add(alert);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var command = new ResolveCameraMotionAlertCommand(alertId);
         var handler = new ResolveCameraMotionAlertHandler(Context);
@@ -182,7 +182,7 @@ public class ResolveCameraMotionAlertCommandHandlerTests : TestCommandBase
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var resolved = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId);
+        var resolved = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(resolved);
         Assert.True(resolved.IsResolved);
     }
@@ -239,7 +239,7 @@ public class LinkMotionAlertToVideoCommandHandlerTests : TestCommandBase
 
         Context.CameraMotionAlerts.Add(alert);
         Context.CameraVideoArchives.Add(video);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var command = new LinkMotionAlertToVideoCommand(alertId, videoId);
         var handler = new LinkMotionAlertToVideoHandler(Context);
@@ -248,7 +248,7 @@ public class LinkMotionAlertToVideoCommandHandlerTests : TestCommandBase
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var linked = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId);
+        var linked = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(linked);
         Assert.Equal(videoId, linked.RelatedVideoArchiveId);
     }
@@ -294,7 +294,7 @@ public class DeleteCameraMotionAlertCommandHandlerTests : TestCommandBase
         SetIdProperty(alert, alertId);
 
         Context.CameraMotionAlerts.Add(alert);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var command = new DeleteCameraMotionAlertCommand(alertId);
         var handler = new DeleteCameraMotionAlertHandler(Context);
@@ -303,7 +303,7 @@ public class DeleteCameraMotionAlertCommandHandlerTests : TestCommandBase
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var deleted = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId);
+        var deleted = await Context.CameraMotionAlerts.FirstOrDefaultAsync(x => x.Id == alertId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.Null(deleted);
     }
 

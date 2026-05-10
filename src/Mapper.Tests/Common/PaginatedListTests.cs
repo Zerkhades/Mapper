@@ -79,7 +79,7 @@ public class PaginatedListTests
 
         using var context = new TestDbContext(options);
         context.TestEntities.AddRange(data.Select(i => new TestEntity { Id = i, Value = $"Item{i}" }));
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var queryable = context.TestEntities.OrderBy(x => x.Id);
 
@@ -106,7 +106,7 @@ public class PaginatedListTests
 
         using var context = new TestDbContext(options);
         context.TestEntities.AddRange(data.Select(i => new TestEntity { Id = i, Value = $"Item{i}" }));
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var queryable = context.TestEntities.OrderBy(x => x.Id);
 
@@ -123,7 +123,7 @@ public class PaginatedListTests
     public void TotalPages_WithExactDivision_ShouldCalculateCorrectly()
     {
         // Arrange & Act
-        var paginatedList = new PaginatedList<int>(new List<int>(), 20, 1, 5);
+        var paginatedList = new PaginatedList<int>([], 20, 1, 5);
 
         // Assert
         Assert.Equal(4, paginatedList.TotalPages);
@@ -133,7 +133,7 @@ public class PaginatedListTests
     public void TotalPages_WithRemainder_ShouldRoundUp()
     {
         // Arrange & Act
-        var paginatedList = new PaginatedList<int>(new List<int>(), 21, 1, 5);
+        var paginatedList = new PaginatedList<int>([], 21, 1, 5);
 
         // Assert
         Assert.Equal(5, paginatedList.TotalPages);

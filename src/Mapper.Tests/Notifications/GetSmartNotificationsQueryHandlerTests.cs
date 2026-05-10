@@ -21,7 +21,7 @@ public class GetSmartNotificationsQueryHandlerTests : TestCommandBase
         // Arrange
         var now = DateTimeOffset.UtcNow;
         AddStatus(_factory.CameraMarkId, false, CameraStatusReason.NetworkDisconnected, now.AddMinutes(-10));
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetSmartNotificationsQueryHandler(Context);
 
@@ -44,7 +44,7 @@ public class GetSmartNotificationsQueryHandlerTests : TestCommandBase
         // Arrange
         var now = DateTimeOffset.UtcNow;
         AddStatus(_factory.CameraMarkId, false, CameraStatusReason.NetworkDisconnected, now.AddMinutes(-2));
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetSmartNotificationsQueryHandler(Context);
 
@@ -63,7 +63,7 @@ public class GetSmartNotificationsQueryHandlerTests : TestCommandBase
         // Arrange
         var now = DateTimeOffset.UtcNow;
         var alert = AddAlert(_factory.CameraMarkId, MotionSeverity.High, 85, false, now.AddMinutes(-3));
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetSmartNotificationsQueryHandler(Context);
 
@@ -92,7 +92,7 @@ public class GetSmartNotificationsQueryHandlerTests : TestCommandBase
             AddAlert(_factory.CameraMarkId, MotionSeverity.Low, 20 + i, true, now.AddMinutes(-i));
         }
 
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var handler = new GetSmartNotificationsQueryHandler(Context);
 
         // Act

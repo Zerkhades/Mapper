@@ -44,7 +44,7 @@ namespace Mapper.Tests.GeoMarks.Commands
 
             // Assert
             var updatedMark = await Context.GeoMarks.OfType<WorkplaceMark>()
-                .SingleOrDefaultAsync(m => m.Id == markId);
+                .SingleOrDefaultAsync(m => m.Id == markId, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(updatedMark);
             Assert.Equal(0.4, updatedMark.X);
@@ -84,7 +84,7 @@ namespace Mapper.Tests.GeoMarks.Commands
             };
 
             Context.Employees.AddRange(employee1, employee2);
-            await Context.SaveChangesAsync();
+            await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             // Act
             await handler.Handle(
@@ -103,7 +103,7 @@ namespace Mapper.Tests.GeoMarks.Commands
             // Assert
             var updatedMark = await Context.GeoMarks.OfType<WorkplaceMark>()
                 .Include(m => m.Employees)
-                .SingleOrDefaultAsync(m => m.Id == markId);
+                .SingleOrDefaultAsync(m => m.Id == markId, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(updatedMark);
             Assert.Equal(2, updatedMark.Employees.Count);

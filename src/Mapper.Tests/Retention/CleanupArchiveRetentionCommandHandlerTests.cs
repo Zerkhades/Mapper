@@ -24,7 +24,7 @@ public class CleanupArchiveRetentionCommandHandlerTests : TestCommandBase
         // Arrange
         var now = DateTimeOffset.UtcNow;
         AddVideo("/videos/old.mp4", "/thumbs/old.jpg", now.AddDays(-8), 100, hasMotion: false);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new CleanupArchiveRetentionCommandHandler(Context, _storage);
 
@@ -38,7 +38,7 @@ public class CleanupArchiveRetentionCommandHandlerTests : TestCommandBase
         Assert.Equal(1, result.CandidateCount);
         Assert.Equal(0, result.DeletedCount);
         Assert.Empty(_storage.DeletedKeys);
-        Assert.Equal(1, await Context.CameraVideoArchives.CountAsync());
+        Assert.Equal(1, await Context.CameraVideoArchives.CountAsync(cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class CleanupArchiveRetentionCommandHandlerTests : TestCommandBase
         var now = DateTimeOffset.UtcNow;
         AddVideo("/videos/old.mp4", "/thumbs/old.jpg", now.AddDays(-8), 100, hasMotion: false);
         AddVideo("/videos/recent.mp4", null, now.AddDays(-1), 200, hasMotion: false);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new CleanupArchiveRetentionCommandHandler(Context, _storage);
 
@@ -75,7 +75,7 @@ public class CleanupArchiveRetentionCommandHandlerTests : TestCommandBase
         Assert.Equal(1, result.DeletedCount);
         Assert.Contains("/videos/old.mp4", _storage.DeletedKeys);
         Assert.Contains("/thumbs/old.jpg", _storage.DeletedKeys);
-        var remaining = await Context.CameraVideoArchives.SingleAsync();
+        var remaining = await Context.CameraVideoArchives.SingleAsync(cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal("/videos/recent.mp4", remaining.VideoPath);
     }
 

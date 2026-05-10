@@ -38,7 +38,7 @@ public class CreateCameraVideoArchiveCommandHandlerTests : TestCommandBase
 
         // Assert
         Assert.NotEqual(Guid.Empty, result);
-        var archive = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == result);
+        var archive = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == result, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(archive);
         Assert.Equal(_factory.CameraMarkId, archive.CameraMarkId);
         Assert.Equal("/videos/test.mp4", archive.VideoPath);
@@ -101,7 +101,7 @@ public class MarkVideoArchiveAsArchivedCommandHandlerTests : TestCommandBase
         SetIdProperty(archive, archiveId);
 
         Context.CameraVideoArchives.Add(archive);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var command = new MarkVideoArchiveAsArchivedCommand(archiveId);
         var handler = new MarkVideoArchiveAsArchivedHandler(Context);
@@ -110,7 +110,7 @@ public class MarkVideoArchiveAsArchivedCommandHandlerTests : TestCommandBase
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var updated = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == archiveId);
+        var updated = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == archiveId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(updated);
         Assert.True(updated.IsArchived);
     }
@@ -159,7 +159,7 @@ public class DeleteCameraVideoArchiveCommandHandlerTests : TestCommandBase
         SetIdProperty(archive, archiveId);
 
         Context.CameraVideoArchives.Add(archive);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var command = new DeleteCameraVideoArchiveCommand(archiveId);
         var handler = new DeleteCameraVideoArchiveHandler(Context);
@@ -168,7 +168,7 @@ public class DeleteCameraVideoArchiveCommandHandlerTests : TestCommandBase
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var deleted = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == archiveId);
+        var deleted = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == archiveId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.Null(deleted);
     }
 
@@ -216,7 +216,7 @@ public class UpdateVideoArchiveMotionDetectionCommandHandlerTests : TestCommandB
         SetIdProperty(archive, archiveId);
 
         Context.CameraVideoArchives.Add(archive);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var command = new UpdateVideoArchiveMotionDetectionCommand(archiveId, true);
         var handler = new UpdateVideoArchiveMotionDetectionHandler(Context);
@@ -225,7 +225,7 @@ public class UpdateVideoArchiveMotionDetectionCommandHandlerTests : TestCommandB
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        var updated = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == archiveId);
+        var updated = await Context.CameraVideoArchives.FirstOrDefaultAsync(x => x.Id == archiveId, cancellationToken: TestContext.Current.CancellationToken);
         Assert.NotNull(updated);
         Assert.True(updated.HasMotionDetected);
     }

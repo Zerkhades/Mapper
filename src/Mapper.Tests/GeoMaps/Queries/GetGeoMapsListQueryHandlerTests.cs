@@ -42,7 +42,7 @@ namespace Mapper.Tests.GeoMaps.Queries
             var handler = new GetGeoMapListHandler(context, Mapper);
 
             context.GeoMaps.RemoveRange(context.GeoMaps);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
             // Act
             var result = await handler.Handle(

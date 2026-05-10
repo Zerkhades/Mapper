@@ -22,7 +22,7 @@ public class GetMapGraphAnalyticsQueryHandlerTests : TestCommandBase
         var isolated = AddMap("Isolated");
         AddTransition(mapA.Id, mapB.Id, "A to B");
         AddTransition(mapB.Id, mapC.Id, "B to C");
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetMapGraphAnalyticsQueryHandler(Context);
 
@@ -49,7 +49,7 @@ public class GetMapGraphAnalyticsQueryHandlerTests : TestCommandBase
         var mapC = AddMap("C");
         AddTransition(mapA.Id, mapB.Id, "A to B");
         AddTransition(mapB.Id, mapC.Id, "B to C");
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var handler = new GetMapGraphAnalyticsQueryHandler(Context);
 
@@ -70,7 +70,7 @@ public class GetMapGraphAnalyticsQueryHandlerTests : TestCommandBase
     {
         // Arrange
         var map = AddMap("A");
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var handler = new GetMapGraphAnalyticsQueryHandler(Context);
 
         // Act & Assert
