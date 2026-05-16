@@ -14,6 +14,8 @@ namespace Mapper.Persistence
         public DbSet<CameraMotionAlert> CameraMotionAlerts { get; set; }
         public DbSet<CameraStatusHistory> CameraStatusHistories { get; set; }
         public DbSet<AuditEvent> AuditEvents { get; set; }
+        public DbSet<RouteNode> RouteNodes { get; set; }
+        public DbSet<RouteEdge> RouteEdges { get; set; }
 
         public MapperDbContext(DbContextOptions<MapperDbContext> options) : base(options) { }
 
@@ -127,6 +129,43 @@ namespace Mapper.Persistence
                 b.HasIndex(x => x.EntityType);
                 b.HasIndex(x => x.EntityId);
                 b.HasIndex(x => x.UserId);
+            });
+
+            modelBuilder.Entity<RouteNode>(b =>
+            {
+                b.ToTable("route_nodes");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.GeoMapId).IsRequired();
+                b.Property(x => x.GeoMarkId);
+                b.Property(x => x.X).IsRequired();
+                b.Property(x => x.Y).IsRequired();
+                b.Property(x => x.Title).HasMaxLength(200);
+                b.Property(x => x.IsDeleted).IsRequired();
+                b.Property(x => x.DeletedAt);
+                b.HasQueryFilter(x => !x.IsDeleted);
+                b.HasIndex(x => x.GeoMapId);
+                b.HasIndex(x => x.GeoMarkId);
+                b.HasOne<GeoMap>().WithMany().HasForeignKey(x => x.GeoMapId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne<GeoMark>().WithMany().HasForeignKey(x => x.GeoMarkId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<RouteEdge>(b =>
+            {
+                b.ToTable("route_edges");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.GeoMapId).IsRequired();
+                b.Property(x => x.FromNodeId).IsRequired();
+                b.Property(x => x.ToNodeId).IsRequired();
+                b.Property(x => x.CostOverride);
+                b.Property(x => x.IsBidirectional).IsRequired();
+                b.Property(x => x.IsDisabled).IsRequired();
+                b.Property(x => x.Description).HasMaxLength(500);
+                b.HasIndex(x => x.GeoMapId);
+                b.HasIndex(x => x.FromNodeId);
+                b.HasIndex(x => x.ToNodeId);
+                b.HasOne<GeoMap>().WithMany().HasForeignKey(x => x.GeoMapId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne<RouteNode>().WithMany().HasForeignKey(x => x.FromNodeId).OnDelete(DeleteBehavior.Restrict);
+                b.HasOne<RouteNode>().WithMany().HasForeignKey(x => x.ToNodeId).OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
